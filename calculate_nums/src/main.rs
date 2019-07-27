@@ -12,13 +12,11 @@ fn main() {
 }
 
 fn calculate_mean(nums:&[usize], calculations:&mut HashMap<String,f32>) {
-    let mut mean:f32 = 0.00;
     let mut total:usize = 0;
     for num in nums {
         total += num;
     }
-    mean = (total / nums.len()) as f32;
-    calculations.insert(String::from("mean"), mean);
+    calculations.insert(String::from("mean"), (total / nums.len()) as f32);
 }
 
 fn calculate_median(nums:&[usize], calculations:&mut HashMap<String, f32>) {
