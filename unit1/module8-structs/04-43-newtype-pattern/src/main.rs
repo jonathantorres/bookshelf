@@ -1,3 +1,4 @@
+#[derive(Debug)]
 struct Meters(u8);
 
 fn add_distances(d1: Meters, d2: Meters) -> Meters {
@@ -5,8 +6,9 @@ fn add_distances(d1: Meters, d2: Meters) -> Meters {
 }
 
 fn main() {
-    let distance1 = Meters(3);
-    let distance2: u8 = 7;
+    let distance1:Meters = Meters(3);
+    let distance2 = Meters(7);
 
     let distance3 = add_distances(distance1, distance2);
+    println!("{:?}", distance3);
 }

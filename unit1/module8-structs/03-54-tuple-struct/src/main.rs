@@ -8,6 +8,6 @@ fn main() {
     let triangle1 = Triangle(3, 4, 5);
     is_equilateral(triangle1);
 
-    let nums = (5, 5, 5);
+    let nums = Triangle(5, 5, 5);
     is_equilateral(nums);
 }
