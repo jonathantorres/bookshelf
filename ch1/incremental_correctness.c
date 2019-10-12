@@ -1,3 +1,4 @@
+// Chapter 1 - Page 16 - Stop and Think: Incremental Correctness
 #include <stdio.h>
 #include <math.h>
 
