@@ -7,3 +7,6 @@
 - The heart of any algorithm is an __**idea**__.
 - An important techinque in algorithm design is to narrow the set of allowable instances until there is a correct and efficient algorithm.
 - Searching for __**counter examples**__ is the best way to disprove the correctness of a __**heuristic.**__
+- What is __**Mathematical Induction**__?
+- Mathematical induction is usually the right way to verify the correctness of a recursive or incremental insertion algorithm.
+- Mathematical induction is related to recursion.
