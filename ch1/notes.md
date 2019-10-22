@@ -10,3 +10,4 @@
 - What is __**Mathematical Induction**__?
 - Mathematical induction is usually the right way to verify the correctness of a recursive or incremental insertion algorithm.
 - Mathematical induction is related to recursion.
+- Modeling your application in terms of well-defined structures and algorithms is the most important single step towards a solution.
