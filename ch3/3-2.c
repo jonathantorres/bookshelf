@@ -35,32 +35,23 @@ int list_length(list *_list);
 
 void list_reverse(list *_list)
 {
-	if (!_list) {
-		return;
-	}
+    if (!_list) {
+        return;
+    }
+    if (list_length(_list) == 0) {
+        return;
+    }
+    list_node *cur_node = _list->first;
+    list_node *prev_node = NULL;
+    list_node *next_node = NULL;
 
-	if (_list->first == NULL) {
-		return;
-	}
-
-	if (list_length(_list) == 1) {
-		return;
-	}
-
-	list_node *cur_node = _list->first;
-	list_node *next_node = NULL;
-	list_node *prev_node = NULL;
-
-	while (cur_node != NULL) {
-		next_node = cur_node->next;
-		cur_node->next = prev_node;
-		prev_node = cur_node;
-		cur_node = next_node;
-	}
-
-	_list->first = prev_node;
-
-	return;
+    while (cur_node != NULL) {
+        next_node = cur_node->next;
+        cur_node->next = prev_node;
+        prev_node = cur_node;
+        cur_node = next_node;
+    }
+    _list->first = prev_node;
 }
 
 list_node *create_node(void *value)
@@ -183,19 +174,19 @@ void list_push(list *_list, void *value)
 
 int main(void)
 {
-	list *names = list_new();
-	list_push(names, strdup("Jonathan"));
-	list_push(names, strdup("George"));
-	list_push(names, strdup("Billy"));
-	list_push(names, strdup("Marcus"));
-	LIST_FOREACH(names) {
-		printf("- %s\n", (char*)cur->value);
-	}
-	puts("");
-	list_reverse(names);
-	LIST_FOREACH(names) {
-		printf("- %s\n", (char*)cur->value);
-	}
-	list_destroy(names);
-	return 0;
+    list *names = list_new();
+    list_push(names, strdup("Jonathan"));
+    list_push(names, strdup("George"));
+    list_push(names, strdup("Billy"));
+    list_push(names, strdup("Marcus"));
+    LIST_FOREACH(names) {
+        printf("- %s\n", (char*)cur->value);
+    }
+    puts("");
+    list_reverse(names);
+    LIST_FOREACH(names) {
+        printf("- %s\n", (char*)cur->value);
+    }
+    list_destroy(names);
+    return 0;
 }
