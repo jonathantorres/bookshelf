@@ -9,6 +9,9 @@ CFLAGS := gcc -std=gnu11 -Wall -Wextra
 3-20: 3-20.c
 	$(CFLAGS) 3-20.c -o 3-20
 
+3-22: 3-22.c linked_list.o binary_tree.o
+	$(CFLAGS) 3-22.c linked_list.o binary_tree.o -o 3-22
+
 3-23: 3-23.c
 	$(CFLAGS) 3-23.c -o 3-23
 
@@ -24,4 +27,4 @@ binary_tree.o: binary_tree.c binary_tree.h
 
 clean:
 	rm -f ./*.o ./*.h.gch *.out
-	rm -f ./3-2 ./3-16 ./3-20 ./3-23
+	rm -f ./3-2 ./3-16 ./3-20 ./3-22 ./3-23
