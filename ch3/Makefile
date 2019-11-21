@@ -5,6 +5,9 @@ CFLAGS := gcc -std=gnu11 -Wall -Wextra
 
 3-16: 3-16.c hash_table.o array.o linked_list.o binary_tree.o
 	$(CFLAGS) 3-16.c hash_table.o array.o linked_list.o binary_tree.o -o 3-16
+	
+3-17: 3-17.c
+	$(CFLAGS) 3-17.c -o 3-17
 
 3-20: 3-20.c
 	$(CFLAGS) 3-20.c -o 3-20
