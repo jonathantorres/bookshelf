@@ -58,6 +58,11 @@ int main(void)
     } else {
         printf("%d found!\n", *result);
     }
+
+    int *min_val = binary_tree_find_min(tree);
+    printf("min value is: %d\n", *min_val);
+    int *max_val = binary_tree_find_max(tree);
+    printf("max value is: %d\n", *max_val);
     binary_tree_destroy(tree, binary_tree_delete_cb);
     puts("");
 

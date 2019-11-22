@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct binary_tree_node {
     // struct binary_tree_node *parent;
@@ -22,7 +23,10 @@ typedef int (*binary_tree_cmp)(void *a, void *b);
 
 binary_tree *binary_tree_new(void);
 void binary_tree_insert(binary_tree *tree, void *value, binary_tree_cmp cmp);
+void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp);
 void *binary_tree_search(binary_tree *tree, void *value, binary_tree_cmp cmp);
+void *binary_tree_find_max(binary_tree *tree);
+void *binary_tree_find_min(binary_tree *tree);
 void binary_tree_traverse(binary_tree *tree, binary_tree_cb cb);
 void binary_tree_destroy(binary_tree *tree, binary_tree_cb cb);
 

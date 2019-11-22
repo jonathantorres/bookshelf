@@ -40,7 +40,7 @@ void insert_node(binary_tree_node **node, void *value, binary_tree_cmp cmp)
         return;
     }
 
-    if (cmp((*node)->value, value) < 0) {
+    if (cmp(value, (*node)->value) < 0) {
         insert_node(&(*node)->left, value, cmp);
     } else {
         insert_node(&(*node)->right, value, cmp);
@@ -110,6 +110,95 @@ void binary_tree_insert(binary_tree *tree, void *value, binary_tree_cmp cmp)
 
     insert_node(&tree->root, value, cmp);
     return;
+}
+
+void destroy_single_node(binary_tree_node *node, binary_tree_cb cb)
+{
+    if (!node) {
+        return;
+    }
+    cb(node);
+    free(node);
+}
+
+void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, binary_tree_cb cb)
+{
+    if (!tree) {
+        return;
+    }
+    if (tree->root == NULL) {
+        return;
+    }
+
+    binary_tree_node *node_to_delete = find_node(tree->root, value, cmp);
+    if (node_to_delete == NULL) {
+        return;
+    }
+
+    // let's delete the node
+    if (node_to_delete->left == NULL && node_to_delete->right == NULL) {
+        // node with no children
+    } else if (node_to_delete->left == NULL && node_to_delete->right != NULL) {
+        // node with a right child
+    } else if (node_to_delete->left != NULL && node_to_delete->right == NULL) {
+        // node with a left child
+    } else if (node_to_delete->left != NULL && node_to_delete->right != NULL) {
+        // node with left and right children
+    }
+}
+
+binary_tree_node *find_min_node(binary_tree_node *node)
+{
+    binary_tree_node *min_node = node;
+
+    while (min_node->left != NULL) {
+        min_node = min_node->left;
+    }
+    return min_node;
+}
+
+binary_tree_node *find_max_node(binary_tree_node *node)
+{
+    binary_tree_node *max_node = node;
+
+    while (max_node->right != NULL) {
+        max_node = max_node->right;
+    }
+    return max_node;
+}
+
+void *binary_tree_find_min(binary_tree *tree)
+{
+    if (!tree) {
+        return NULL;
+    }
+    if (tree->root == NULL) {
+        return NULL;
+    }
+
+    binary_tree_node *min_node = find_min_node(tree->root);
+    if (min_node == NULL) {
+        return NULL;
+    }
+
+    return min_node->value;
+}
+
+void *binary_tree_find_max(binary_tree *tree)
+{
+    if (!tree) {
+        return NULL;
+    }
+    if (tree->root == NULL) {
+        return NULL;
+    }
+
+    binary_tree_node *max_node = find_max_node(tree->root);
+    if (max_node == NULL) {
+        return NULL;
+    }
+
+    return max_node->value;
 }
 
 void binary_tree_traverse(binary_tree *tree, binary_tree_cb cb)
