@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 typedef struct binary_tree_node {
-    // struct binary_tree_node *parent;
+    struct binary_tree_node *parent;
     struct binary_tree_node *left;
     struct binary_tree_node *right;
     void *value;

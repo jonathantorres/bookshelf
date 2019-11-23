@@ -1,6 +1,6 @@
 #include "binary_tree.h"
 
-void *find_node(binary_tree_node *node, void *value, binary_tree_cmp cmp)
+binary_tree_node *find_node(binary_tree_node *node, void *value, binary_tree_cmp cmp)
 {
     if (!node) {
         return NULL;
@@ -8,7 +8,7 @@ void *find_node(binary_tree_node *node, void *value, binary_tree_cmp cmp)
     int result = cmp(node->value, value);
 
     if (result == 0) {
-        return node->value;
+        return node;
     } else if (result < 0) {
         return find_node(node->left, value, cmp);
     } else if (result > 0) {
@@ -16,6 +16,26 @@ void *find_node(binary_tree_node *node, void *value, binary_tree_cmp cmp)
     }
 
     return NULL;
+}
+
+binary_tree_node *find_min_node(binary_tree_node *node)
+{
+    binary_tree_node *min_node = node;
+
+    while (min_node->left != NULL) {
+        min_node = min_node->left;
+    }
+    return min_node;
+}
+
+binary_tree_node *find_max_node(binary_tree_node *node)
+{
+    binary_tree_node *max_node = node;
+
+    while (max_node->right != NULL) {
+        max_node = max_node->right;
+    }
+    return max_node;
 }
 
 binary_tree_node *create_node(void *value)
@@ -26,24 +46,26 @@ binary_tree_node *create_node(void *value)
     }
 
     node->value = value;
+    node->parent = NULL;
     node->left = NULL;
     node->right = NULL;
 
     return node;
 }
 
-void insert_node(binary_tree_node **node, void *value, binary_tree_cmp cmp)
+void insert_node(binary_tree_node **node, binary_tree_node *parent, void *value, binary_tree_cmp cmp)
 {
     if (*node == NULL) {
         binary_tree_node *new_node = create_node(value);
+        new_node->parent = parent;
         *node = new_node;
         return;
     }
 
     if (cmp(value, (*node)->value) < 0) {
-        insert_node(&(*node)->left, value, cmp);
+        insert_node(&(*node)->left, *node, value, cmp);
     } else {
-        insert_node(&(*node)->right, value, cmp);
+        insert_node(&(*node)->right, *node, value, cmp);
     }
 }
 
@@ -90,7 +112,12 @@ void *binary_tree_search(binary_tree *tree, void *value, binary_tree_cmp cmp)
         return NULL;
     }
 
-    return find_node(tree->root, value, cmp);
+    binary_tree_node *node_found = find_node(tree->root, value, cmp);
+    if (!node_found) {
+        return NULL;
+    }
+
+    return node_found->value;
 }
 
 void binary_tree_insert(binary_tree *tree, void *value, binary_tree_cmp cmp)
@@ -108,7 +135,7 @@ void binary_tree_insert(binary_tree *tree, void *value, binary_tree_cmp cmp)
         return;
     }
 
-    insert_node(&tree->root, value, cmp);
+    insert_node(&tree->root, tree->root, value, cmp);
     return;
 }
 
@@ -138,33 +165,37 @@ void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, bin
     // let's delete the node
     if (node_to_delete->left == NULL && node_to_delete->right == NULL) {
         // node with no children
+        destroy_single_node(node_to_delete, cb);
     } else if (node_to_delete->left == NULL && node_to_delete->right != NULL) {
         // node with a right child
+        binary_tree_node *node_to_move = node_to_delete->right;
+        node_to_move->parent = node_to_delete->parent;
+        if (node_to_move->parent->right == node_to_delete) {
+            node_to_move->parent->right = node_to_move;
+        } else {
+            node_to_move->parent->left = node_to_move;
+        }
+        destroy_single_node(node_to_delete, cb);
     } else if (node_to_delete->left != NULL && node_to_delete->right == NULL) {
         // node with a left child
+        binary_tree_node *node_to_move = node_to_delete->left;
+        node_to_move->parent = node_to_delete->parent;
+        if (node_to_move->parent->right == node_to_delete) {
+            node_to_move->parent->right = node_to_move;
+        } else {
+            node_to_move->parent->left = node_to_move;
+        }
+        destroy_single_node(node_to_delete, cb);
     } else if (node_to_delete->left != NULL && node_to_delete->right != NULL) {
         // node with left and right children
+        binary_tree_node *replacement = find_min_node(node_to_delete->right);
+        replacement->right = node_to_delete->right;
+        replacement->left = node_to_delete->left;
+        replacement->parent = node_to_delete->parent;
+        replacement->right->parent = replacement;
+        replacement->left->parent = replacement;
+        destroy_single_node(node_to_delete, cb);
     }
-}
-
-binary_tree_node *find_min_node(binary_tree_node *node)
-{
-    binary_tree_node *min_node = node;
-
-    while (min_node->left != NULL) {
-        min_node = min_node->left;
-    }
-    return min_node;
-}
-
-binary_tree_node *find_max_node(binary_tree_node *node)
-{
-    binary_tree_node *max_node = node;
-
-    while (max_node->right != NULL) {
-        max_node = max_node->right;
-    }
-    return max_node;
 }
 
 void *binary_tree_find_min(binary_tree *tree)

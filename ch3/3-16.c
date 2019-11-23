@@ -45,6 +45,8 @@ int main(void)
     int num3 = 43;
     int num4 = 12;
     int s1 = 10;
+    int s2 = 43;
+    int s3 = 12;
     binary_tree *tree = binary_tree_new();
     binary_tree_insert(tree, &num1, binary_tree_cmp_fn);
     binary_tree_insert(tree, &num2, binary_tree_cmp_fn);
@@ -63,6 +65,10 @@ int main(void)
     printf("min value is: %d\n", *min_val);
     int *max_val = binary_tree_find_max(tree);
     printf("max value is: %d\n", *max_val);
+
+    binary_tree_delete(tree, &s2, binary_tree_cmp_fn, binary_tree_delete_cb);
+    binary_tree_delete(tree, &s3, binary_tree_cmp_fn, binary_tree_delete_cb);
+    binary_tree_traverse(tree, binary_tree_cb_fn);
     binary_tree_destroy(tree, binary_tree_delete_cb);
     puts("");
 
