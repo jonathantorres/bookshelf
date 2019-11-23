@@ -66,8 +66,8 @@ int main(void)
     int *max_val = binary_tree_find_max(tree);
     printf("max value is: %d\n", *max_val);
 
-    binary_tree_delete(tree, &s2, binary_tree_cmp_fn, binary_tree_delete_cb);
-    binary_tree_delete(tree, &s3, binary_tree_cmp_fn, binary_tree_delete_cb);
+    // binary_tree_delete(tree, &s2, binary_tree_cmp_fn, binary_tree_delete_cb);
+    // binary_tree_delete(tree, &s3, binary_tree_cmp_fn, binary_tree_delete_cb);
     binary_tree_traverse(tree, binary_tree_cb_fn);
     binary_tree_destroy(tree, binary_tree_delete_cb);
     puts("");

@@ -5,7 +5,7 @@ binary_tree_node *find_node(binary_tree_node *node, void *value, binary_tree_cmp
     if (!node) {
         return NULL;
     }
-    int result = cmp(node->value, value);
+    int result = cmp(value, node->value);
 
     if (result == 0) {
         return node;
