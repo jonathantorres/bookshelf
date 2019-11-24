@@ -44,14 +44,17 @@ int main(void)
     int num2 = 3;
     int num3 = 43;
     int num4 = 12;
+    int num5 = 55;
     int s1 = 10;
     int s2 = 43;
     int s3 = 12;
+    int s4 = 3;
     binary_tree *tree = binary_tree_new();
     binary_tree_insert(tree, &num1, binary_tree_cmp_fn);
     binary_tree_insert(tree, &num2, binary_tree_cmp_fn);
     binary_tree_insert(tree, &num3, binary_tree_cmp_fn);
     binary_tree_insert(tree, &num4, binary_tree_cmp_fn);
+    binary_tree_insert(tree, &num5, binary_tree_cmp_fn);
     binary_tree_traverse(tree, binary_tree_cb_fn);
 
     int *result = binary_tree_search(tree, &s1, binary_tree_cmp_fn);
@@ -68,6 +71,7 @@ int main(void)
 
     // binary_tree_delete(tree, &s2, binary_tree_cmp_fn, binary_tree_delete_cb);
     // binary_tree_delete(tree, &s3, binary_tree_cmp_fn, binary_tree_delete_cb);
+    // binary_tree_delete(tree, &s4, binary_tree_cmp_fn, binary_tree_delete_cb);
     binary_tree_traverse(tree, binary_tree_cb_fn);
     binary_tree_destroy(tree, binary_tree_delete_cb);
     puts("");
