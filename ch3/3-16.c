@@ -45,6 +45,7 @@ int main(void)
     int num3 = 43;
     int num4 = 12;
     int num5 = 55;
+    int d10 = 10;
     int s1 = 10;
     int s2 = 43;
     int s3 = 12;
@@ -72,7 +73,8 @@ int main(void)
     // binary_tree_delete(tree, &s2, binary_tree_cmp_fn, binary_tree_delete_cb);
     // binary_tree_delete(tree, &s3, binary_tree_cmp_fn, binary_tree_delete_cb);
     // binary_tree_delete(tree, &s4, binary_tree_cmp_fn, binary_tree_delete_cb);
-    binary_tree_traverse(tree, binary_tree_cb_fn);
+    // binary_tree_delete(tree, &d10, binary_tree_cmp_fn, binary_tree_delete_cb);
+    // binary_tree_traverse(tree, binary_tree_cb_fn);
     binary_tree_destroy(tree, binary_tree_delete_cb);
     puts("");
 

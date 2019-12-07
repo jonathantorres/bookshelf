@@ -157,9 +157,14 @@ void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, bin
         return;
     }
 
+    bool deleted_root = false;
     binary_tree_node *node_to_delete = find_node(tree->root, value, cmp);
     if (node_to_delete == NULL) {
         return;
+    }
+
+    if (node_to_delete == tree->root) {
+        deleted_root = true;
     }
 
     // let's delete the node
@@ -169,6 +174,9 @@ void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, bin
             node_to_delete->parent->left = NULL;
         } else if (node_to_delete == node_to_delete->parent->right) {
             node_to_delete->parent->right = NULL;
+        }
+        if (deleted_root) {
+            tree->root = NULL;
         }
         destroy_single_node(node_to_delete, cb);
     } else if (node_to_delete->left == NULL && node_to_delete->right != NULL) {
@@ -180,6 +188,9 @@ void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, bin
         } else if (node_to_delete->parent->left == node_to_delete) {
             node_to_move->parent->left = node_to_move;
         }
+        if (deleted_root) {
+            tree->root = node_to_move;
+        }
         destroy_single_node(node_to_delete, cb);
     } else if (node_to_delete->left != NULL && node_to_delete->right == NULL) {
         // node with a left child
@@ -190,16 +201,26 @@ void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, bin
         } else if (node_to_delete->parent->left == node_to_delete) {
             node_to_move->parent->left = node_to_move;
         }
+        if (deleted_root) {
+            tree->root = node_to_move;
+        }
         destroy_single_node(node_to_delete, cb);
     } else if (node_to_delete->left != NULL && node_to_delete->right != NULL) {
         // node with left and right children
         binary_tree_node *replacement = find_min_node(node_to_delete->right);
+        if (replacement->parent) {
+            if (replacement->parent->left == replacement) {
+                replacement->parent->left = NULL;
+            }
+        }
         replacement->parent = node_to_delete->parent;
 
-        if (node_to_delete->parent->right == node_to_delete) {
-            node_to_delete->parent->right = replacement;
-        } else if (node_to_delete->parent->left == node_to_delete) {
-            node_to_delete->parent->left = replacement;
+        if (node_to_delete->parent != NULL) {
+            if (node_to_delete->parent->right == node_to_delete) {
+                node_to_delete->parent->right = replacement;
+            } else if (node_to_delete->parent->left == node_to_delete) {
+                node_to_delete->parent->left = replacement;
+            }
         }
 
         // using just the right node as the replacement
@@ -212,6 +233,9 @@ void binary_tree_delete(binary_tree *tree, void *value, binary_tree_cmp cmp, bin
             replacement->left = node_to_delete->left;
             node_to_delete->left->parent = replacement;
             node_to_delete->right->parent = replacement;
+        }
+        if (deleted_root) {
+            tree->root = replacement;
         }
         destroy_single_node(node_to_delete, cb);
     }
