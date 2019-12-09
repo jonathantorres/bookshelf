@@ -11,6 +11,7 @@
 #include "insertion_sort.h"
 #include "merge_sort.h"
 #include "quick_sort.h"
+#include "heap_sort.h"
 #include "priority_queue.h"
 
 int cmp_int(void *a, void *b)
@@ -132,6 +133,24 @@ void run_quick_sort()
 }
 
 void run_heap_sort()
+{
+    array *_array = array_create(15, sizeof(int*));
+
+    for (unsigned int i = 0; i < 15; i++) {
+        int *value = malloc(sizeof(int));
+        if (value != NULL) {
+            *value = gen_random_number();
+            array_push(_array, value);
+        }
+    }
+    printf("heap sort:");
+    array_print(_array, 'i');
+    heap_sort(_array, cmp_int);
+    printf("heap sort:");
+    array_print(_array, 'i');
+}
+
+void test_priority_queue()
 {
     int *num1 = malloc(sizeof(int));
     int *num2 = malloc(sizeof(int));

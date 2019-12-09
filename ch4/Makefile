@@ -1,7 +1,7 @@
 CFLAGS := gcc -std=gnu11 -Wall -Wextra
 
-4-37: 4-37.c array.o bubble_sort.o insertion_sort.o selection_sort.o merge_sort.o quick_sort.o priority_queue.o
-	$(CFLAGS) 4-37.c array.o bubble_sort.o insertion_sort.o selection_sort.o merge_sort.o quick_sort.o priority_queue.o -o 4-37
+4-37: 4-37.c array.o bubble_sort.o insertion_sort.o selection_sort.o merge_sort.o quick_sort.o heap_sort.o priority_queue.o
+	$(CFLAGS) 4-37.c array.o bubble_sort.o insertion_sort.o selection_sort.o merge_sort.o quick_sort.o heap_sort.o priority_queue.o -o 4-37
 
 # Compiling objects
 array.o: array.c array.h
@@ -16,6 +16,8 @@ merge_sort.o: merge_sort.c merge_sort.h
 	$(CFLAGS) -c merge_sort.c merge_sort.h
 quick_sort.o: quick_sort.c quick_sort.h
 	$(CFLAGS) -c quick_sort.c quick_sort.h
+heap_sort.o: heap_sort.c heap_sort.h
+	$(CFLAGS) -c heap_sort.c heap_sort.h
 priority_queue.o: priority_queue.c priority_queue.h
 	$(CFLAGS) -c priority_queue.c priority_queue.h
 
