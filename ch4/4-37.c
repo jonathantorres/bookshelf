@@ -156,10 +156,12 @@ void test_priority_queue()
     int *num2 = malloc(sizeof(int));
     int *num3 = malloc(sizeof(int));
     int *num4 = malloc(sizeof(int));
+    int *num5 = malloc(sizeof(int));
     *num1 = 10;
     *num2 = 20;
     *num3 = 8;
     *num4 = 18;
+    *num5 = 5;
 
     int *min;
 
@@ -168,16 +170,15 @@ void test_priority_queue()
     priority_queue_insert(p_queue, num2);
     priority_queue_insert(p_queue, num3);
     priority_queue_insert(p_queue, num4);
+    priority_queue_insert(p_queue, num5);
+
+    array_print(p_queue->queue, 'i');
 
     min = (int*)priority_queue_extract_min(p_queue);
     if (min) {
         printf("%d\n", *min);
     }
-
-    min = (int*)priority_queue_extract_min(p_queue);
-    if (min) {
-        printf("%d\n", *min);
-    }
+    array_print(p_queue->queue, 'i');
     priority_queue_destroy(p_queue);
 }
 
@@ -207,5 +208,6 @@ int main(void)
     run_merge_sort();
     run_quick_sort();
     run_heap_sort();
+    test_priority_queue();
     return 0;
 }

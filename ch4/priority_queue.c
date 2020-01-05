@@ -42,44 +42,52 @@ int _p_queue_left_child(int i)
     return (2*i) + 1;
 }
 
-void _p_queue_bubble_up(priority_queue *p_queue, int i)
+int _p_queue_right_child(int i)
 {
-    if (_p_queue_get_parent(i) == -1) {
+    return (2*i) + 2;
+}
+
+void _p_queue_bubble_up(priority_queue *p_queue, int item_index)
+{
+    if (_p_queue_get_parent(item_index) == -1) {
         return;
     }
 
-    int parent = _p_queue_get_parent(i);
-    void *item1 = array_get(p_queue->queue, (unsigned int)parent);
-    void *item2 = array_get(p_queue->queue, (unsigned int)i);
+    int parent_index = _p_queue_get_parent(item_index);
+    void *parent_item = array_get(p_queue->queue, (unsigned int)parent_index);
+    void *child_item = array_get(p_queue->queue, (unsigned int)item_index);
 
-    if (p_queue->cmp(item1, item2) >= 0) {
-        array_set(p_queue->queue, item1, i);
-        array_set(p_queue->queue, item2, parent);
-        _p_queue_bubble_up(p_queue, parent);
+    if (p_queue->cmp(parent_item, child_item) >= 0) {
+        array_set(p_queue->queue, parent_item, item_index);
+        array_set(p_queue->queue, child_item, parent_index);
+        _p_queue_bubble_up(p_queue, parent_index);
     }
 }
 
-void _p_queue_bubble_down(priority_queue *p_queue, int i)
+void _p_queue_bubble_down(priority_queue *p_queue, int current_i)
 {
-    int child = _p_queue_left_child(i);
-    int min_index = i;
-    void *item1;
-    void *item2;
+    int left_i = _p_queue_left_child(current_i);
+    int right_i = _p_queue_right_child(current_i);
+    int min_i = current_i;
 
-    for (int j = 0; j <= 1; j++) {
-        if (child+j <= (int)p_queue->queue->length-1) {
-            item1 = array_get(p_queue->queue, (unsigned int)min_index);
-            item2 = array_get(p_queue->queue, (unsigned int)child+j);
-            if (p_queue->cmp(item1, item2) >= 0) {
-                min_index = child+j;
-            }
-        }
+    void *left_item = array_get(p_queue->queue, (unsigned int)left_i);
+    void *current_item = array_get(p_queue->queue, (unsigned int)current_i);
+
+    if (left_i < (int)p_queue->queue->length-1 && p_queue->cmp(left_item, current_item) <= 0) {
+        min_i = left_i;
     }
 
-    if (min_index != i) {
-        array_set(p_queue->queue, item1, i);
-        array_set(p_queue->queue, item2, min_index);
-        _p_queue_bubble_down(p_queue, min_index);
+    void *right_item = array_get(p_queue->queue, (unsigned int)right_i);
+    void *min_item = array_get(p_queue->queue, (unsigned int)min_i);
+
+    if (right_i < (int)p_queue->queue->length-1 && p_queue->cmp(right_item, min_item) <= 0) {
+        min_i = right_i;
+    }
+
+    if (min_i != current_i) {
+        array_set(p_queue->queue, min_item, current_i);
+        array_set(p_queue->queue, current_item, min_i);
+        _p_queue_bubble_down(p_queue, min_i);
     }
 }
 
