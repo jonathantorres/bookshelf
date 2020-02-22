@@ -54,6 +54,21 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 1-19: ch1/1-19.c
 	$(CFLAGS) ch1/1-19.c -o bin/1-19
 	./bin/1-19
+1-20: ch1/1-20.c
+	$(CFLAGS) ch1/1-20.c -o bin/1-20
+	./bin/1-20
+1-21: ch1/1-21.c
+	$(CFLAGS) ch1/1-21.c -o bin/1-21
+	./bin/1-21
+1-22: ch1/1-22.c
+	$(CFLAGS) ch1/1-22.c -o bin/1-22
+	./bin/1-22
+1-23: ch1/1-23.c
+	$(CFLAGS) ch1/1-23.c -o bin/1-23
+	./bin/1-23
+1-24: ch1/1-24.c
+	$(CFLAGS) ch1/1-24.c -o bin/1-24
+	./bin/1-24
 
 clean:
 	rm -f ./*.o ch*/*.h.gch
