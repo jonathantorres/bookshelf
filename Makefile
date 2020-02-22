@@ -70,6 +70,22 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 	$(CFLAGS) ch1/1-24.c -o bin/1-24
 	./bin/1-24
 
+2-1: ch2/2-1.c
+	$(CFLAGS) ch2/2-1.c -o bin/2-1
+	./bin/2-1
+2-2: ch2/2-2.c
+	$(CFLAGS) ch2/2-2.c -o bin/2-2
+	./bin/2-2
+2-3: ch2/2-3.c
+	$(CFLAGS) ch2/2-3.c -o bin/2-3
+	./bin/2-3
+2-4: ch2/2-4.c
+	$(CFLAGS) ch2/2-4.c -o bin/2-4
+	./bin/2-4
+2-5: ch2/2-5.c
+	$(CFLAGS) ch2/2-5.c -o bin/2-5
+	./bin/2-5
+
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
