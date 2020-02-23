@@ -101,6 +101,25 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 	$(CFLAGS) ch2/2-10.c -o bin/2-10
 	./bin/2-10
 
+3-1: ch3/3-1.c
+	$(CFLAGS) ch3/3-1.c -o bin/3-1
+	./bin/3-1
+3-2: ch3/3-2.c
+	$(CFLAGS) ch3/3-2.c -o bin/3-2
+	./bin/3-2
+3-3: ch3/3-3.c
+	$(CFLAGS) ch3/3-3.c -o bin/3-3
+	./bin/3-3
+3-4: ch3/3-4.c
+	$(CFLAGS) ch3/3-4.c -o bin/3-4
+	./bin/3-4
+3-5: ch3/3-5.c
+	$(CFLAGS) ch3/3-5.c -o bin/3-5
+	./bin/3-5
+3-6: ch3/3-6.c
+	$(CFLAGS) ch3/3-6.c -o bin/3-6
+	./bin/3-6
+
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
