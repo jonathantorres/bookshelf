@@ -94,6 +94,12 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 2-8: ch2/2-8.c
 	$(CFLAGS) ch2/2-8.c -o bin/2-8
 	./bin/2-8
+2-9: ch2/2-9.c
+	$(CFLAGS) ch2/2-9.c -o bin/2-9
+	./bin/2-9
+2-10: ch2/2-10.c
+	$(CFLAGS) ch2/2-10.c -o bin/2-10
+	./bin/2-10
 
 clean:
 	rm -f ./*.o ch*/*.h.gch
