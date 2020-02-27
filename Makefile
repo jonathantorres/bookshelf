@@ -150,6 +150,18 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 4-10: ch4/4-10.c
 	$(CFLAGS) ch4/4-10.c -o bin/4-10
 	./bin/4-10
+4-11: ch4/4-11.c
+	$(CFLAGS) ch4/4-11.c -o bin/4-11
+	./bin/4-11
+4-12: ch4/4-12.c
+	$(CFLAGS) ch4/4-12.c -o bin/4-12
+	./bin/4-12
+4-13: ch4/4-13.c
+	$(CFLAGS) ch4/4-13.c -o bin/4-13
+	./bin/4-13
+4-14: ch4/4-14.c
+	$(CFLAGS) ch4/4-14.c -o bin/4-14
+	./bin/4-14
 
 clean:
 	rm -f ./*.o ch*/*.h.gch
