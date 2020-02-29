@@ -181,6 +181,48 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 5-6: ch5/5-6.c
 	$(CFLAGS) ch5/5-6.c -o bin/5-6
 	./bin/5-6
+5-7: ch5/5-7.c
+	$(CFLAGS) ch5/5-7.c -o bin/5-7
+	./bin/5-7
+5-8: ch5/5-8.c
+	$(CFLAGS) ch5/5-8.c -o bin/5-8
+	./bin/5-8
+5-9: ch5/5-9.c
+	$(CFLAGS) ch5/5-9.c -o bin/5-9
+	./bin/5-9
+5-10: ch5/5-10.c
+	$(CFLAGS) ch5/5-10.c -o bin/5-10
+	./bin/5-10
+5-11: ch5/5-11.c
+	$(CFLAGS) ch5/5-11.c -o bin/5-11
+	./bin/5-11
+5-12: ch5/5-12.c
+	$(CFLAGS) ch5/5-12.c -o bin/5-12
+	./bin/5-12
+5-13: ch5/5-13.c
+	$(CFLAGS) ch5/5-13.c -o bin/5-13
+	./bin/5-13
+5-14: ch5/5-14.c
+	$(CFLAGS) ch5/5-14.c -o bin/5-14
+	./bin/5-14
+5-15: ch5/5-15.c
+	$(CFLAGS) ch5/5-15.c -o bin/5-15
+	./bin/5-15
+5-16: ch5/5-16.c
+	$(CFLAGS) ch5/5-16.c -o bin/5-16
+	./bin/5-16
+5-17: ch5/5-17.c
+	$(CFLAGS) ch5/5-17.c -o bin/5-17
+	./bin/5-17
+5-18: ch5/5-18.c
+	$(CFLAGS) ch5/5-18.c -o bin/5-18
+	./bin/5-18
+5-19: ch5/5-19.c
+	$(CFLAGS) ch5/5-19.c -o bin/5-19
+	./bin/5-19
+5-20: ch5/5-20.c
+	$(CFLAGS) ch5/5-20.c -o bin/5-20
+	./bin/5-20
 
 clean:
 	rm -f ./*.o ch*/*.h.gch
