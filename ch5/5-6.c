@@ -9,14 +9,15 @@ int main(void)
     int lim = 100;
     char msg[lim];
     get_line(msg, lim);
-    printf("%s", msg);
+    reverse(msg);
+    printf("%s\n", msg);
     return 0;
 }
 
 void reverse(char *s)
 {
-    char *t;
     int c;
+    char *t;
     for (t = s + (strlen(s)-1); s < t; s++, t--) {
         c = *s;
         *s = *t;
