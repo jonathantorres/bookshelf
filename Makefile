@@ -243,6 +243,34 @@ CFLAGS := gcc -std=c11 -Wall -Wextra
 	$(CFLAGS) ch6/6-6.c -o bin/6-6
 	./bin/6-6
 
+7-1: ch7/7-1.c
+	$(CFLAGS) ch7/7-1.c -o bin/7-1
+	./bin/7-1
+7-2: ch7/7-2.c
+	$(CFLAGS) ch7/7-2.c -o bin/7-2
+	./bin/7-2
+7-3: ch7/7-3.c
+	$(CFLAGS) ch7/7-3.c -o bin/7-3
+	./bin/7-3
+7-4: ch7/7-4.c
+	$(CFLAGS) ch7/7-4.c -o bin/7-4
+	./bin/7-4
+7-5: ch7/7-5.c
+	$(CFLAGS) ch7/7-5.c -o bin/7-5
+	./bin/7-5
+7-6: ch7/7-6.c
+	$(CFLAGS) ch7/7-6.c -o bin/7-6
+	./bin/7-6
+7-7: ch7/7-7.c
+	$(CFLAGS) ch7/7-7.c -o bin/7-7
+	./bin/7-7
+7-8: ch7/7-8.c
+	$(CFLAGS) ch7/7-8.c -o bin/7-8
+	./bin/7-8
+7-9: ch7/7-9.c
+	$(CFLAGS) ch7/7-9.c -o bin/7-9
+	./bin/7-9
+
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
