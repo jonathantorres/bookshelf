@@ -1,0 +1,1 @@
+long sqr(int x);
