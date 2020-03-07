@@ -1,7 +1,4 @@
 ## Scheduling: Introduction (Answers)
-Response time = time of first run - arrival time
-Turnaround time = completion time - arrival time
-
 1. Response time for SJF: `200`, Turnaround time for SJF: `400`, Response Time for FIFO: `200`, Turnaround time for FIFO: `400`
 
 2. Response time for SJF: `133.33`, Turnaround time for SJF: `333.33`, Response Time for FIFO: `133.33`, Turnaround time for FIFO: `333.33`
