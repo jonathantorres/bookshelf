@@ -12,10 +12,16 @@ int main(int argc, char const *argv[])
     for (int i = 1; i < argc; i++) {
         struct stat st;
         int rc = stat(argv[i], &st);
-        assert(rc == 0);
-        printf("rc=%d\n", rc);
-        printf("ino=%ld\n", st.st_ino);
-        printf("filename given: %s\n", argv[i]);
+        if (rc == 0) {
+            printf("Filename: %s\n", argv[i]);
+            printf("File serial number (ino): %lld\n", st.st_ino);
+            printf("Filesize: %lld bytes\n", st.st_size);
+            printf("Blocks allocated: %lld\n", st.st_blocks);
+            printf("Reference link count: %d\n", st.st_nlink);
+            printf("\n");
+        } else {
+            printf("ERROR: could not process %s\n", argv[i]);
+        }
     }
     return 0;
 }
