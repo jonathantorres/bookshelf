@@ -6,3 +6,4 @@
 
 3. See `tail.c`
 
+4. See `rsearch.c`
