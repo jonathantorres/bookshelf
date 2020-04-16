@@ -4,9 +4,9 @@
 
 2. See `checkfletcher.c`
 
-3.
+3. See `compare.c`, fletcher is faster than XOR
 
-4.
+4. See `crc.c`
 
 5. See `createcsum.c` and `checkcsum.c`
 

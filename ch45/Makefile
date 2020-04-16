@@ -8,5 +8,9 @@ createcsum: createcsum.c
 	$(CFLAGS) createcsum.c -o createcsum
 checkcsum: checkcsum.c
 	$(CFLAGS) checkcsum.c -o checkcsum
+compare: compare.c
+	$(CFLAGS) compare.c -o compare
+crc: crc.c
+	$(CFLAGS) crc.c -o crc
 clean:
-	rm -f checkxor checkfletcher createcsum checkcsum
+	rm -f checkxor checkfletcher createcsum checkcsum compare crc
