@@ -84,3 +84,60 @@ Using Paris and Lyon -> Server in Miami:
 
 #### P20
 M * min{Rc,Rs,R}
+
+#### P21
+min{R1k,R2k,Rnk}, min{Ri...Rk}
+
+#### P22
+The sum of the `p` of each link (p1,p2,p[n]) where `n` is the number of links
+
+#### P23
+- Same as the propagation delay
+- Yes, since the router won't be able to forward bits as quickly as it receives them. It must be as large as the queuing delay, but this value is variable
+
+#### P24
+The data would take almost 27 days to transfer. So I would probably put the data in a hard drive(s) and use FedEx
+
+#### P25
+- 500,000,000,000,000
+- All of them?
+- R * d`-prop`
+- 25 meters, not as long
+- L = s * R/L
+
+#### P26
+R = 2Gbps
+
+#### P27
+- 200,000,000,000,000,000,000
+- All of them
+- 2,500 meters
+
+#### P28
+- 0.4 seconds
+- 0.4 seconds plus the transmission time
+- Same for me
+
+#### P29
+- 24 seconds? The distance is not specified
+- 240,000,000
+- 1,000 or 1KB
+
+#### P30
+Gate Information, departure times
+
+#### P31
+- 4 seconds, 12 seconds
+- About 0.00125 seconds, after 0.0025 seconds
+- About 1 second
+- Faster delivery times, since every piece of data is received constantly
+- Packet loss, and re-sending lost packets
+
+#### P32
+Yes, I would say so. It slows down the receival of the packets by the next router in the link
+
+#### P33
+I think a number greater than 80 (of course). S = F/R, probably
+
+#### P34
+They probably use a Voice-over IP (VoIP) application to accomplish that
