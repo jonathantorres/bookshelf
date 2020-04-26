@@ -36,3 +36,71 @@ For 3G 1Mbps and about 10Mbps for 4G
 #### R10
 - Geostationary Satellites: which remain above the same spot on Earth
 - Low-earth orbiting (LEO) satellites: which do not remain on one spot on Earth. They rotate around Earth and may communicate with each other, as well as with ground stations
+
+#### R11
+The end-to-end delay is `2 l/r`
+
+#### R12
+It stores packets that are waiting to be transmitted to the output link
+
+#### R13
+- Up to 10 users
+- Because each user uses half of the 2Mbps link. Yes, one of the links will have to wait for one of the other two to finish
+- There's a 40% chance that a user is transmitting at any given time
+- When all 3 users are transmitting at the same time or every 25 seconds
+
+#### R14
+FDM the frecuency is divided up among the connections established in the link, for a TDM link time is divided into frames of a fixed duration and each frame is divided into a fixed number of time slots
+
+#### R15
+They created their own private TCP/IP network and they attempt to bypass the upper tiers by using lower tiers or connecting to upper tiers at IXP's. To reduce payments to upper-tier ISP's and for better control on how their services are provided to end users
+
+#### R16
+- Processing Delay - Constant
+- Queuing Delay - Variable
+- Transmission Delay - Variable
+- Propagation Delay - Variable
+
+#### R17
+- Length 10km, Rate 100Mbps, Size 100 bytes
+- Length 1000km, Rate 512Kbps, Size 500 bytes
+
+#### R18
+Approx. 0.01 seconds. It does not depend on packet length nor transmission rate
+
+#### R19
+- 500Kbps
+- 8 seconds
+- 100Kbps and 40 seconds
+
+#### R20
+It examines the IP address in the packet's header and it forwards it to the appropriate link. To find the shortest route possible
+
+#### R21
+500 and 300 packets respectively. Packet loss will occur with a high emission rate and a low transmission rate. If both are the same, packet loss will occur after a long period of time, depending on how long the router takes to transmit and forward every packet
+
+#### R22
+To provided a structured way to discuss system components. It also makes it easier to update system components (Hardware and Software)
+
+#### R23
+One disadvantage is that one layer may duplicate lower-layer functionallity
+
+#### R24
+They all refer to a packet of information but each layer uses encapsulation to add/interpret it's own details to the packet accross the network stack
+
+#### R25
+- Router: Network, Link, Physical
+- Link layer switch: Link, Physical
+- Host: Application, Transport, Network, Link, Physical
+
+#### R26
+After infecting one host, from that same host it seeks entry into other hosts over the internet and from the newly infected hosts, it seeks entry into yet more hosts
+
+#### R27
+By using malware, you can have a network of infected hosts and use them for the DDoS attack by blasting traffic at the target
+
+#### R28
+- Trudy is doing packet sniffing
+- Trudy can make Alice think that she is Bob
+- Trudy can make Bob think that she is Alice
+- Trudy can see/modify the information that Bob and Alice are sharing
