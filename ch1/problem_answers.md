@@ -1,5 +1,5 @@
 #### P1
-***Insert image***
+![problem1](https://github.com/jonathantorres/cn/blob/master/ch1/img/p1.jpg)
 
 #### P2
 If L = 1000bits and R = 1Mbps then:
