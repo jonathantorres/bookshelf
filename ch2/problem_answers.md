@@ -53,7 +53,7 @@ I would say that persisten connection would be the best option, the TCP connecti
 - Probably not, but it's unlikely to happen. Bob connections will be using only 1/N part of the bandwidth
 
 #### P12
-***Write program, p12.py***
+See `p12.py`
 
 #### P13
 The control connection sends user identification information such as password, username, commands to move around folders and the commands. The data connection is used to actually transfer the files
@@ -83,8 +83,8 @@ IMAP maintains a folder hierarchy on a remote server, so the folders and structu
 - To make offers, if you are interested in purchasing a domain that is already taken
 
 #### P19
--
--
+- Tried with my website, it returns the A record containing the IP address of the server
+- Tried with a few, most of them return several A records with different IP addresses
 
 #### P20
 The browser makes a DNS request for www.somesite.com. The DNS service makes the necessary queries to translate the name to the appropriate IP address
