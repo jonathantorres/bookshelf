@@ -1,5 +1,6 @@
 # Go Intro
 Exercises and answers to questions from the "Introducing Go" book.  
+
 ![Book Cover](https://github.com/jonathantorres/gointro/blob/master/cover.jpg)
 
 ## Compile and run programs
