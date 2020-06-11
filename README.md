@@ -1,6 +1,6 @@
 # Go Intro
 Exercises and answers to questions from the "Introducing Go" book.
-![Book Cover](https://github.com/jonathantorres/raw/master/cover.jpg "Book Cover")
+![Book Cover](https://github.com/jonathantorres/gointro/blob/master/cover.jpg)
 
 ## Compile and run programs
 After cloning the repository somewhere in your `GOPATH` location, to compile and run the programs, you have a few options:
