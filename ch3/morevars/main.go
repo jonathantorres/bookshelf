@@ -23,6 +23,8 @@ func main() {
 	var hi string = "hello"
 	var world string = "world"
 	fmt.Println(hi == world)
+	var world2 = "world"
+	fmt.Println(world2 == world)
 
 	// create the variable and infer the type
 	yes := "yes"
