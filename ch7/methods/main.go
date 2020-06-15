@@ -6,7 +6,9 @@ import (
 )
 
 type Circle struct {
-	x, y, r float64
+	x float64
+	y float64
+	r float64
 }
 
 func (c *Circle) area() float64 {
@@ -23,16 +25,15 @@ func (r *Rectangle) area() float64 {
 	return l * w
 }
 
-func main() {
-	c := Circle{x: 0, y: 0, r: 10}
-	fmt.Println(c.area())
-
-	r := Rectangle{x1: 0, y1: 0, x2: 10, y2: 10}
-	fmt.Println(r.area())
-}
-
 func distance(x1, y1, x2, y2 float64) float64 {
 	a := x2 - x1
 	b := y2 - y1
 	return math.Sqrt(a*a + b*b)
+}
+
+func main() {
+	circle := Circle{x: 10, y: 11, r: 12}
+	rect := Rectangle{x1: 6, y1: 10, x2: 22, y2: 20}
+	fmt.Println(circle.area())
+	fmt.Println(rect.area())
 }
