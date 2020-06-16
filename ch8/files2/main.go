@@ -12,7 +12,6 @@ func main() {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-
 	str := string(bs)
 	fmt.Println(str)
 }
