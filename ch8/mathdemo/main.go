@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gointro/ch8/math"
+	"github.com/jonathantorres/gointro/ch8/math"
 )
 
 func main() {
