@@ -1,5 +1,7 @@
 package tempconv
 
+// Exercise 2.1
+
 func CToF(c Celsius) Fahrenheit {
 	return Fahrenheit(c*9/5 + 32)
 }

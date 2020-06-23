@@ -1,5 +1,7 @@
 package tempconv
 
+// Exercise 2.1
+
 import "fmt"
 
 type Celsius float64

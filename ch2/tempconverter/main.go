@@ -1,8 +1,10 @@
 package main
 
+// Exercise 2.1
+
 import (
 	"fmt"
-	"vamos/go_programming/ch2/tempconv"
+	"github.com/jonathantorres/gopl/ch2/tempconv"
 )
 
 func main() {
