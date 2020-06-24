@@ -4,28 +4,56 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"net/http"
+	"strconv"
+)
+
+var (
+	width           = 600
+	height          = 320
+	stroke          = "grey"
+	fill            = "white"
+	xyscale float64 = float64(width / 2 / xyrange)
+	zscale  float64 = float64(height) * 0.4
 )
 
 const (
-	width, height = 600, 320
-	cells         = 100
-	xyrange       = 30.0
-	xyscale       = width / 2 / xyrange
-	zscale        = height * 0.4
-	angle         = math.Pi / 6
+	cells   = 100
+	xyrange = 30.0
+	angle   = math.Pi / 6
 )
+
 var sin30, cos30 = math.Sin(angle), math.Cos(angle)
 
 func main() {
 	http.HandleFunc("/", render)
-	http.ListenAndServe(":9090", nil)
+	log.Fatal(http.ListenAndServe(":9090", nil))
 }
 
 func render(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	if r.Form.Get("width") != "" {
+		val, err := strconv.Atoi(r.Form.Get("width"))
+		if err == nil {
+			width = val
+		}
+	}
+	if r.Form.Get("height") != "" {
+		val, err := strconv.Atoi(r.Form.Get("height"))
+		if err == nil {
+			height = val
+		}
+	}
+	if r.Form.Get("stroke") != "" {
+		stroke = r.Form.Get("stroke")
+	}
+	if r.Form.Get("fill") != "" {
+		fill = r.Form.Get("fill")
+	}
 	w.Header().Set("Content-Type", "image/svg+xml")
-	fmt.Fprintf(w, "<svg xmlns='http://www.w3.org/2000/svg' "+"style='stroke:grey;fill:white;stroke-width:0.7' "+"width='%d' height='%d'>", width, height)
+	fmt.Fprintf(w, "<svg xmlns='http://www.w3.org/2000/svg' "+"style='stroke:%s;fill:%s;stroke-width:0.7' "+"width='%d' height='%d'>", stroke, fill, width, height)
 	for i := 0; i < cells; i++ {
 		for j := 0; j < cells; j++ {
 			ax, ay := corner(i+1, j)
@@ -45,8 +73,8 @@ func corner(i, j int) (float64, float64) {
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
 	z := f(x, y)
-	sx := width/2 + (x-y)*cos30*xyscale
-	sy := height/2 + (x+y)*sin30*xyscale - z*zscale
+	sx := float64(width)/2 + (x-y)*cos30*xyscale
+	sy := float64(height)/2 + (x+y)*sin30*xyscale - z*zscale
 	return sx, sy
 }
 
