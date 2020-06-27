@@ -1,0 +1,32 @@
+package main
+
+import "fmt"
+
+// Exercise 3.13
+const (
+	B  = 1
+	KB = B * 1000
+	MB = KB * 1000
+	GB = MB * 1000
+	TB = GB * 1000
+	PB = TB * 1000
+	EB = PB * 1000
+	ZB = EB * 1000
+	YB = ZB * 1000
+)
+
+const (
+	_ = 1 << (10 * iota)
+	KiB
+	MiB
+	GiB
+	TiB
+	PiB
+	EiB
+	ZiB
+	YiB
+)
+
+func main() {
+	fmt.Println(EB)
+}
