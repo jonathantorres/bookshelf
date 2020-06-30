@@ -1,5 +1,7 @@
 package main
 
+// Exercise 4.8
+
 import (
 	"bufio"
 	"fmt"
@@ -10,7 +12,7 @@ import (
 )
 
 func main() {
-	counts := make(map[rune]int)
+	counts := make(map[string]int)
 	var utflen [utf8.UTFMax + 1]int
 	invalid := 0
 
@@ -28,12 +30,23 @@ func main() {
 			invalid++
 			continue
 		}
-		counts[r]++
+		switch {
+		case unicode.IsLetter(r):
+			counts["letters"]++
+		case unicode.IsDigit(r):
+			counts["numbers"]++
+		case unicode.IsSpace(r):
+			counts["space"]++
+		case unicode.IsSymbol(r):
+			counts["symbol"]++
+		default:
+			counts["untracked"]++
+		}
 		utflen[n]++
 	}
-	fmt.Printf("rune\tcount\n")
+	fmt.Printf("type\tcount\n")
 	for c, n := range counts {
-		fmt.Printf("%q\t%d\n", c, n)
+		fmt.Printf("%s\t%d\n", c, n)
 	}
 	fmt.Print("\nlen\tcount\n")
 	for i, n := range utflen {
