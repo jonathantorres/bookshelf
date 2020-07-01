@@ -9,10 +9,6 @@ import (
 )
 
 func main() {
-	// create issue: ismana create {user/repo} {issue title} {issue content}
-	// read issue: ismana read {user/repo} {issue number}
-	// update issue: ismana update {user/repo} {issue number} {issue title} {issue content}
-	// close issue: ismana close {user/repo} {issue number}
 	if len(os.Args) < 4 {
 		printInfo()
 		os.Exit(1)
@@ -40,15 +36,18 @@ func createIssue(args []string) {
 		printInfo()
 		os.Exit(1)
 	}
-	repo := args[0]
+	repo_user := args[0]
 	title := args[1]
 	var content string
 	if len(args) >= 3 {
 		content = args[2]
 	}
-	fmt.Println("repo", repo)
-	fmt.Println("title", title)
-	fmt.Println("content", content)
+	_, err := createNewIssue(repo_user, title, content)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	fmt.Println("Issue created!")
 }
 
 func readIssue(args []string) {
@@ -68,7 +67,7 @@ func readIssue(args []string) {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
-	fmt.Println(issue.Title)
+	fmt.Fprintf(os.Stdout, "#%-5d %-30s %s\n%s\n", issue.Number, repo_user, issue.Title, issue.Body)
 }
 
 func updateIssue(args []string) {
@@ -77,6 +76,23 @@ func updateIssue(args []string) {
 		printInfo()
 		os.Exit(1)
 	}
+	repo_user := args[0]
+	number, err := strconv.Atoi(args[1])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	title := args[2]
+	var content string
+	if len(args) >= 4 {
+		content = args[3]
+	}
+	_, err = updateExistingIssue(repo_user, int64(number), title, content)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	fmt.Println("Issue has been updated")
 }
 
 func closeIssue(args []string) {
@@ -85,6 +101,18 @@ func closeIssue(args []string) {
 		printInfo()
 		os.Exit(1)
 	}
+	repo_user := args[0]
+	number, err := strconv.Atoi(args[1])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	_, err = closeExistingIssue(repo_user, int64(number))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	fmt.Println("Issue has been closed")
 }
 
 func cmdNotSupported(cmd string) {
