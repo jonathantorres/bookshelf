@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/jonathantorres/gopl/ch4/github"
 	"html/template"
 	"os"
 	"time"
-	"vamos/go_programming/ch4/github"
 )
 
 const templ = `
