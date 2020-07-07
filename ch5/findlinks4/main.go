@@ -1,15 +1,18 @@
 package main
 
-// Exercise 5.14
+// Exercise 5.13
 
 import (
 	"fmt"
 	"github.com/jonathantorres/gopl/ch5/links"
+	"io/ioutil"
 	"log"
-	"os"
 	"net/http"
+	"os"
 	"strings"
 )
+
+var startDomain string
 
 func main() {
 	if len(os.Args) < 2 {
@@ -44,17 +47,22 @@ func crawl(url string) []string {
 }
 
 func makePages(root string, urls []string) {
+	if startDomain == "" {
+		startDomain = root
+	}
 	var dirName string
-	var path string
 	if strings.HasPrefix(root, "http://") {
 		dirName = root[7:]
 	} else if strings.HasPrefix(root, "https://") {
 		dirName = root[8:]
 	}
-	if _, err := os.Stat("./"+dirName); err != nil {
+	if startDomain != root {
+		return
+	}
+	if _, err := os.Stat("./" + dirName); err != nil {
 		if os.IsNotExist(err) {
-			if err = os.Mkdir(dirName, 0777); if != nil {
-				fmt.Fprintf(os.Stderr, "error creating directory: %s", err)
+			if err = os.Mkdir(dirName, 0777); err != nil {
+				fmt.Fprintf(os.Stderr, "error creating directory: %s\n", err)
 				os.Exit(1)
 			}
 		}
@@ -62,10 +70,58 @@ func makePages(root string, urls []string) {
 	for _, url := range urls {
 		resp, err := http.Get(url)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error getting %s: %s", url, err)
+			fmt.Fprintf(os.Stderr, "error getting %s: %s\n", url, err)
+			continue
+		}
+		host := resp.Request.URL.Host
+		path := resp.Request.URL.Path
+		var filename string
+		var fullpath string
+		if host == dirName {
+			// same domain
+			filename = getFilename(path)
+			fullpath = dirName + path + filename
+			if err = os.MkdirAll(dirName+path, 0777); err != nil {
+				fmt.Fprintf(os.Stderr, "error creating path directories: %s\n", err)
+				os.Exit(1)
+			}
+		} else if strings.Index(dirName, host) != -1 {
+			// is under subdomain
+			filename = getFilename(path)
+			fullpath = dirName + "/" + host + path + filename
+			if err = os.MkdirAll(dirName+host+path, 0777); err != nil {
+				fmt.Fprintf(os.Stderr, "error creating path directories: %s\n", err)
+				os.Exit(1)
+			}
+		} else {
+			continue
+		}
+		if fullpath == "" {
+			fmt.Fprintf(os.Stderr, "could not build full path for %s\n", url)
+			continue
+		}
+		bodyData := make([]byte, 0)
+		if bodyData, err = ioutil.ReadAll(resp.Body); err != nil {
+			fmt.Fprintf(os.Stderr, "error reading response: %s\n", err)
 			continue
 		}
 		resp.Body.Close()
+		if err = ioutil.WriteFile(fullpath, bodyData, 0644); err != nil {
+			fmt.Fprintf(os.Stderr, "error creating file: %s\n", err)
+			continue
+		}
 	}
-	fmt.Println("dir:", dirName)
+}
+
+func getFilename(path string) string {
+	var filename string
+	if path == "/" || strings.HasPrefix(path, "/") {
+		filename = "index.html"
+	} else {
+		lastIndex := strings.LastIndex(path, "/")
+		if lastIndex != -1 {
+			filename = path[lastIndex+1:]
+		}
+	}
+	return filename
 }
