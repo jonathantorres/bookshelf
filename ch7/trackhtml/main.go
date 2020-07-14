@@ -4,13 +4,20 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"os"
-	// "sort"
+	"html/template"
 	"log"
-	"text/tabwriter"
+	"net/http"
+	"sort"
+	"strings"
 	"time"
 )
+
+type TrackManagement struct {
+	PageTitle string
+	Tracks    []*Track
+	Cols      []string
+	OrderBy   string
+}
 
 var tracks = []*Track{
 	{"Go", "Delilah", "From the Roots Up", 2012, length("3m38s")},
@@ -19,31 +26,45 @@ var tracks = []*Track{
 	{"Ready 2 Go", "Martin Solveig", "Smash", 2011, length("4m24s")},
 }
 
-var tmp = `
+var templ = `
 <html>
 	<head>
-		<title>tracks</title>
+		<title>{{.PageTitle}}</title>
+		<style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 800px;
+		}
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+		</style>
 	</head>
 	<body>
-		<h1>Song Tracks</h1>
+		<h1>{{.PageTitle}}</h1>
 		<table>
 			<thead>
 				<tr>
-					<th>Title</th>
-					<th>Artist</th>
-					<th>Album</th>
-					<th>Year</th>
-					<th>Length</th>
+					{{ range $i, $col := .Cols }}
+					<th>
+						<a href="/?sort_by={{ $col }}&order_by={{ $.OrderBy }}">{{ $col | capitalize }}</a>
+					</th>
+					{{ end }}
 				</tr>
 			</thead>
 			<tbody>
+				{{ range $i, $track := .Tracks }}
 				<tr>
-					<td>One</td>
-					<td>Two</td>
-					<td>Three</td>
-					<td>Four</td>
-					<td>Five</td>
+					<td>{{ $track.Title }}</td>
+					<td>{{ $track.Artist }}</td>
+					<td>{{ $track.Album }}</td>
+					<td>{{ $track.Year }}</td>
+					<td>{{ $track.Length }}</td>
 				</tr>
+				{{ end }}
 			</tbody>
 		</table>
 	</body>
@@ -53,23 +74,69 @@ var tmp = `
 func main() {
 	http.HandleFunc("/", handleTracks)
 	log.Fatal(http.ListenAndServe(":9999", nil))
-	// sort.Sort(byArtist(tracks))
-	// printTracks(tracks)
 }
 
 func handleTracks(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hola!")
+	w.Header().Add("Content-Type", "text/html")
+	tracksTempl, err := template.New("tracks").
+		Funcs(template.FuncMap{"capitalize": capitalize}).
+		Parse(templ)
+	if err != nil {
+		fmt.Fprintf(w, "Error, parsing the template %s", err)
+		return
+	}
+	sortBy := r.URL.Query().Get("sort_by")
+	orderBy := r.URL.Query().Get("order_by")
+	if orderBy == "" {
+		orderBy = "asc"
+	}
+	if sortBy != "" {
+		handleSorting(sortBy, orderBy)
+	} else {
+		sort.Sort(byArtist(tracks))
+	}
+	if orderBy == "asc" {
+		orderBy = "desc"
+	} else {
+		orderBy = "asc"
+	}
+	var cols = []string{"title", "artist", "album", "year", "length"}
+	var tracksManagement = TrackManagement{
+		PageTitle: "These are the tracks",
+		Tracks:    tracks,
+		Cols:      cols,
+		OrderBy:   orderBy,
+	}
+	if err := tracksTempl.Execute(w, tracksManagement); err != nil {
+		fmt.Fprintf(w, "Error, executing the template %s", err)
+	}
 }
 
-func printTracks(tracks []*Track) {
-	const format = "%v\t%v\t%v\t%v\t%v\t\n"
-	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 8, 2, ' ', 0)
-	fmt.Fprintf(tw, format, "Title", "Artist", "Album", "Year", "Length")
-	fmt.Fprintf(tw, format, "-----", "-----", "-----", "-----", "-----")
-	for _, t := range tracks {
-		fmt.Fprintf(tw, format, t.Title, t.Artist, t.Album, t.Year, t.Length)
+func handleSorting(sortType, orderBy string) {
+	var sortFunc sort.Interface
+	switch sortType {
+	case "title":
+		sortFunc = byTitle(tracks)
+	case "artist":
+		sortFunc = byArtist(tracks)
+	case "album":
+		sortFunc = byAlbum(tracks)
+	case "year":
+		sortFunc = byYear(tracks)
+	case "length":
+		sortFunc = byLength(tracks)
+	default:
+		sortFunc = byArtist(tracks)
 	}
-	tw.Flush()
+	if orderBy == "asc" {
+		sort.Sort(sortFunc)
+	} else {
+		sort.Sort(sort.Reverse(sortFunc))
+	}
+}
+
+func capitalize(s string) string {
+	return strings.Title(s)
 }
 
 func length(s string) time.Duration {
