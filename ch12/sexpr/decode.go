@@ -1,6 +1,8 @@
 package sexpr
 
 // Exercise 12.7
+// Exercise 12.8
+// Exercise 12.10
 
 import (
 	"bytes"
@@ -8,11 +10,18 @@ import (
 	"io"
 	"reflect"
 	"strconv"
+	"strings"
 	"text/scanner"
 )
 
+var Interfaces map[string]reflect.Type
+
 type Decoder struct {
 	lex *lexer
+}
+
+func init() {
+	Interfaces = make(map[string]reflect.Type)
 }
 
 func NewDecoder(r io.Reader) *Decoder {
@@ -74,8 +83,13 @@ func read(lex *lexer, v reflect.Value) {
 	case scanner.Ident:
 		// The only valid identifiers are
 		// "nil" and struct field names.
-		if lex.text() == "nil" {
+		switch lex.text() {
+		case "nil":
 			v.Set(reflect.Zero(v.Type()))
+			lex.next()
+			return
+		case "t":
+			v.SetBool(true)
 			lex.next()
 			return
 		}
@@ -86,7 +100,19 @@ func read(lex *lexer, v reflect.Value) {
 		return
 	case scanner.Int:
 		i, _ := strconv.Atoi(lex.text()) // NOTE: ignoring errors
-		v.SetInt(int64(i))
+		switch v.Type().Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			v.SetInt(int64(i))
+			lex.next()
+			return
+		case reflect.Float32, reflect.Float64:
+			v.SetFloat(float64(i))
+			lex.next()
+			return
+		}
+	case scanner.Float:
+		f, _ := strconv.ParseFloat(lex.text(), 64) // NOTE: ignoring errors
+		v.SetFloat(float64(f))
 		lex.next()
 		return
 	case '(':
@@ -132,6 +158,16 @@ func readList(lex *lexer, v reflect.Value) {
 			v.SetMapIndex(key, value)
 			lex.consume(')')
 		}
+	case reflect.Interface: // (name value)
+		name := strings.Trim(lex.text(), `"`)
+		lex.next()
+		typ, ok := Interfaces[name]
+		if !ok {
+			panic(fmt.Sprintf("no concrete type registered for interface %s", name))
+		}
+		val := reflect.New(typ)
+		read(lex, reflect.Indirect(val))
+		v.Set(reflect.Indirect(val))
 	default:
 		panic(fmt.Sprintf("cannot decode list into %v", v.Type()))
 	}
