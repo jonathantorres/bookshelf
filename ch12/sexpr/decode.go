@@ -3,6 +3,7 @@ package sexpr
 // Exercise 12.7
 // Exercise 12.8
 // Exercise 12.10
+// Exercise 12.13
 
 import (
 	"bytes"
@@ -124,6 +125,21 @@ func read(lex *lexer, v reflect.Value) {
 	panic(fmt.Sprintf("unexpected token %q", lex.text()))
 }
 
+func fieldByName(structure reflect.Value, name string) reflect.Value {
+	field := structure.FieldByName(name)
+	if field != (reflect.Value{}) {
+		return field
+	}
+	typ := structure.Type()
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		if field.Tag.Get("sexpr") == name {
+			return structure.FieldByName(field.Name)
+		}
+	}
+	return reflect.Value{}
+}
+
 func readList(lex *lexer, v reflect.Value) {
 	switch v.Kind() {
 	case reflect.Array: // (item ...)
@@ -144,7 +160,7 @@ func readList(lex *lexer, v reflect.Value) {
 			}
 			name := lex.text()
 			lex.next()
-			read(lex, v.FieldByName(name))
+			read(lex, fieldByName(v, name))
 			lex.consume(')')
 		}
 	case reflect.Map: // ((key value) ...)
