@@ -9,7 +9,7 @@ int main(void)
     char chars[MAX] = { 0 };
     int freqs[MAX] = { 0 };
 
-    while((c = getchar()) != EOF) {
+    while ((c = getchar()) != EOF) {
         if (c == ' ') {
             continue;
         }

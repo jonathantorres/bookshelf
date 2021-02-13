@@ -12,7 +12,7 @@ int main(void)
     int len;
     while ((len = get_line(line, MAXLINE)) > 0) {
         detab(line, len);
-        printf("%s\n", line);
+        printf("%s", line);
     }
     return 0;
 }

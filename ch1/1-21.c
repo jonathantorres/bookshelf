@@ -32,10 +32,17 @@ int get_line(char s[], int lim)
 
 void entab(char s[], int len)
 {
+    int tab_added = 0;
     for (int i = 0; i < len; i++) {
-        if (i >= 3 && s[i] == ' ' && s[i-1] == ' ' && s[i-2] == ' ' && s[i-3] == ' ') {
+        if (s[i] == ' ' && s[i+1] == ' ' && s[i+2] == ' ' && s[i+3] == ' ') {
             putchar('\t');
+            tab_added = 1;
+        } else if (s[i] == ' ') {
+            if (tab_added == 0) {
+                putchar(s[i]);
+            }
         } else {
+            tab_added = 0;
             putchar(s[i]);
         }
     }

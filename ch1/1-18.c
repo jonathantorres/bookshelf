@@ -10,14 +10,38 @@ int main(void)
     char line[MAXLINE];
 
     while ((len = get_line(line, MAXLINE)) > 0) {
-        if (line[0] == '\t' || line[0] == ' ') {
+        int l_trails = 0;
+        for (int i = 0; i < len; i++) {
+            if (line[i] != ' ' && line[i] != '\t') {
+                break;
+            }
+            l_trails++;
+        }
+        // remove left trailing blanks and tabs
+        if (l_trails > 0) {
             for (int i = 0; i < len; i++) {
-                line[i] = line[i+1];
+                line[i] = line[(i+l_trails)];
+            }
+            len -= l_trails;
+        }
+
+        int r_trails = 0;
+        for (int i = len-1; i >= 0; i--) {
+            if (line[i] == '\n') {
+                continue;
+            }
+            if (line[i] == ' ' || line[i] == '\t') {
+                r_trails++;
+            } else {
+                break;
             }
         }
 
-        if (line[len-2] == '\t' || line[len-2] == ' ') {
-            line[len-2] = 0;
+        // remove right trailing blanks and tabs
+        if (r_trails > 0) {
+            len -= r_trails;
+            line[len-1] = '\n';
+            line[len] = '\0';
         }
 
         int all_blanks = 1;

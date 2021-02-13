@@ -10,11 +10,12 @@ int main(void)
 {
     char line[MAXLINE];
     char rev[MAXLINE];
+    char *revp = &rev[1]; // strip the leading newline
     int len;
 
     while ((len = get_line(line, MAXLINE)) > 0) {
         reverse(line, rev, len);
-        printf("%s\n", rev);
+        printf("%s\n", revp);
     }
 
     return 0;
