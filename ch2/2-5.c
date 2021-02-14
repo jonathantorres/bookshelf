@@ -8,8 +8,8 @@ int main(void)
     char s2[] = "ona";
     char s3[] = "bum";
 
-    printf("%d\n", any(s1, s2)); // 1
-    printf("%d\n", any(s1, s3)); // -1
+    printf("%s in %s = %d\n", s1, s2, any(s1, s2)); // 1
+    printf("%s in %s = %d\n", s1, s3, any(s1, s3)); // -1
     return 0;
 }
 

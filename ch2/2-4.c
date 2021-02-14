@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 void squeeze(char s1[], const char s2[]);
-void squeeze2(char s[], int c);
 
 int main(void)
 {
@@ -28,16 +27,4 @@ void squeeze(char s1[], const char s2[])
         }
     }
     s1[k] = '\0';
-}
-
-void squeeze2(char s[], int c)
-{
-    int i, j;
-
-    for (i = j = 0; s[i] != '\0'; i++) {
-        if (s[i] != c) {
-            s[j++] = s[i];
-        }
-    }
-    s[j] = '\0';
 }

@@ -11,9 +11,11 @@ int main(void)
     // always assume it's a valid hex value
     char s1[] = "0xFF00FF";
     char s2[] = "cc0033";
+    char s3[] = "DEAD";
 
-    printf("%d\n", htoi(s1));
-    printf("%d\n", htoi(s2));
+    printf("%s = %d\n", s1, htoi(s1));
+    printf("%s = %d\n", s2, htoi(s2));
+    printf("%s = %d\n", s3, htoi(s3));
     return 0;
 }
 

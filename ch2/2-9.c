@@ -1,19 +1,21 @@
 #include <stdio.h>
 
-int bitcount(int x);
+int bitcount(unsigned int x);
 
 int main(void)
 {
-    int x = 500;
-    printf("%d\n", bitcount(x));
+    int n = 75;
+    printf("num of 1's in %d = %d\n", n, bitcount(n));
     return 0;
 }
 
-int bitcount(int x)
+int bitcount(unsigned int x)
 {
     int b;
     for (b = 0; x != 0; x &= (x-1)) {
-        b++;
+        if (x) {
+            b++;
+        }
     }
     return b;
 }

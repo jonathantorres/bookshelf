@@ -1,22 +1,33 @@
 #include <stdio.h>
 
-int setbits(int x, int p, int n, int y);
+unsigned int setbits(unsigned int x, int p, int n, int y);
+unsigned int getbits(unsigned int x, int p, int n);
 
 int main(void)
 {
-    int x = 100;
-    int y = 200;
-    int p = 2;
-    int n = 3;
-
-    printf("%d\n", setbits(x, p, n, y));
+    unsigned int x = 150;
+    unsigned int y = 100;
+    int p = 3;
+    int n = 4;
+    printf("%u set-> %u = %u\n", x, y, setbits(x, p, n, y));
     return 0;
 }
 
-int setbits(int x, int p, int n, int y)
+// returns x with the n bits that begin at position p,
+// set to the rightmost n bits of y,
+// leaving the other bits unchanged
+// TODO: there's a bug here, try with different test cases
+// maybe see (ex. 2-7)
+unsigned int setbits(unsigned int x, int p, int n, int y)
 {
-    y = y >> (p-1);      // move the bits starting at pos p to the end
-    y = y & ~(~0 << n);  // null all the bits from a pos higher than n
-    x = x & (~0 << n);   // null the last n bits
-    return (x | y);
+    unsigned int ry = getbits(y, p, n);
+    int xa = x & (~0 << n);
+    ry = ry << (p+1-n);
+    return xa | ry;
+}
+
+// getbits: get n bits from position p
+unsigned int getbits(unsigned int x, int p, int n)
+{
+    return (x >> (p+1-n)) & ~(~0 << n);
 }
