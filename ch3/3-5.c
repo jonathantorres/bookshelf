@@ -1,37 +1,32 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <limits.h>
 
-void reverse(char s[]);
+void reverse(char s[], int len);
 void itob(int n, char s[], int b);
 
 int main(void)
 {
-    char s[100];
-    long int n = 18237012837;
+    char s1[100];
+    char s2[100];
+    int n = 530;
 
-    itob(n, s, 16);
-    printf("%s\n", s);
+    itob(n, s1, 16); // hex
+    printf("%d = %s\n", n, s1);
+    itob(n, s2, 2); // base 2
+    printf("%d = %s\n", n, s2);
     return 0;
-}
-
-// reverse: reverse string s in place
-void reverse(char s[])
-{
-    int c, i, j;
-    for (i = 0, j = strlen(s)-1; i < j; i++, j--) {
-        c = s[i];
-        s[i] = s[j];
-        s[j] = c;
-    }
 }
 
 void itob(int n, char s[], int b)
 {
     int i, sign, num;
-    sign = n;
-    n = abs(n); // sets n to be positive
     i = 0;
+    if ((sign = n) < 0) { // record sign
+        if (n <= INT_MIN) {
+            n++;
+        }
+        n = -n; // make n positive
+    }
     do {
         // generate digits in reverse order
         num = n % b;
@@ -46,5 +41,16 @@ void itob(int n, char s[], int b)
         s[i++] = '-';
     }
     s[i] = '\0';
-    reverse(s);
+    reverse(s, i);
+}
+
+// reverse: reverse string s in place
+void reverse(char s[], int len)
+{
+    int c, i, j;
+    for (i = 0, j = len-1; i < j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
 }
