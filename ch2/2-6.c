@@ -16,14 +16,12 @@ int main(void)
 // returns x with the n bits that begin at position p,
 // set to the rightmost n bits of y,
 // leaving the other bits unchanged
-// TODO: there's a bug here, try with different test cases
-// maybe see (ex. 2-7)
 unsigned int setbits(unsigned int x, int p, int n, int y)
 {
-    unsigned int ry = getbits(y, p, n);
-    int xa = x & (~0 << n);
+    unsigned int ry = getbits(y, n-1, n);
     ry = ry << (p+1-n);
-    return xa | ry;
+    unsigned int m = ((1 << n)-1) << (p+1-n);
+    return x ^ ((x ^ ry) & m);
 }
 
 // getbits: get n bits from position p

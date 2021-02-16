@@ -25,17 +25,10 @@ unsigned int getbits(unsigned int x, int p, int n)
     return (x >> (p+1-n)) & ~(~0 << n);
 }
 
-// TODO: this function has a bug (see ex. 2-6)
 unsigned int setbits(unsigned int x, int p, int n, int y)
 {
-    unsigned int ry = getbits(y, p, n);
-    int xa = x & (~0 << n);
+    unsigned int ry = getbits(y, n-1, n);
     ry = ry << (p+1-n);
-    return xa | ry;
+    unsigned int m = ((1 << n)-1) << (p+1-n);
+    return x ^ ((x ^ ry) & m);
 }
-
-// leave this around for testing
-// unsigned int setbits(unsigned int x, int p, int n, int y)
-// {
-//     return x & ~(~(~0 << n) << (p+1-n)) | (y & ~(~0 << n)) << (p+1-n);
-// }
