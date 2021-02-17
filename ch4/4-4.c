@@ -5,13 +5,13 @@
 
 #define MAXVAL 100
 #define BUFSIZE 100
-#define MAXOP 100    // max size of operand or operator
-#define NUMBER '0' // signal that a number wes found
-#define PRINT 'p'    // print the element witout poping
+#define MAXOP 100     // max size of operand or operator
+#define NUMBER '0'    // signal that a number was found
+#define PRINT 'p'     // print the element without poping
 #define DUPLICATE 'd' // duplicate element
-#define SWAP 's'     // swap the top two elements
-#define CLEAR 'c'    // clear the stack
-#define VARIABLE 'x' // name of the variable for the latest printed value
+#define SWAP 's'      // swap the top two elements
+#define CLEAR 'c'     // clear the stack
+#define VARIABLE 'x'  // name of the variable for the latest printed value
 
 int sp = 0;
 double val[MAXVAL];
@@ -23,10 +23,10 @@ int bufp = 0;
 int getop(char s[]);
 void push(double f);
 double pop(void);
-void print(void);
-void duplicate(void);
+void peek(void);
+void dup(void);
 void swap(void);
-void clear_stack(void);
+void clear(void);
 int getch(void);
 void ungetch(int c);
 
@@ -77,11 +77,11 @@ int main(void)
                 break;
             case PRINT:
                 operator = 0;
-                print();
+                peek();
                 break;
             case DUPLICATE:
                 operator = 0;
-                duplicate();
+                dup();
                 break;
             case SWAP:
                 operator = 0;
@@ -89,7 +89,7 @@ int main(void)
                 break;
             case CLEAR:
                 operator = 0;
-                clear_stack();
+                clear();
                 break;
             case '\n':
                 if (operator) {
@@ -104,15 +104,15 @@ int main(void)
     return 0;
 }
 
-/* print: prints without poping*/
-void print(void)
+/* peek: prints without poping */
+void peek(void)
 {
     x = val[sp-1];
     printf("%g\n", x);
 }
 
 /* duplicate: duplicates the last element */
-void duplicate(void)
+void dup(void)
 {
     push(val[sp]);
 }
@@ -120,14 +120,13 @@ void duplicate(void)
 /* swap: swaps the top 2 elements */
 void swap()
 {
-    double temp;
-    temp = val[sp-2];
+    double temp = val[sp-2];
     val[sp-2] = val[sp-1];
     val[sp-1] = temp;
 }
 
-/* clear_stack: clears the stack */
-void clear_stack(void)
+/* clear: clears the stack */
+void clear(void)
 {
     sp = 0;
 }

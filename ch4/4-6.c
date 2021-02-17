@@ -2,16 +2,18 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+#include <string.h>
 
 #define MAXVAL 100
 #define BUFSIZE 100
-#define MAXOP 100    // max size of operand or operator
-#define NUMBER '0' // signal that a number wes found
-#define PRINT 'p'    // print the element witout poping
+#define MAXOP 100     // max size of operand or operator
+#define NUMBER '0'    // signal that a number wes found
+#define PRINT 'p'     // print the element witout poping
 #define DUPLICATE 'd' // duplicate element
-#define SWAP 's'     // swap the top two elements
-#define CLEAR 'c'    // clear the stack
-#define VARIABLE 'x' // name of the variable for the latest printed value
+#define SWAP 's'      // swap the top two elements
+#define CLEAR 'c'     // clear the stack
+#define VARIABLE 'x'  // name of the variable for the latest printed value
+#define NAME 'n'      // name of the mathematical operation
 
 int sp = 0;
 double val[MAXVAL];
@@ -23,12 +25,13 @@ int bufp = 0;
 int getop(char s[]);
 void push(double f);
 double pop(void);
-void print(void);
-void duplicate(void);
+void peek(void);
+void dup(void);
 void swap(void);
-void clear_stack(void);
+void clear(void);
 int getch(void);
 void ungetch(int c);
+void mathfunc(char s[]);
 
 int main(void)
 {
@@ -41,6 +44,10 @@ int main(void)
             case NUMBER:
                 operator = 1;
                 push(atof(s));
+                break;
+            case NAME:
+                operator = 1;
+                mathfunc(s);
                 break;
             case VARIABLE:
                 operator = 1;
@@ -77,11 +84,11 @@ int main(void)
                 break;
             case PRINT:
                 operator = 0;
-                print();
+                peek();
                 break;
             case DUPLICATE:
                 operator = 0;
-                duplicate();
+                dup();
                 break;
             case SWAP:
                 operator = 0;
@@ -89,7 +96,7 @@ int main(void)
                 break;
             case CLEAR:
                 operator = 0;
-                clear_stack();
+                clear();
                 break;
             case '\n':
                 if (operator) {
@@ -104,15 +111,32 @@ int main(void)
     return 0;
 }
 
-/* print: prints without poping*/
-void print(void)
+void mathfunc(char s[])
+{
+    double op2;
+    if (strcmp(s, "sin") == 0) {
+        push(sin(pop()));
+    } else if (strcmp(s, "cos") == 0) {
+        push(cos(pop()));
+    } else if (strcmp(s, "exp") == 0) {
+        push(exp(pop()));
+    } else if (strcmp(s, "pow") == 0) {
+        op2 = pop();
+        push(pow(pop(), op2));
+    } else {
+        printf("error: %s not supported\n", s);
+    }
+}
+
+/* peek: prints without poping */
+void peek(void)
 {
     x = val[sp-1];
     printf("%g\n", x);
 }
 
 /* duplicate: duplicates the last element */
-void duplicate(void)
+void dup(void)
 {
     push(val[sp]);
 }
@@ -120,14 +144,13 @@ void duplicate(void)
 /* swap: swaps the top 2 elements */
 void swap()
 {
-    double temp;
-    temp = val[sp-2];
+    double temp = val[sp-2];
     val[sp-2] = val[sp-1];
     val[sp-1] = temp;
 }
 
-/* clear_stack: clears the stack */
-void clear_stack(void)
+/* clear: clears the stack */
+void clear(void)
 {
     sp = 0;
 }
@@ -154,10 +177,23 @@ int getop(char s[])
 
     }
     s[1] = '\0';
+    i = 0;
+    if (islower(c)) {
+        while (islower(s[++i] = c = getch())) {
+            //
+        }
+        s[i] = '\0';
+        if (c != EOF) {
+            ungetch(c);
+        }
+        if (strlen(s) > 1) {
+            return NAME;
+        }
+        return c;
+    }
     if (!isdigit(c) && c != '.') {
         return c;
     }
-    i = 0;
     if (isdigit(c)) {
         while (isdigit(s[++i] = c = getch())) {
             //
