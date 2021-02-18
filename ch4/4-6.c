@@ -35,9 +35,14 @@ void mathfunc(char s[]);
 
 int main(void)
 {
-    int type, operator;
+    int type, operator, var = 0;
     double op2;
     char s[MAXOP];
+    double vars[26];
+
+    for (int i = 0; i < 26; i++) {
+        vars[i] = 0.0;
+    }
 
     while ((type = getop(s)) != EOF) {
         switch (type) {
@@ -98,6 +103,14 @@ int main(void)
                 operator = 0;
                 clear();
                 break;
+            case '=':
+                pop();
+                if (var >= 'A' && var <= 'Z') {
+                    vars[var-'A'] = pop();
+                } else {
+                    printf("error: no variable name\n");
+                }
+                break;
             case '\n':
                 if (operator) {
                   x = pop();
@@ -105,8 +118,15 @@ int main(void)
                 }
                 break;
             default:
-                printf("error: unknown command %s\n", s);
+                if (type >= 'A' && type <= 'Z') {
+                    push(vars[type-'A']);
+                } else if (type == 'v') {
+                    push(x);
+                } else {
+                    printf("error: unknown command %s\n", s);
+                }
         }
+        var = type;
     }
     return 0;
 }
