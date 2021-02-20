@@ -13,15 +13,18 @@ void ungetch(int c);
 
 int main(void)
 {
-    int a[MAXLEN], n;
-    for (n = 0; n < MAXLEN && getint(&a[n]) != EOF; n++) {
-        //
+    int n;
+    int r;
+    r = getint(&n);
+    if (r > 0) {
+        printf("%d\n", n);
+    } else if (r == 0) {
+        printf("not a number\n");
+    } else if (r == EOF) {
+        printf("end of file\n");
+    } else {
+        printf("unknown error!\n");
     }
-    printf("\n");
-    for (int i = 0; i < n; i++) {
-        printf("%d ", a[i]);
-    }
-    printf("\n");
     return 0;
 }
 

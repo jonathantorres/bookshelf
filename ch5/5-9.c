@@ -10,35 +10,54 @@ static char daytab[2][13] = {
 
 int main(void)
 {
-    int y = 1984, m = 7, d = 12, yd = 194;
-    int *pm, *pd;
-    pm = &m;
-    pd = &d;
+    int y = 1984, m = 6, d = 30, yd = 325;
+    int pm, pd;
     printf("Day: %d\n", day_of_year(y, m, d));
-    month_day(y, yd, pm, pd);
-    printf("Month: %d, Day: %d\n", *pm, *pd);
+    month_day(y, yd, &pm, &pd);
+    printf("Month: %d, Day: %d\n", pm, pd);
     return 0;
 }
 
+/* day_of_year: set day of year form month & day */
 int day_of_year(int year, int month, int day)
 {
     int i, leap;
     char *p;
     leap = (year%4 == 0 && year%100 != 0) || year%400 == 0;
     p = daytab[leap];
+    if (month < 1 || month > 12) {
+        printf("error: invalid month!\n");
+        return -1;
+    }
+    if (day < 1 || day > *(p+month)) {
+        printf("error: invalid day!\n");
+        return -1;
+    }
     for (i = 1; i < month; i++) {
-        day += *(p+1);
+        day += *p++;
     }
     return day;
 }
 
+/* month_day: set month, day from day of year */
 void month_day(int year, int yearday, int *pmonth, int *pday)
 {
     int i, leap;
     char *p;
     leap = (year%4 == 0 && year%100 != 0) || year%400 == 0;
     p = daytab[leap];
-    for (i = 0; yearday > *p; i++, p++) {
+    if (leap) {
+        if (yearday > 365) {
+            printf("error: not a valid day!\n");
+            return;
+        }
+    } else {
+        if (yearday > 366) {
+            printf("error: not a valid day!\n");
+            return;
+        }
+    }
+    for (i = 1; yearday > *p; i++, p++) {
         yearday -= *p;
     }
     *pmonth = i;

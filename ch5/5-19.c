@@ -3,13 +3,20 @@
 #include <ctype.h>
 
 #define MAXTOKEN 100
+#define BUFSIZE 100
+
 enum { NAME, PARENS, BRACKETS };
 enum { NO, YES };
 
-int tokentype;
-int pretoken = NO;
 int posttoken(void);
 int gettoken(void);
+void ungetch(int c);
+int getch(void);
+
+int bufp = 0;
+int tokentype;
+int pretoken = NO;
+char buf[BUFSIZE];
 char token[MAXTOKEN];
 char out[1000];
 
@@ -17,7 +24,6 @@ int main(void)
 {
     int type;
     char temp[MAXTOKEN];
-    void ungetch(int c);
 
     while (gettoken() != EOF) {
         strcpy(out, token);
@@ -45,8 +51,7 @@ int main(void)
 
 int gettoken(void)
 {
-    int c, getch(void);
-    void ungetch(int);
+    int c;
     char *p = token;
 
     if (pretoken == YES) {
@@ -63,7 +68,7 @@ int gettoken(void)
             ungetch(c);
             return tokentype = '(';
         }
-    } else if(c == '[') {
+    } else if (c == '[') {
         for (*p++ = c; (*p++ = getch()) != ']';) {
         }
         *p = '\0';
@@ -79,10 +84,6 @@ int gettoken(void)
         return tokentype = c;
     }
 }
-
-#define BUFSIZE 100
-char buf[BUFSIZE];
-int bufp = 0;
 
 int getch(void)
 {

@@ -5,9 +5,15 @@
 
 #define MAXLINES 5000
 #define PLINES 10
+#define ALLOCSIZE 50000 // size of available space
+#define MAXLEN 1000     // max size of a line
 
+static char allocbuf[ALLOCSIZE]; // storage for alloc
+static char *allocp = allocbuf;  // next free position
 char *lineptr[MAXLINES];
 
+int get_line(char *s, int);
+char *alloc(int n);
 int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines);
 int process_input(char *v[]);
@@ -15,7 +21,6 @@ int process_input(char *v[]);
 int main(int argc, char *argv[])
 {
     int nlines;
-
     switch (argc) {
         case 1:
             nlines = PLINES;
@@ -60,10 +65,6 @@ int process_input(char *v[])
     }
 }
 
-#define MAXLEN 1000
-int get_line(char *, int);
-char *alloc(int);
-
 int readlines(char *lineptr[], int maxlines)
 {
     int len, nlines;
@@ -96,10 +97,6 @@ int get_line(char *s, int lim)
     return i;
 }
 
-#define ALLOCSIZE 50000           // size of available space
-static char allocbuf[ALLOCSIZE];  // storage for alloc
-static char *allocp = allocbuf;   // next free position
-
 char *alloc(int n)
 {
     // if it fits
@@ -120,7 +117,7 @@ void writelines(char *lineptr[], int nlines)
         n++;
     }
     for (i = 0; i < (nlines+1) && i < (n+1); i++) {
-        *--lineptr;
+        --lineptr;
     }
     while (*++lineptr != NULL) {
         printf("%s\n", *lineptr);

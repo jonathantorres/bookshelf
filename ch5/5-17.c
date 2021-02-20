@@ -3,18 +3,27 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAXLINES 5000           /* max #lines to be sorted */
-char *lineptr[MAXLINES];        /* pointers to text lines */
+#define MAXLINES 5000   // max number of lines to be sorted
+#define MAXLEN 1000     // max length of any input line
+#define ALLOCSIZE 10000 // size of available space
 
+static char allocbuf[ALLOCSIZE];
+static char *allocp = allocbuf;
+char *lineptr[MAXLINES];
+
+int field_index(int fld, char *s);
+int lgetline(char *s, int lim);
+char *alloc(int n);
 int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines);
-
 void lqsort(void *lineptr[], int left, int right, int (*comp) (void *, void*));
-int numcmp_increase(char *, char  *);
-int numcmp_decrease(char  *, char *);
-int my_strcmp_decrease(char  *, char  *);
+int numcmp_increase(char *s1, char *s2);
+int numcmp_decrease(char *s1, char *s2);
+int my_strcmp_decrease(char *s1, char *s2);
 int my_strcmp_increase(char *s1, char *s2);
 int read_input(char *s);
+char *fillfld(char *s);
+
 int decrease = 0;
 int fold = 0;
 int dir = 0;
@@ -22,10 +31,9 @@ int numeric = 0;
 int flag = 0;
 int field = 0;
 
-/* sort input lines */
 int main(int argc, char *argv[])
 {
-    int nlines;             /* number of input lines read */
+    int nlines;
     int i, j;
     unsigned int uargc;
 
@@ -64,20 +72,21 @@ int main(int argc, char *argv[])
         return 1;
     }
 }
-char *fillfld(char *s);
+
 int read_input(char *s)
 {
     decrease = 0;
     fold = 0;
     dir = 0;
     numeric = 0;
+
     if (s[0] != '-') {
         printf("usage: sort -dfnr\n");
         return 1;
     }
     while (*s) {
         ++s;
-        switch(*s) {
+        switch (*s) {
             case 'n':
                 numeric = 1;
                 break;
@@ -107,10 +116,12 @@ int read_input(char *s)
     }
     return 0;
 }
+
 char *fillfld(char *s)
 {
     int i;
     i = 0;
+
     while (*s) {
         ++s;
         if ((!(isdigit(*s))) && *s != '-') {
@@ -131,11 +142,6 @@ char *fillfld(char *s)
     return s;
 }
 
-#define MAXLEN 1000     /* max lenght of any input line */
-int lgetline(char *, int);
-char *alloc(int);
-
-/* readlines: read input lines */
 int readlines(char *lineptr[], int maxlines)
 {
     int len, nlines;
@@ -145,7 +151,7 @@ int readlines(char *lineptr[], int maxlines)
         if (nlines >= maxlines || (p = alloc(len)) == NULL) {
             return -1;
         } else {
-            line[len-1] = '\0';     /* delete newline */
+            line[len-1] = '\0';
             strcpy(p, line);
             lineptr[nlines++] = p;
         }
@@ -154,7 +160,6 @@ int readlines(char *lineptr[], int maxlines)
     return nlines;
 }
 
-/* writelines: write output line */
 void writelines(char *lineptr[], int nlines)
 {
     while (nlines-- > 0) {
@@ -177,11 +182,7 @@ int lgetline(char *s, int lim)
     return i;
 }
 
-#define ALLOCSIZE 10000 /* size of available space */
-static char allocbuf[ALLOCSIZE];        /* storage for alloc */
-static char *allocp = allocbuf;         /* next free position */
-
-char *alloc(int n)      /* return pointer to n characters */
+char *alloc(int n)
 {
     if (allocbuf + ALLOCSIZE - allocp >= n) {
         allocp += n;
@@ -191,14 +192,13 @@ char *alloc(int n)      /* return pointer to n characters */
     }
 }
 
-void afree(char *p)     /* free storage pointed to by p */
+void afree(char *p)
 {
     if (p >= allocbuf && p < allocbuf + ALLOCSIZE) {
         allocp = p;
     }
 }
 
-/* qsort: sort v[left]...v[right] onto increasing order */
 void lqsort(void *v[], int left, int right, int (*comp) (void *, void *))
 {
     int i, last;
@@ -222,7 +222,6 @@ void lqsort(void *v[], int left, int right, int (*comp) (void *, void *))
     lqsort(v, last+1, right, comp);
 }
 
-int field_index(int fld, char *s);
 int numcmp_decrease(char *s1, char *s2)
 {
     int fld_idx_s1 = 0, fld_idx_s2 = 0;
@@ -244,7 +243,6 @@ int numcmp_decrease(char *s1, char *s2)
     }
 }
 
-/* numcmp: compare s1 and s2 numerically */
 int numcmp_increase(char *s1, char *s2)
 {
     int fld_idx_s1 = 0, fld_idx_s2 = 0;
@@ -319,8 +317,8 @@ int my_strcmp_increase(char *s1, char *s2)
     int fld_idx_s1 = 0, fld_idx_s2 = 0;
 
     if (flag != 0 && field != 0) {
-            fld_idx_s1 = field_index(field, s1);
-            fld_idx_s2 = field_index(field, s2);
+        fld_idx_s1 = field_index(field, s1);
+        fld_idx_s2 = field_index(field, s2);
     }
     while (s1[fld_idx_s1] == s2[fld_idx_s2]) {
         ++fld_idx_s1;

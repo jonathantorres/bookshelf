@@ -3,12 +3,19 @@
 #include <ctype.h>
 
 #define MAXTOKEN 100
+#define BUFSIZE 100
+
 enum { NAME, PARENS, BRACKETS, ERR };
 
 void dcl(void);
 void dirdcl(void);
 int gettoken(void);
+void ungetch(int c);
+int getch(void);
+
+int bufp = 0;
 int tokentype;
+char buf[BUFSIZE];
 char token[MAXTOKEN];
 char name[MAXTOKEN];
 char datatype[MAXTOKEN];
@@ -30,8 +37,7 @@ int main(void)
 
 int gettoken(void)
 {
-    int c, getch(void);
-    void ungetch(int);
+    int c;
     char *p = token;
 
     while ((c = getch()) == ' ' || c == '\t') {
@@ -66,10 +72,6 @@ int gettoken(void)
         printf("%c", tokentype);
     }
 }
-
-#define BUFSIZE 100
-char buf[BUFSIZE];
-int bufp = 0;
 
 int getch(void)
 {
@@ -116,7 +118,7 @@ void dirdcl(void)
         tokentype = ERR;
         return;
     }
-    while ((type=gettoken()) == PARENS || type == BRACKETS) {
+    while ((type = gettoken()) == PARENS || type == BRACKETS) {
         if (type == PARENS) {
             strcat(out, " function returning");
         } else {

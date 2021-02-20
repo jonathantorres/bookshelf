@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 void p_strcat(char *s, char *t);
-void n_strcat(char s[], char t[]);
 
 int main(void)
 {
@@ -22,17 +21,5 @@ void p_strcat(char *s, char *t)
         // copy t
         s++;
         t++;
-    }
-}
-
-void n_strcat(char s[], char t[])
-{
-    int i = 0, j = 0;
-    while (s[i] != '\0') {
-        i++;
-        // find end of s
-    }
-    while ((s[i++] = t[j++]) != '\0') {
-        // copy t
     }
 }

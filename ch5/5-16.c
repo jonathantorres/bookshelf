@@ -3,16 +3,21 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-int get_line(char*, int);
-char *alloc(int);
-int readlines(char**, int);
-void writelines(char**, int);
-void quicksort(void**, int, int, int (*)(void*, void*));
+#define MAXLINES 10000   // max number of lines
+#define MAXLEN 1000      // max length of line array
+#define ALLOCSIZE 50000  // size of available space
+
+int get_line(char* s, int lim);
+char *alloc(int n);
+int readlines(char* lineptr[], int maxlines);
+void writelines(char* lineptr[], int nlines);
+void quicksort(void *v[], int left, int right, int (*)(void*, void*));
+void swap(void *v[], int i, int j);
 int numcmp(char*, char*);
 int mystrcmp(char*, char*);
 
-#define MAXLINES 10000
-#define MAXLEN 1000
+static char allocbuf[ALLOCSIZE];  // storage for alloc
+static char *allocp = allocbuf;   // next free position
 
 char *lineptr[MAXLINES];  /* pointers to text lines */
 int decreasing = 0;       /* 0 if increasing, 1 if decreasing   -r flag */
@@ -79,15 +84,14 @@ int main(int argc, char *argv[])
 void quicksort(void *v[], int left, int right, int (*comp)(void*, void*))
 {
     int i, last;
-    void swap(void *v[], int, int);
 
     if (left >= right) {
         return;
     }
     swap(v, left, (left + right) / 2);  /* move element to sort left */
     last = left;
-    for(i = left + 1; i <= right; ++i) {
-        if(!decreasing) {
+    for (i = left + 1; i <= right; ++i) {
+        if (!decreasing) {
             if ((*comp)(v[i], v[left]) < 0) {
                 swap(v, ++last, i);
             }
@@ -104,12 +108,12 @@ void quicksort(void *v[], int left, int right, int (*comp)(void*, void*))
 
 int mystrcmp(char *s1, char *s2)
 {
-    if(directory) {
+    if (directory) {
         while (!isdigit(*s1) && !isalpha(*s1) && !isspace(*s1) && *s1) {
-            ++s1;       /* ignore bad characters */
+            ++s1; /* ignore bad characters */
         }
         while (!isdigit(*s2) && !isalpha(*s2) && !isspace(*s2) && *s2) {
-            ++s2;       /* ignore bad characters */
+            ++s2; /* ignore bad characters */
         }
     }
     while (fold ? (tolower(*s1) == tolower(*s2)) : (*s1 == *s2)) {
@@ -119,11 +123,11 @@ int mystrcmp(char *s1, char *s2)
         ++s1;
         ++s2;
         if (directory) {
-            while(!isdigit(*s1) && !isalpha(*s1) && !isspace(*s1) && *s1) {
-                ++s1;       /* ignore bad characters */
+            while (!isdigit(*s1) && !isalpha(*s1) && !isspace(*s1) && *s1) {
+                ++s1; /* ignore bad characters */
             }
-            while(!isdigit(*s2) && !isalpha(*s2) && !isspace(*s2) && *s2) {
-                ++s2;       /* ignore bad characters */
+            while (!isdigit(*s2) && !isalpha(*s2) && !isspace(*s2) && *s2) {
+                ++s2; /* ignore bad characters */
             }
         }
     }
@@ -133,7 +137,7 @@ int mystrcmp(char *s1, char *s2)
 void lower(char v[])
 {
     int i = 0;
-    while(v[i]) {
+    while (v[i]) {
         v[i] = tolower(v[i]);
         i++;
     }
@@ -144,6 +148,7 @@ int numcmp(char *s1, char *s2)
     double v1, v2;
     v1 = atof(s1);
     v2 = atof(s2);
+
     if (v1 < v2) {
         return -1;
     } else if (v1 > v2) {
@@ -195,7 +200,7 @@ int readlines(char *lineptr[], int maxlines)
 int get_line(char *s, int lim)
 {
     int c, i;
-    for (i = 0; i<lim-1 && (c=getchar()) != EOF && c != '\n'; i++) {
+    for (i = 0; i<lim-1 && (c = getchar()) != EOF && c != '\n'; i++) {
         s[i] = c;
     }
     if (c == '\n') {
@@ -205,10 +210,6 @@ int get_line(char *s, int lim)
     s[i] = '\0';
     return i;
 }
-
-#define ALLOCSIZE 50000           // size of available space
-static char allocbuf[ALLOCSIZE];  // storage for alloc
-static char *allocp = allocbuf;   // next free position
 
 char *alloc(int n)
 {

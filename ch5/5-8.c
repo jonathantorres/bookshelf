@@ -5,7 +5,7 @@ void month_day(int year, int yearday, int *pmonth, int *pday);
 
 int main(void)
 {
-    int y = 1984, m = 6, d = 30, yd = 366;
+    int y = 1984, m = 6, d = 30, yd = 325;
     int pm, pd;
     printf("Day: %d\n", day_of_year(y, m, d));
     month_day(y, yd, &pm, &pd);

@@ -3,18 +3,25 @@
 #include <ctype.h>
 
 #define MAXTOKEN 100
+#define BUFSIZE 100
+
 enum { NAME, PARENS, BRACKETS, ERR };
 
+int getch(void);
+void ungetch(int c);
 void dcl(void);
 void dirdcl(void);
 int gettoken(void);
+
 int tokentype;
+int bufp = 0;
+char buf[BUFSIZE];
 char token[MAXTOKEN];
 char name[MAXTOKEN];
 char datatype[MAXTOKEN];
 char out[1000];
 
-int main(void)  /* convert declaration to words */
+int main(void)
 {
     while (gettoken() != EOF) {
         strcpy(datatype, token);
@@ -30,8 +37,7 @@ int main(void)  /* convert declaration to words */
 
 int gettoken(void)
 {
-    int c, getch(void);
-    void ungetch(int);
+    int c;
     char *p = token;
 
     while ((c = getch()) == ' ' || c == '\t') {
@@ -66,10 +72,6 @@ int gettoken(void)
         printf("%c", tokentype);
     }
 }
-
-#define BUFSIZE 100
-char buf[BUFSIZE];
-int bufp = 0;
 
 int getch(void)
 {
