@@ -6,6 +6,7 @@
 #define HASHSIZE 101
 #define MAXWORD 1000
 #define BUFSIZE 100
+
 char buf[BUFSIZE];
 int bufp = 0;
 
@@ -17,24 +18,25 @@ struct nlist {
 
 static struct nlist * hashtab[HASHSIZE];
 
-struct nlist * lookup(char * );
-struct nlist * install(char * , char * );
+struct nlist *lookup(char *s);
+struct nlist *install(char *name, char *defn);
 int process(void);
 int getch(void);
-void ungetch(int);
+void ungetch(int c);
 int preproc(void);
 int backslash(void);
 int comment(void);
 int literal(void);
 int readword(void);
-unsigned hash(char *);
-char *_strdup(char *);
+unsigned hash(char *s);
+char *_strdup(char *s);
 
 int main(void)
 {
     int c;
     const int done = 0;
     int status = 1;
+
     while (!done) {
         while (isspace(c = getch())) {
             putchar(c);
@@ -44,20 +46,15 @@ int main(void)
         }
         if (c == '#' && status == 1) {
             status = preproc();
-        }
-        else if (c == '\\') {
+        } else if (c == '\\') {
             status = backslash();
-        }
-        else if (c == '/') {
+        } else if (c == '/') {
             status = comment();
-        }
-        else if (c == '\"') {
+        } else if (c == '\"') {
             status = literal();
-        }
-        else if (c == EOF) {
+        } else if (c == EOF) {
             return 0;
-        }
-        else if (!isalpha(c) && c != '_') {
+        } else if (!isalpha(c) && c != '_') {
             putchar(c);
             status = 0;
         } else {
@@ -75,7 +72,7 @@ int preproc(void)
 {
     int c;
     char name[MAXWORD + 1], defn[MAXWORD + 1];
-    char * n, * d;
+    char *n, *d;
 
     for (n = name; isalpha(c = getch()) && n - name < MAXWORD; ++n) {
         *n = c;
@@ -91,10 +88,10 @@ int preproc(void)
             c = getch();
         }
         for (n = name; (isalnum(c) || c == '_') && n - name < MAXWORD; ++n) {
-            * n = c;
+            *n = c;
             c = getch();
         }
-        * n = '\0';
+        *n = '\0';
 
         while (isspace(c)) {
             if (c == '\n') {
@@ -104,7 +101,7 @@ int preproc(void)
         }
 
         for (d = defn; (isalnum(c) || c == '_') && d - defn < MAXWORD; ++d) {
-            * d = c;
+            *d = c;
             c = getch();
         }
         *d = '\0';
@@ -117,8 +114,9 @@ int preproc(void)
     }
 
     while (c != '\n') {
-        if (c == EOF)
+        if (c == EOF) {
             return EOF;
+        }
         putchar(c);
         c = getch();
     }
@@ -137,8 +135,7 @@ int backslash(void)
 
     if (slash) {
         putchar(c);
-    }
-    else {
+    } else {
         ungetch(c);
     }
 
@@ -194,8 +191,7 @@ int literal(void)
     while (c != '\"' && c != EOF) {
         if (c == '\\') {
             backslash();
-        }
-        else {
+        } else {
             putchar(c);
         }
         c = getch();
@@ -218,15 +214,14 @@ int readword(void)
 
     c = getch();
     for (w = word; (isalnum(c) || c == '_') && c != EOF; ++w) {
-        * w = c;
+        *w = c;
         c = getch();
     }
     *w = '\0';
     node = lookup(word);
     if (node == NULL) {
         printf("%s", word);
-    }
-    else {
+    } else {
         printf("%s", node->defn);
     }
     if (c == EOF) {
@@ -236,9 +231,9 @@ int readword(void)
     return 0;
 }
 
-struct nlist *lookup(char * s)
+struct nlist *lookup(char *s)
 {
-    struct nlist * np;
+    struct nlist *np;
     for (np = hashtab[hash(s)]; np != NULL; np = np->next) {
         if (strcmp(s, np->name) == 0) {
             return np;
@@ -247,13 +242,13 @@ struct nlist *lookup(char * s)
     return NULL;
 }
 
-struct nlist *install(char * name, char * defn)
+struct nlist *install(char *name, char *defn)
 {
-    struct nlist * np;
+    struct nlist *np;
     unsigned hashval;
 
     if ((np = lookup(name)) == NULL) {
-        np = (struct nlist * ) malloc(sizeof(*np));
+        np = (struct nlist*) malloc(sizeof(*np));
         if (np == NULL || (np->name = _strdup(name)) == NULL) {
             return NULL;
         }
@@ -261,7 +256,7 @@ struct nlist *install(char * name, char * defn)
         np->next = hashtab[hashval];
         hashtab[hashval] = np;
     } else {
-        free((void * ) np->defn);
+        free((void *) np->defn);
     }
     if ((np->defn = _strdup(defn)) == NULL) {
         return NULL;
@@ -269,19 +264,19 @@ struct nlist *install(char * name, char * defn)
     return np;
 }
 
-unsigned hash(char * s)
+unsigned hash(char *s)
 {
     unsigned hashval;
-    for (hashval = 0;* s != '\0'; ++s) {
-        hashval = * s + 31 * hashval;
+    for (hashval = 0; *s != '\0'; ++s) {
+        hashval = *s + 31 * hashval;
     }
     return hashval % HASHSIZE;
 }
 
-char *_strdup(char * s)
+char *_strdup(char *s)
 {
-    char * p;
-    p = (char * ) malloc(strlen(s) + 1);
+    char *p;
+    p = (char *) malloc(strlen(s) + 1);
     if (p != NULL) {
         strcpy(p, s);
     }

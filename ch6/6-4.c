@@ -3,13 +3,12 @@
 #include <string.h>
 #include <assert.h>
 
-typedef struct WORD {
-    char *Word;
-    size_t Count;
-    struct WORD *Left;
-    struct WORD *Right;
-}
-WORD;
+typedef struct word_t {
+    char *word;
+    size_t count;
+    struct word_t *left;
+    struct word_t *right;
+} word_t;
 
 #define SUCCESS 0
 #define CANNOT_MALLOC_WORDARRAY 1
@@ -18,203 +17,210 @@ WORD;
 #define NO_MEMORY_FOR_WORD 4
 #define NONALPHA "1234567890 \v\f\n\t\r+=-*/\\,.;:'#~?<>|{}[]`!\"�$%^&()"
 
-int ReadInputToTree(WORD **DestTree, size_t *Treecount, FILE *Input);
-int AddToTree(WORD **DestTree, size_t *Treecount, char *Word);
-int WalkTree(WORD **DestArray, WORD *Word);
-int CompareCounts(const void *vWord1, const void *vWord2);
-int OutputWords(FILE *Dest, size_t Count, WORD **WordArray);
-void FreeTree(WORD *W);
+int read_input_to_tree(word_t **dest_tree, size_t *tree_count, FILE *input);
+int add_to_tree(word_t **dest_tree, size_t *tree_count, char *word);
+int walk_tree(word_t **dest_array, word_t *word);
+int compare_counts(const void *w1, const void *w2);
+int output_words(FILE *dest, size_t Count, word_t **WordArray);
+void free_tree(word_t *w);
 char *dupstr(char *s);
 
-int main(void) {
-    int Status = SUCCESS;
-    WORD *Words = NULL;
-    size_t Treecount = 0;
-    WORD **WordArray = NULL;
+int main(void)
+{
+    int status          = SUCCESS;
+    word_t *words       = NULL;
+    size_t tree_count   = 0;
+    word_t **word_array = NULL;
 
-    if (SUCCESS == Status) {
-        Status = ReadInputToTree( & Words, & Treecount, stdin);
+    if (SUCCESS == status) {
+        status = read_input_to_tree(&words, &tree_count, stdin);
     }
-    if (SUCCESS == Status) {
-        if (0 == Treecount) {
-            Status = NO_WORDS_ON_INPUT;
+    if (SUCCESS == status) {
+        if (0 == tree_count) {
+            status = NO_WORDS_ON_INPUT;
         }
     }
-    if (SUCCESS == Status) {
-        WordArray = malloc(Treecount *sizeof *WordArray);
-        if (NULL == WordArray) {
-            Status = CANNOT_MALLOC_WORDARRAY;
+    if (SUCCESS == status) {
+        word_array = malloc(tree_count * sizeof *word_array);
+        if (NULL == word_array) {
+            status = CANNOT_MALLOC_WORDARRAY;
         }
     }
-    if (SUCCESS == Status) {
-        Status = WalkTree(WordArray, Words);
+    if (SUCCESS == status) {
+        status = walk_tree(word_array, words);
     }
-    if (SUCCESS == Status) {
-        qsort(WordArray, Treecount, sizeof *WordArray, CompareCounts);
+    if (SUCCESS == status) {
+        qsort(word_array, tree_count, sizeof *word_array, compare_counts);
     }
-    if (SUCCESS == Status) {
-        Status = OutputWords(stdout, Treecount, WordArray);
+    if (SUCCESS == status) {
+        status = output_words(stdout, tree_count, word_array);
     }
-    if (NULL != WordArray) {
-        free(WordArray);
-        WordArray = NULL;
+    if (NULL != word_array) {
+        free(word_array);
+        word_array = NULL;
     }
-    if (NULL != Words) {
-        FreeTree(Words);
-        Words = NULL;
+    if (NULL != words) {
+        free_tree(words);
+        words = NULL;
     }
-    if (SUCCESS != Status) {
-        fprintf(stderr, "Program failed with code %d\n", Status);
+    if (SUCCESS != status) {
+        fprintf(stderr, "Program failed with code %d\n", status);
     }
-    return (SUCCESS == Status ? EXIT_SUCCESS : EXIT_FAILURE);
+    return (SUCCESS == status ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-void FreeTree(WORD *W) {
-    if (NULL != W) {
-        if (NULL != W->Word) {
-            free(W-> Word);
-            W-> Word = NULL;
+void free_tree(word_t *w)
+{
+    if (NULL != w) {
+        if (NULL != w->word) {
+            free(w->word);
+            w->word = NULL;
         }
-        if (NULL != W->Left) {
-            FreeTree(W-> Left);
-            W-> Left = NULL;
+        if (NULL != w->left) {
+            free_tree(w->left);
+            w->left = NULL;
         }
-        if (NULL != W->Right) {
-            FreeTree(W-> Right);
-            W-> Right = NULL;
+        if (NULL != w->right) {
+            free_tree(w->right);
+            w->right = NULL;
         }
     }
 }
 
-int AddToTree(WORD **DestTree, size_t *Treecount, char *Word) {
-    int Status = SUCCESS;
-    int CompResult = 0;
+int add_to_tree(word_t **dest_tree, size_t *tree_count, char *word)
+{
+    int status      = SUCCESS;
+    int comp_result = 0;
 
-    assert(NULL != DestTree);
-    assert(NULL != Treecount);
-    assert(NULL != Word);
+    assert(NULL != dest_tree);
+    assert(NULL != tree_count);
+    assert(NULL != word);
 
-    if (NULL == *DestTree) {
-        *DestTree = malloc(sizeof **DestTree);
-        if (NULL == *DestTree) {
-            Status = NO_MEMORY_FOR_WORDNODE;
+    if (NULL == *dest_tree) {
+        *dest_tree = malloc(sizeof **dest_tree);
+        if (NULL == *dest_tree) {
+            status = NO_MEMORY_FOR_WORDNODE;
         } else {
-            ( *DestTree)-> Left = NULL;
-            ( *DestTree)-> Right = NULL;
-            ( *DestTree)-> Count = 1;
-            ( *DestTree)-> Word = dupstr(Word);
-            if (NULL == ( *DestTree)-> Word) {
-                Status = NO_MEMORY_FOR_WORD;
-                free( *DestTree);
-                *DestTree = NULL;
+            (*dest_tree)->left = NULL;
+            (*dest_tree)->right = NULL;
+            (*dest_tree)->count = 1;
+            (*dest_tree)->word = dupstr(word);
+            if (NULL == (*dest_tree)->word) {
+                status = NO_MEMORY_FOR_WORD;
+                free(*dest_tree);
+                *dest_tree = NULL;
             } else {
-                ++*Treecount;
+                ++*tree_count;
             }
         }
     } else {
-        CompResult = strcmp(Word, ( *DestTree)-> Word);
-        if (0 < CompResult) {
-            Status = AddToTree( & ( *DestTree)-> Left, Treecount, Word);
-        } else if (0 > CompResult) {
-            Status = AddToTree( & ( *DestTree)-> Left, Treecount, Word);
+        comp_result = strcmp(word, (*dest_tree)->word);
+        if (0 < comp_result) {
+            status = add_to_tree(&(*dest_tree)->left, tree_count, word);
+        } else if (0 > comp_result) {
+            status = add_to_tree(&(*dest_tree)->left, tree_count, word);
         } else {
-            ++(*DestTree)->Count;
+            ++(*dest_tree)->count;
         }
     }
 
-    return Status;
+    return status;
 }
 
-int ReadInputToTree(WORD **DestTree, size_t *Treecount, FILE *Input) {
-    int Status = SUCCESS;
-    char Buf[8192] = {
-        0
-    };
-    char *Word = NULL;
+int read_input_to_tree(word_t **dest_tree, size_t *tree_count, FILE *input)
+{
+    int status     = SUCCESS;
+    char buf[8192] = {0};
+    char *word     = NULL;
 
-    assert(NULL != DestTree);
-    assert(NULL != Treecount);
-    assert(NULL != Input);
+    assert(NULL != dest_tree);
+    assert(NULL != tree_count);
+    assert(NULL != input);
 
-    while (NULL != fgets(Buf, sizeof Buf, Input)) {
-        Word = strtok(Buf, NONALPHA);
-        while (SUCCESS == Status && NULL != Word) {
-            Status = AddToTree(DestTree, Treecount, Word);
-            if (SUCCESS == Status) {
-                Word = strtok(NULL, NONALPHA);
+    while (fgets(buf, sizeof(buf), input) != NULL) {
+        word = strtok(buf, NONALPHA);
+        while (SUCCESS == status && NULL != word) {
+            status = add_to_tree(dest_tree, tree_count, word);
+            if (SUCCESS == status) {
+                word = strtok(NULL, NONALPHA);
             }
         }
     }
-    return Status;
+    return status;
 }
 
-int WalkTree(WORD **DestArray, WORD *Word) {
-    int Status = SUCCESS;
-    static WORD **Write = NULL;
+int walk_tree(word_t **dest_array, word_t *word)
+{
+    int status            = SUCCESS;
+    static word_t **write = NULL;
 
-    assert(NULL != Word);
-    if (NULL != DestArray) {
-        Write = DestArray;
+    assert(NULL != word);
+
+    if (dest_array != NULL) {
+        write = dest_array;
     }
-    if (NULL != Word) {
-        *Write = Word;
-        ++Write;
-        if (NULL != Word-> Left) {
-            Status = WalkTree(NULL, Word-> Left);
+    if (word != NULL) {
+        *write = word;
+        ++write;
+        if (word->left != NULL) {
+            status = walk_tree(NULL, word->left);
         }
-        if (NULL != Word-> Right) {
-            Status = WalkTree(NULL, Word-> Right);
+        if (word->right != NULL) {
+            status = walk_tree(NULL, word->right);
         }
     }
-    return Status;
+    return status;
 }
 
-int CompareCounts(const void *vWord1,
-    const void *vWord2) {
-    int Result = 0;
-    WORD* const *Word1 = vWord1;
-    WORD* const *Word2 = vWord2;
+int compare_counts(const void *w1, const void *w2)
+{
+    int res              = 0;
+    word_t* const *word1 = w1;
+    word_t* const *word2 = w2;
 
-    assert(NULL != vWord1);
-    assert(NULL != vWord2);
+    assert(NULL != w1);
+    assert(NULL != w2);
 
-    if (( *Word1)-> Count < ( *Word2)-> Count) {
-        Result = 1;
-    } else if (( *Word1)-> Count > ( *Word2)-> Count) {
-        Result = -1;
+    if ((*word1)->count < (*word2)->count) {
+        res = 1;
+    } else if ((*word1)->count > (*word2)->count) {
+        res = -1;
     } else {
-        Result = 0;
+        res = 0;
     }
 
-    return Result;
+    return res;
 }
 
-int OutputWords(FILE *Dest, size_t Count, WORD **WordArray) {
-    int Status = SUCCESS;
-    size_t Pos = 0;
+int output_words(FILE *dest, size_t count, word_t **word_array)
+{
+    int status = SUCCESS;
+    size_t pos = 0;
 
-    assert(NULL != Dest);
-    assert(NULL != WordArray);
+    assert(NULL != dest);
+    assert(NULL != word_array);
 
-    fprintf(Dest, "Total Words: %lu\n", (unsigned long) Count);
+    fprintf(dest, "Total Words: %lu\n", (unsigned long) count);
 
-    while (SUCCESS == Status && Pos < Count) {
-        fprintf(Dest, "%10lu %s\n", (unsigned long) WordArray[Pos]-> Count, WordArray[Pos]-> Word);
-        ++Pos;
+    while (SUCCESS == status && pos < count) {
+        fprintf(dest, "%10lu %s\n", (unsigned long) word_array[pos]->count, word_array[pos]->word);
+        ++pos;
     }
-    return Status;
+    return status;
 }
 
-char *dupstr(char *s) {
-    char *Result = NULL;
+char *dupstr(char *s)
+{
+    char *res   = NULL;
     size_t slen = 0;
 
     assert(NULL != s);
+
     slen = strlen(s);
-    Result = malloc(slen + 1);
-    if (NULL != Result) {
-        memcpy(Result, s, slen);
-        *(Result + slen) = '\0';
+    res  = malloc(slen + 1);
+    if (NULL != res) {
+        memcpy(res, s, slen);
+        *(res + slen) = '\0';
     }
-    return Result;
+    return res;
 }

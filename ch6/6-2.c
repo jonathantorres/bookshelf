@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 struct var_group {
-    char * word;
+    char *word;
 } var_arr[] = {
     { "char" },
     { "double" },
@@ -16,6 +16,12 @@ struct var_group {
     { "unsigned" }
 };
 
+#define DEFAULT 6
+#define MAXWORD 100
+#define MAXVAR 500
+#define VAR_SIZE (sizeof(var_arr) / sizeof(var_arr[0]))
+#define BUFSIZE 100
+
 struct tnode {
     char *word;
     int count;
@@ -23,24 +29,18 @@ struct tnode {
     struct tnode *right;
 };
 
-#define DEFAULT 6
-#define MAXWORD 100
-#define MAXVAR 500
-#define VAR_SIZE (sizeof var_arr / sizeof var_arr[0])
-#define BUFSIZE 100
-
 char buf[BUFSIZE];
 int bufp = 0;
 int vg_index = 0;
 char *vgroup[MAXVAR];
 
 int getword(char *word, int lim);
-int binsearch(char * word, struct var_group var_arr[], int n);
-void getvar(struct var_group * p, int index, int n);
+int binsearch(char *word, struct var_group var_arr[], int n);
+void getvar(int n);
 int getch(void);
 void ungetch(int c);
 struct tnode * talloc(void);
-char *_strdup(char *);
+char *_strdup(char *s);
 struct tnode *addtree(struct tnode *p, char *w);
 void treeprint(struct tnode *p);
 
@@ -53,8 +53,7 @@ int main(int argc, char *argv[])
     if (argc == 1) {
         printf("Usage: ./program -n, a default value has been setted\n");
     } else {
-        while (!isdigit( * ++argv[0])) {
-
+        while (!isdigit(*++argv[0])) {
         }
         n = atoi(*argv);
     }
@@ -62,7 +61,7 @@ int main(int argc, char *argv[])
     while (getword(word, MAXWORD) != EOF) {
         if (isalpha(word[0])) {
             if (((index = binsearch(word, var_arr, VAR_SIZE)) >= 0) && vg_index < MAXVAR) {
-                getvar(var_arr, index, n);
+                getvar(n);
             }
         }
     }
@@ -77,9 +76,8 @@ int main(int argc, char *argv[])
 
 int getword(char *word, int lim)
 {
-    int c, getch(void);
-    void ungetch(int);
-    char * w = word;
+    int c;
+    char *w = word;
 
     while (isspace(c = getch())) {
     }
@@ -91,8 +89,8 @@ int getword(char *word, int lim)
         return c;
     }
     for (; --lim > 0; w++) {
-        if (!isalnum( * w = getch())) {
-            ungetch( * w);
+        if (!isalnum(*w = getch())) {
+            ungetch(*w);
             break;
         }
     }
@@ -104,7 +102,6 @@ int binsearch(char * word, struct var_group var_arr[], int n)
 {
     int cond;
     int low, high, mid;
-
     low = 0;
     high = n - 1;
 
@@ -112,22 +109,19 @@ int binsearch(char * word, struct var_group var_arr[], int n)
         mid = (low + high) / 2;
         if ((cond = strcmp(word, var_arr[mid].word)) < 0) {
             high = mid - 1;
-        }
-        else if (cond > 0) {
+        } else if (cond > 0) {
             low = mid + 1;
-        }
-        else {
+        } else {
             return mid;
         }
     }
     return -1;
 }
 
-void getvar(struct var_group * p, int index, int n)
+void getvar(int n)
 {
-    int c, getch(void);
+    int c;
     int i = 0;
-    void ungetch(int);
     char word[MAXWORD];
 
     while (isspace(c = getch())) {
@@ -154,7 +148,6 @@ void getvar(struct var_group * p, int index, int n)
             }
         }
     }
-    return;
 }
 
 int getch(void)
@@ -166,8 +159,7 @@ void ungetch(int c)
 {
     if (bufp >= BUFSIZE) {
         printf("ungetch: too many characters\n");
-    }
-    else {
+    } else {
         buf[bufp++] = c;
     }
 }
@@ -182,11 +174,9 @@ struct tnode *addtree(struct tnode *p, char *w)
         p->left = p->right = NULL;
     } else if ((cond = strcmp(w, p->word)) == 0) {
         p->count++;
-    }
-    else if (cond < 0) {
+    } else if (cond < 0) {
         p->left = addtree(p->left, w);
-    }
-    else {
+    } else {
         p->right = addtree(p->right, w);
     }
     return p;
@@ -208,8 +198,8 @@ struct tnode *talloc(void)
 
 char *_strdup(char * s)
 {
-    char * p;
-    p = (char * ) malloc(strlen(s) + 1);
+    char *p;
+    p = (char *) malloc(strlen(s) + 1);
     if (p != NULL) {
         strcpy(p, s);
     }

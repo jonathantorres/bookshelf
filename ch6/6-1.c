@@ -3,7 +3,11 @@
 #include <string.h>
 
 #define MAXWORD 100
-#define NKEYS (sizeof keytab / sizeof keytab[0])
+#define BUFFSIZE 100
+#define NKEYS (sizeof(keytab) / sizeof(keytab[0]))
+
+char buf[BUFFSIZE];
+int bufp = 0;
 
 struct key
 {
@@ -21,9 +25,11 @@ struct key
     { "while", 0 },
 };
 
-int acceptable(char);
-int getword(char *, int);
-int binsearch(char *, struct key *, int);
+int getch(void);
+void ungetch(int c);
+int acceptable(char c);
+int getword(char *word, int lim);
+int binsearch(char *word, struct key tab[], int n);
 
 int main(void)
 {
@@ -66,12 +72,10 @@ int binsearch(char *word, struct key tab[], int n)
 
 int getword(char *word, int lim)
 {
-    int c, getch(void);
-    void ungetch(int);
+    int c;
     char *w = word;
 
     while (isspace(c = getch())) {
-
     }
     if (c != EOF) {
         *w++ = c;
@@ -89,10 +93,6 @@ int getword(char *word, int lim)
     *w = '\0';
     return word[0];
 }
-
-#define BUFFSIZE 100
-char buf[BUFFSIZE];
-int bufp = 0;
 
 int getch(void)
 {

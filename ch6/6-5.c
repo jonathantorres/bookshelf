@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #define HASHSIZE 101
 #define MAXWORD 1000
 #define BUFSIZE 100
+
 char buf[BUFSIZE];
 int bufp = 0;
 
@@ -14,22 +16,28 @@ struct nlist {
     char *name;
     char *defn;
 };
-static struct nlist * hashtab[HASHSIZE];
+static struct nlist *hashtab[HASHSIZE];
 
 void undef(char *s);
-struct nlist *lookup(char * s);
-struct nlist *install(char * name, char * defn);
-unsigned hash(char * s);
-char *_strdup(char * s);
+struct nlist *lookup(char *s);
+struct nlist *install(char *name, char *defn);
+unsigned hash(char *s);
+char *_strdup(char *s);
 
 int main(void)
 {
+    struct nlist *lu = install("Jonathan", "def");
+    if (!lu) {
+        puts("Error!");
+        return 1;
+    }
+    assert(lookup("Jonathan") != NULL);
     return 0;
 }
 
-struct nlist *lookup(char * s)
+struct nlist *lookup(char *s)
 {
-    struct nlist * np;
+    struct nlist *np;
     for (np = hashtab[hash(s)]; np != NULL; np = np->next) {
         if (strcmp(s, np->name) == 0) {
             return np;
@@ -38,13 +46,13 @@ struct nlist *lookup(char * s)
     return NULL;
 }
 
-struct nlist *install(char * name, char * defn)
+struct nlist *install(char *name, char *defn)
 {
-    struct nlist * np;
+    struct nlist *np;
     unsigned hashval;
 
     if ((np = lookup(name)) == NULL) {
-        np = (struct nlist * ) malloc(sizeof(*np));
+        np = (struct nlist *) malloc(sizeof(*np));
         if (np == NULL || (np->name = _strdup(name)) == NULL) {
             return NULL;
         }
@@ -52,7 +60,7 @@ struct nlist *install(char * name, char * defn)
         np->next = hashtab[hashval];
         hashtab[hashval] = np;
     } else {
-        free((void * ) np->defn);
+        free((void *) np->defn);
     }
     if ((np->defn = _strdup(defn)) == NULL) {
         return NULL;
@@ -60,19 +68,19 @@ struct nlist *install(char * name, char * defn)
     return np;
 }
 
-unsigned hash(char * s)
+unsigned hash(char *s)
 {
     unsigned hashval;
-    for (hashval = 0;* s != '\0'; ++s) {
-        hashval = * s + 31 * hashval;
+    for (hashval = 0; *s != '\0'; ++s) {
+        hashval = *s + 31 * hashval;
     }
     return hashval % HASHSIZE;
 }
 
-char *_strdup(char * s)
+char *_strdup(char *s)
 {
-    char * p;
-    p = (char * ) malloc(strlen(s) + 1);
+    char *p;
+    p = (char *) malloc(strlen(s) + 1);
     if (p != NULL) {
         strcpy(p, s);
     }
@@ -83,6 +91,7 @@ void undef(char *s)
 {
     struct nlist *np1, *np2;
     unsigned hashval = hash(s);
+
     for (np1 = hashtab[hashval], np2 = NULL; np1 != NULL; np2 = np1, np1 = np1->next) {
         if (strcmp(s, np1->name) == 0) {
             free(np1->name);

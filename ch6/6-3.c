@@ -28,7 +28,7 @@ struct wordtree *addword(struct wordtree **node, char *word, int line);
 char *char_in_string(char *s, int c);
 char *tokenise(char **s, char *delims);
 int noiseword(char *s);
-char *get_line(char * s, int n, FILE * fp);
+char *get_line(char *s, int n, FILE *fp);
 
 int main(void)
 {
@@ -40,12 +40,12 @@ int main(void)
     struct wordtree *tree = NULL;
     char *delims = " \t\n\r\a\f\v!\"%^&*()_=+{}[]\\|/,.<>:;#~?";
 
-    while (!giveup && get_line(buffer, sizeof buffer, stdin) != NULL) {
+    while (!giveup && get_line(buffer, sizeof(buffer), stdin) != NULL) {
         ++line;
         s = buffer;
         while (!giveup && (word = tokenise(&s, delims)) != NULL) {
             if (!noiseword(word)) {
-                if (NULL == addword(&tree, word, line)) {
+                if (addword(&tree, word, line) == NULL) {
                     printf("Error adding data into memory. Giving up.\n");
                     giveup = 1;
                 }
@@ -120,7 +120,7 @@ void printtree(struct wordtree *node)
 
 struct linelist *addlink(int line)
 {
-    struct linelist *new = malloc(sizeof *new);
+    struct linelist *new = malloc(sizeof(struct linelist));
     if (new != NULL) {
         new->line = line;
         new->next = NULL;
@@ -169,8 +169,8 @@ struct wordtree *addword(struct wordtree **node, char *word, int line)
     int diff = 0;
 
     if (node != NULL && word != NULL) {
-        if (NULL == *node) {
-            *node = malloc(sizeof **node);
+        if (*node == NULL) {
+            *node = malloc(sizeof(**node));
             if (NULL != *node) {
                 (*node)->left = NULL;
                 (*node)->right = NULL;
@@ -184,7 +184,7 @@ struct wordtree *addword(struct wordtree **node, char *word, int line)
             }
         } else {
             diff = i_strcmp((*node)->word, word);
-            if (0 == diff) {
+            if (diff == 0) {
                 newline = addlink(line);
                 if (newline != NULL) {
                     wordloc = *node;
@@ -267,7 +267,7 @@ int noiseword(char *s)
         "they",
         "you"
     };
-    int top = sizeof list / sizeof list[0] - 1;
+    int top = sizeof(list) / sizeof(list[0]) - 1;
     int bottom = 0;
     int guess = top / 2;
     int diff = 0;
@@ -311,6 +311,3 @@ char *get_line(char * s, int n, FILE * fp)
     }
     return p;
 }
-
-
-
