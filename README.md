@@ -1,7 +1,7 @@
 # K&R
 The exercises and programs for "The C Programming Language", better known as K&R.
 
-![Book Cover](https://github.com/jonathantorres/kr/blob/revs/cover.jpeg)
+![Book Cover](https://github.com/jonathantorres/kr/blob/master/cover.jpeg)
 
 #### Running an exercise
 In order to run an exercise, use the make command for it. For example, to run exercise 3 of chapter 1:
