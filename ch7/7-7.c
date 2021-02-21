@@ -6,7 +6,7 @@
 
 int get_line(char *line, int max);
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
     FILE *f;
     char line[MAXLINE], *pattern;
@@ -30,8 +30,9 @@ int main(int argc, char * argv[])
             }
         }
     }
+
     if (argn++ <= argc) {
-        pattern = * argv;
+        pattern = *argv;
         if (argn <= argc) {
             lineno = 0;
             while (*++argv != NULL) {

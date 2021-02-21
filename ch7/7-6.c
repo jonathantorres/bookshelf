@@ -4,13 +4,13 @@
 
 #define MAXLINE 100
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
     FILE *f1, *f2;
     char l1[MAXLINE], l2[MAXLINE];
     char *prog = argv[0];
     if (argc != 3) {
-        printf("error: the program takes 2 arguments;\n");
+        printf("error: the program takes 2 arguments\n");
         return 0;
     } else {
         if ((f1 = fopen(*++argv, "r")) != NULL) {

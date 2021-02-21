@@ -1,24 +1,24 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-void miniprintf(char * fmt, ...);
+void miniprintf(char *fmt, ...);
 
 int main(void)
 {
-    miniprintf("This is the %c\n", 's');
+    miniprintf("This is the letter %c\n", 's');
 }
 
-void miniprintf(char * fmt, ...)
+void miniprintf(char *fmt, ...)
 {
     va_list ap;
-    char * p, * sval;
+    char *p, *sval;
     int ival;
     double dval;
 
     va_start(ap, fmt);
     for (p = fmt; *p; p++) {
         if (*p != '%') {
-            putchar( * p);
+            putchar(*p);
             continue;
         }
         switch (*++p) {
@@ -53,7 +53,7 @@ void miniprintf(char * fmt, ...)
                 printf("%f", dval);
                 break;
             case 's':
-                for (sval = va_arg(ap, char *); *sval; sval++) {
+                for (sval = va_arg(ap, char*); *sval; sval++) {
                     putchar(*sval);
                 }
                 break;

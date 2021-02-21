@@ -3,8 +3,8 @@
 #define LINELEN 10
 #define OCTLEN 3
 
-int printoct(int, int);
-int printnor(int, int);
+int printoct(int c, int n);
+int printnor(int c, int n);
 
 int main(void)
 {
