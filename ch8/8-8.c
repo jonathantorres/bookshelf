@@ -1,60 +1,10 @@
-#include <unistd.h>
-#include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 
-#ifdef NULL
-#undef NULL
-#endif
-
-#define NULL 0
-#define EOF (-1)
-#define BUFSIZ 1024
-#define OPEN_MAX 20
-
-typedef struct {
-    unsigned int is_read  : 1;
-    unsigned int is_write : 1;
-    unsigned int is_unbuf : 1;
-    unsigned int is_eof   : 1;
-    unsigned int is_err   : 1;
-} flags;
-
-typedef struct _iobuf {
-    int cnt;    /* Characters left */
-    char *ptr;  /* next character position */
-    char *base; /* location of buffer */
-    flags flag; /* mode of file access */
-    int fd; /* file descriptor */
-} FILE;
-
-FILE _iob[OPEN_MAX];
-
-#define stdin   (&_iob[0])
-#define stdout  (&_iob[1])
-#define stderr  (&_iob[2])
-
-enum _flags {
-    _READ   = 01,   /* file open for reading */
-    _WRITE  = 02,   /* file open for writing */
-    _UNBUF  = 04,   /* file is unbuffered */
-    _EOF    = 010,  /* EOF has occurred on this file */
-    _ERR    = 020   /* error occurred on this file */
-};
-
-int _fillbuf(FILE *);
-int _flushbuf(int, FILE *);
-
-#define feof(p)     (((p)->flag & _EOF) != 0)
-#define ferror(p)   (((p)->flag & _ERR) != 0)
-#define fileno(p)   ((p)->fd)
-
-#define getc(p) (--(p)->cnt >= 0\
-        ? (unsigned char) *(p)->ptr++ : _fillbuf(p))
-#define putc(x,p) (--(p)->cnt >= 0 \
-        ? *(p)->ptr++ = (x) : _flushbuf((x), p))
-
-#define getchar()   getc(stdin)
-#define putchar(x)  putc((x), stdout)
+#define MAXBYTES 10240
+#define NALLOC   1024
 
 typedef long Align;
 
@@ -66,10 +16,79 @@ union header {
 };
 
 typedef union header Header;
+static Header base;
+static Header *freep = NULL;
+
+static Header *morecore(unsigned nu);
+void *mymalloc(unsigned nbytes);
+void myfree(void *ap);
+unsigned bfree(char *p, unsigned n);
 
 int main(void)
 {
+    char *mem = mymalloc(100);
+    assert(mem != NULL);
+    strcpy(mem, "Jonathan Torres");
+    printf("%s\n", mem);
+    unsigned int n = bfree(mem, 100);
+    assert(n != 0);
     return 0;
+}
+
+static Header *morecore(unsigned nu)
+{
+    char *cp, *sbrk(int);
+    Header *up;
+
+    if (nu < NALLOC) {
+        nu = NALLOC;
+    }
+
+    cp = sbrk(nu * sizeof(Header));
+    if (cp == (char *) - 1) {
+        return NULL;
+    }
+
+    up = (Header *) cp;
+    up->s.size = nu;
+    myfree((void *)(up + 1));
+    return freep;
+}
+
+void *mymalloc(unsigned nbytes)
+{
+    Header *p, *prevp;
+    unsigned nunits;
+
+    if (nbytes > MAXBYTES) {
+        fprintf(stderr, "alloc: can't allocate more than %u bytes\n", MAXBYTES);
+        return NULL;
+    }
+    nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1;
+
+    if ((prevp = freep) == NULL) {
+        base.s.ptr = freep = prevp = & base;
+        base.s.size = 0;
+    }
+    for (p = prevp->s.ptr;; prevp = p, p = p->s.ptr) {
+        if (p->s.size >= nunits) {
+            if (p->s.size == nunits) {
+                prevp->s.ptr = p->s.ptr;
+            } else {
+                p->s.size -= nunits;
+                p += p->s.size;
+                p->s.size = nunits;
+            }
+            freep = prevp;
+            return (void *)(p + 1);
+        }
+
+        if (p == freep) {
+            if ((p = morecore(nunits)) == NULL) {
+                return NULL;
+            }
+        }
+    }
 }
 
 unsigned bfree(char *p, unsigned n)
@@ -80,6 +99,33 @@ unsigned bfree(char *p, unsigned n)
     }
     hp = (Header *) p;
     hp->s.size = n / sizeof(Header);
-    free((void *)(hp+1));
+    myfree((void *)(hp+1));
     return hp->s.size;
+}
+
+void myfree(void *ap)
+{
+    Header *bp, *p;
+    bp = (Header *) ap - 1;
+
+    for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
+        if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
+            break;
+        }
+    }
+
+    if (bp + bp->s.size == p->s.ptr) {
+        bp->s.size += p->s.ptr->s.size;
+        bp->s.ptr = p->s.ptr->s.ptr;
+    } else {
+        bp->s.ptr = p->s.ptr;
+    }
+
+    if (p + p->s.size == bp) {
+        p->s.size += bp->s.size;
+        p->s.ptr = bp->s.ptr;
+    } else {
+        p->s.ptr = bp;
+    }
+    freep = p;
 }

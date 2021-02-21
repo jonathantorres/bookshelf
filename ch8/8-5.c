@@ -7,6 +7,11 @@
 #include <unistd.h>
 
 #define NAME_MAX 14
+#define MAX_PATH 1024
+
+#ifndef DIRSIZ
+#define DIRSIZ 14
+#endif
 
 typedef struct {
     long ino;
@@ -18,13 +23,19 @@ typedef struct {
     Dirent d;
 } DIR;
 
+struct direct {
+    ino_t d_ino;
+    char d_name[DIRSIZ];
+};
+
 DIR *opendir(char *dirname);
 Dirent *readdir(DIR *dfd);
 void closedir(DIR *dfd);
+void dirwalk(char *dir, void (*fcn)(char *));
 
 char *name;
 struct stat stbuf;
-void fsize(char *);
+void fsize(char *name);
 
 int main(int argc, char **argv)
 {
@@ -37,8 +48,6 @@ int main(int argc, char **argv)
     }
     return 0;
 }
-
-void dirwalk(char *, void (*fcn)(char *));
 
 void fsize(char *name)
 {
@@ -62,8 +71,6 @@ void fsize(char *name)
         stbuf.st_ctime, name);
 }
 
-#define MAX_PATH 1024
-
 void dirwalk(char *dir, void (*fcn)(char *))
 {
     char name[MAX_PATH];
@@ -75,8 +82,7 @@ void dirwalk(char *dir, void (*fcn)(char *))
         return;
     }
     while ((dp = readdir(dfd)) != NULL) {
-        if (strcmp(dp->name, ".") == 0
-        || strcmp(dp->name, "..") == 0) {
+        if (strcmp(dp->name, ".") == 0 || strcmp(dp->name, "..") == 0) {
             continue;
         }
         if (strlen(dir)+strlen(dp->name)+2 > sizeof(name)) {
@@ -88,15 +94,6 @@ void dirwalk(char *dir, void (*fcn)(char *))
     }
     closedir(dfd);
 }
-
-#ifndef DIRSIZ
-#define DIRSIZ 14
-#endif
-
-struct direct {
-    ino_t d_ino;
-    char d_name[DIRSIZ];
-};
 
 DIR *opendir(char *dirname)
 {

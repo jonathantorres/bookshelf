@@ -24,7 +24,7 @@ typedef struct _iobuf {
     char *ptr;  /* next character position */
     char *base; /* location of buffer */
     flags flag; /* mode of file access */
-    int fd; /* file descriptor */
+    int fd;     /* file descriptor */
 } FILE;
 
 FILE _iob[OPEN_MAX];
@@ -41,8 +41,8 @@ enum _flags {
     _ERR    = 020   /* error occurred on this file */
 };
 
-int _fillbuf(FILE *);
-int _flushbuf(int, FILE *);
+int _fillbuf(FILE *fp);
+int _flushbuf(int n, FILE *fp);
 
 #define feof(p)     (((p)->flag & _EOF) != 0)
 #define ferror(p)   (((p)->flag & _ERR) != 0)

@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-void error(char *, ...);
+void error(char *fmt, ...);
 void filecopy(int from, int to);
 
 int main(int argc, char *argv[])
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void error(char * fmt, ...)
+void error(char *fmt, ...)
 {
     va_list args;
 

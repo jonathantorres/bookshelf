@@ -52,13 +52,13 @@ static Header *morecore(unsigned nu)
     }
 
     cp = sbrk(nu * sizeof(Header));
-    if (cp == (char * ) - 1) {
+    if (cp == (char *) - 1) {
         return NULL;
     }
 
-    up = (Header * ) cp;
+    up = (Header *) cp;
     up->s.size = nu;
-    myfree((void * )(up + 1));
+    myfree((void *)(up + 1));
     return freep;
 }
 
@@ -81,14 +81,13 @@ void *mymalloc(unsigned nbytes)
         if (p->s.size >= nunits) {
             if (p->s.size == nunits) {
                 prevp->s.ptr = p->s.ptr;
-            }
-            else {
+            } else {
                 p->s.size -= nunits;
                 p += p->s.size;
                 p->s.size = nunits;
             }
             freep = prevp;
-            return (void * )(p + 1);
+            return (void *)(p + 1);
         }
 
         if (p == freep) {
@@ -99,7 +98,7 @@ void *mymalloc(unsigned nbytes)
     }
 }
 
-void myfree(void * ap)
+void myfree(void *ap)
 {
     Header *bp, *p;
     bp = (Header *) ap - 1;
