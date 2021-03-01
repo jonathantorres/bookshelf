@@ -18,7 +18,21 @@ multi_buff_cli: ch3/multi_buff_cli.c
 	$(CFLAGS) ch3/multi_buff_cli.c -o bin/multi_buff_cli
 multi_buff_srv: ch3/multi_buff_srv.c
 	$(CFLAGS) ch3/multi_buff_srv.c -o bin/multi_buff_srv
-
+# Chapter 6 Programs
+tcp_srvd: ch6/tcp_srvd.c
+	$(CFLAGS) ch6/tcp_srvd.c -o bin/tcp_srvd
+spp: ch6/spp.c
+	$(CFLAGS) ch6/spp.c -o bin/spp
+rresvport: ch6/rresvport.c
+	$(CFLAGS) ch6/rresvport.c -o bin/rresvport
+tcp_print: ch6/tcp_print.c
+	$(CFLAGS) ch6/tcp_print.c -o bin/tcp_print
+select: ch6/select.c
+	$(CFLAGS) ch6/select.c -o bin/select
+writev_srv: ch6/writev_srv.c
+	$(CFLAGS) ch6/writev_srv.c -o bin/writev_srv
+writev_cli: ch6/writev_cli.c
+	$(CFLAGS) ch6/writev_cli.c -o bin/writev_cli
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
