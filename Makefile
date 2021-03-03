@@ -33,6 +33,9 @@ writev_srv: ch6/writev_srv.c
 	$(CFLAGS) ch6/writev_srv.c -o bin/writev_srv
 writev_cli: ch6/writev_cli.c
 	$(CFLAGS) ch6/writev_cli.c -o bin/writev_cli
+# Chapter 11 Program
+ping: ch11/ping.c
+	$(CFLAGS) ch11/ping.c -o bin/ping
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
