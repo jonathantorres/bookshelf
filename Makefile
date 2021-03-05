@@ -41,6 +41,9 @@ tftp_cli: ch12/tftp_cli.c
 	$(CFLAGS) ch12/tftp_cli.c -o bin/tftp_cli
 tftp_srv: ch12/tftp_srv.c
 	$(CFLAGS) ch12/tftp_srv.c -o bin/tftp_srv
+# Chapter 13 Program
+lpr: ch13/lpr.c
+	$(CFLAGS) ch13/lpr.c -o bin/lpr
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
