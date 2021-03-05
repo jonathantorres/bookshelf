@@ -36,6 +36,11 @@ writev_cli: ch6/writev_cli.c
 # Chapter 11 Program
 ping: ch11/ping.c
 	$(CFLAGS) ch11/ping.c -o bin/ping
+# Chapter 12 Programs
+tftp_cli: ch12/tftp_cli.c
+	$(CFLAGS) ch12/tftp_cli.c -o bin/tftp_cli
+tftp_srv: ch12/tftp_srv.c
+	$(CFLAGS) ch12/tftp_srv.c -o bin/tftp_srv
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
