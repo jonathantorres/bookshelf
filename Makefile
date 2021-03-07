@@ -44,6 +44,9 @@ tftp_srv: ch12/tftp_srv.c
 # Chapter 13 Program
 lpr: ch13/lpr.c
 	$(CFLAGS) ch13/lpr.c -o bin/lpr
+# Chapter 16 Program
+rmt: ch16/rmt.c
+	$(CFLAGS) ch16/rmt.c -o bin/rmt
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
