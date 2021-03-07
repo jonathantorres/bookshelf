@@ -47,6 +47,15 @@ lpr: ch13/lpr.c
 # Chapter 16 Program
 rmt: ch16/rmt.c
 	$(CFLAGS) ch16/rmt.c -o bin/rmt
+# Chapter 17 Programs
+time_pipe: ch17/time_pipe.c
+	$(CFLAGS) ch17/time_pipe.c -o bin/time_pipe
+time_msgq: ch17/time_msgq.c
+	$(CFLAGS) ch17/time_msgq.c -o bin/time_msgq
+sender: ch17/sender.c
+	$(CFLAGS) ch17/sender.c -o bin/sender
+recvr: ch17/recvr.c
+	$(CFLAGS) ch17/recvr.c -o bin/recvr
 clean:
 	rm -f ./*.o ch*/*.h.gch
 	rm -Rf ./bin && mkdir bin && touch ./bin/.gitkeep
