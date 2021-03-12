@@ -1,7 +1,5 @@
 package main
 
-// Exercise 1.2
-
 import (
 	"fmt"
 	"os"
