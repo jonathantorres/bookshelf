@@ -1,7 +1,5 @@
 package tempconv
 
-// Exercise 2.1
-
 func CToF(c Celsius) Fahrenheit {
 	return Fahrenheit(c*9/5 + 32)
 }
@@ -23,5 +21,5 @@ func KToC(k Kelvin) Celsius {
 }
 
 func KToF(k Kelvin) Fahrenheit {
-	return Fahrenheit(k*1.8-459.17)
+	return Fahrenheit(k*1.8 - 459.17)
 }

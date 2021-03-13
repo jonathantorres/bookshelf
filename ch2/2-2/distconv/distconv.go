@@ -1,7 +1,5 @@
 package distconv
 
-// Exercise 2.2
-
 import "fmt"
 
 type Feet float64

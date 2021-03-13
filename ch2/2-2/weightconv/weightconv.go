@@ -1,7 +1,5 @@
 package weightconv
 
-// Exercise 2.2
-
 import "fmt"
 
 type Pound float64
