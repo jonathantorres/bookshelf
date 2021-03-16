@@ -1,8 +1,5 @@
 package main
 
-// Exercise 3.5
-// Exercise 3.6
-
 import (
 	"image"
 	"image/color"
@@ -37,7 +34,7 @@ func main() {
 			img.Set(px, py, avg(subPixels))
 		}
 	}
-	png.Encode(os.Stdout, img)
+	png.Encode(os.Stdout, img) // NOTE: ignoring errors
 }
 
 func avg(colors []color.Color) color.Color {
@@ -56,6 +53,7 @@ func avg(colors []color.Color) color.Color {
 func mandelbrot(z complex128) color.Color {
 	const iterations = 200
 	const contrast = 15
+
 	var v complex128
 	for n := uint8(0); n < iterations; n++ {
 		v = v*v + z

@@ -1,8 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-// Exercise 3.13
 const (
 	B  = 1
 	KB = B * 1000
@@ -15,18 +16,6 @@ const (
 	YB = ZB * 1000
 )
 
-const (
-	_ = 1 << (10 * iota)
-	KiB
-	MiB
-	GiB
-	TiB
-	PiB
-	EiB
-	ZiB
-	YiB
-)
-
 func main() {
-	fmt.Println(EB)
+	fmt.Println(KB, MB, GB, TB, PB, EB)
 }

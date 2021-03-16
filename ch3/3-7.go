@@ -1,7 +1,5 @@
 package main
 
-// Exercise 3.7
-
 import (
 	"image"
 	"image/color"
