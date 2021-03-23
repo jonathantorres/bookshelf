@@ -1,7 +1,5 @@
 package main
 
-// Exercise 4.13
-
 import (
 	"encoding/json"
 	"fmt"
@@ -23,7 +21,7 @@ type Movie struct {
 	Poster string `json:"Poster"`
 }
 
-const apiKey = "YOURKEY" // replace with your API key
+const apiKey = "API_KEY" // replace with your API key
 const omdbUrl = "http://www.omdbapi.com/?apikey=" + apiKey + "&type=movie"
 
 func main() {
@@ -41,7 +39,7 @@ func main() {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		fmt.Fprintf(os.Stderr, "There was a problem with the response: %s\n", err)
+		fmt.Fprintf(os.Stderr, "There was a problem with the response: %s\n", resp.Status)
 		os.Exit(1)
 	}
 	var results Results

@@ -1,15 +1,14 @@
 package main
 
-// Exercise 4.14
-
 import (
 	"fmt"
-	"github.com/jonathantorres/gopl/ch4/github"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/jonathantorres/gopl/ch4/github"
 )
 
 const templ = `
@@ -45,7 +44,7 @@ var report = template.Must(template.New("issuelist").
 func main() {
 	result, err := github.SearchIssues(os.Args[1:])
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

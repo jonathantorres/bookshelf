@@ -1,7 +1,5 @@
 package main
 
-// Exercise 4.11
-
 import (
 	"bytes"
 	"encoding/json"
@@ -12,7 +10,7 @@ import (
 )
 
 const apiUrl = "https://api.github.com"
-const oauthToken = "YOURTOKEN" // Replace with your oauth2 token
+const oauthToken = "API_TOKEN" // Replace with your oauth2 token
 
 type Issue struct {
 	ID        int64     `json:"id"`

@@ -1,14 +1,16 @@
 package main
 
-import "fmt"
-
-// Exercise 4.3
+import (
+	"fmt"
+)
 
 func main() {
-	n := [...]int{1, 2, 3, 4, 5}
-	fmt.Println(n)
-	reverse(&n)
-	fmt.Println(n)
+	s := [5]int{
+		1, 2, 3, 4, 5,
+	}
+	fmt.Println(s)
+	reverse(&s)
+	fmt.Println(s)
 }
 
 func reverse(s *[5]int) {

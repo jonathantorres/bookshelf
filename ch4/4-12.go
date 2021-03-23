@@ -1,7 +1,5 @@
 package main
 
-// Exercise 4.12
-
 import (
 	"encoding/json"
 	"fmt"
@@ -48,22 +46,22 @@ func main() {
 }
 
 func buildIndex() {
-	fmt.Println("Building index...")
+	fmt.Print("Building index...")
 	comics := make([]*Comic, 0)
 	for i := 1; i <= amountOfComics; i++ {
 		resp, err := http.Get("https://xkcd.com/" + strconv.Itoa(i) + "/info.0.json")
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
+			fmt.Fprintf(os.Stderr, "failed! %s\n", err)
 			continue
 		}
 		if resp.StatusCode != 200 {
-			fmt.Fprintf(os.Stderr, "Problem with the request: %s\n", resp.Status)
+			fmt.Fprintf(os.Stderr, "failed! Problem with the request: %s\n", resp.Status)
 			continue
 		}
 		comic := Comic{}
 		err = json.NewDecoder(resp.Body).Decode(&comic)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Problem encoding response body: %s\n", err)
+			fmt.Fprintf(os.Stderr, "failed! Problem encoding response body: %s\n", err)
 			continue
 		}
 		comics = append(comics, &comic)
@@ -71,14 +69,14 @@ func buildIndex() {
 	}
 	jsonStr, err := json.Marshal(comics)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error marshaling data: %s", err)
+		fmt.Fprintf(os.Stderr, "failed! Error marshaling data: %s", err)
 		os.Exit(1)
 	}
 	if err = ioutil.WriteFile("xkcd.txt", jsonStr, 0644); err != nil {
-		fmt.Fprintf(os.Stderr, "Error saving offline data: %s", err)
+		fmt.Fprintf(os.Stderr, "failed! Error saving offline data: %s", err)
 		os.Exit(1)
 	}
-	fmt.Println("Index completed")
+	fmt.Print("done!\n")
 }
 
 func searchComic(keywords []string) {
