@@ -1,11 +1,10 @@
 package main
 
-// Exercise 5.14
-
 import (
 	"fmt"
 )
 
+// prereqs maps computer science courses to their prerequisites.
 var prereqs = map[string][]string{
 	"algorithms": {"data structures"},
 	"calculus":   {"linear algebra"},
@@ -24,16 +23,7 @@ var prereqs = map[string][]string{
 }
 
 func main() {
-	var course string
-	for course = range prereqs {
-		break
-	}
-	breadthFirst(printClass, []string{course})
-}
-
-func printClass(class string) []string {
-	fmt.Println(class)
-	return prereqs[class]
+	breadthFirst(printCourses, prereqs["compilers"])
 }
 
 func breadthFirst(f func(item string) []string, worklist []string) {
@@ -48,4 +38,9 @@ func breadthFirst(f func(item string) []string, worklist []string) {
 			}
 		}
 	}
+}
+
+func printCourses(course string) []string {
+	fmt.Println(course)
+	return prereqs[course]
 }

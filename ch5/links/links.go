@@ -2,8 +2,9 @@ package links
 
 import (
 	"fmt"
-	"golang.org/x/net/html"
 	"net/http"
+
+	"golang.org/x/net/html"
 )
 
 func Extract(url string) ([]string, error) {

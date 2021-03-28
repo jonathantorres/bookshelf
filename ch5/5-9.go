@@ -1,7 +1,5 @@
 package main
 
-// Exercise 5.9
-
 import (
 	"fmt"
 	"strings"
@@ -9,9 +7,9 @@ import (
 )
 
 var subs = map[string]string{
-	"name": "Jonathan",
+	"name":     "Jonathan",
 	"hometown": "Puerto Rico",
-	"age": "35",
+	"age":      "35",
 }
 
 func main() {
