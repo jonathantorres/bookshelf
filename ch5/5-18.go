@@ -1,7 +1,5 @@
 package main
 
-// Exercise 5.18
-
 import (
 	"fmt"
 	"io"
@@ -17,7 +15,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "fetch %s: %v\n", url, err)
 			continue
 		}
-		fmt.Fprintf(os.Stdout, "%s => %s (%d bytes).\n", url, local, n)
+		fmt.Fprintf(os.Stderr, "%s => %s (%d bytes).\n", url, local, n)
 	}
 }
 
@@ -37,10 +35,14 @@ func fetch(url string) (filename string, n int64, err error) {
 		return "", 0, err
 	}
 	defer func() {
-		if closeErr := f.Close(); err == nil {
+		closeErr := f.Close()
+		if err == nil {
 			err = closeErr
 		}
 	}()
 	n, err = io.Copy(f, resp.Body)
+	if err != nil {
+		return "", 0, err
+	}
 	return local, n, err
 }
