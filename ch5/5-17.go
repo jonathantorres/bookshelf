@@ -29,7 +29,6 @@ func main() {
 		os.Exit(1)
 	}
 	elems := ElementsByTagName(doc, tags...)
-	fmt.Println(elems)
 	if len(elems) > 0 {
 		for _, e := range elems {
 			printNode(os.Stdout, e)
@@ -39,32 +38,30 @@ func main() {
 
 func ElementsByTagName(doc *html.Node, names ...string) []*html.Node {
 	tags := make([]*html.Node, 0, 10)
-	forEachNode(doc, findElementsByTag, nil, tags, names...)
+	elemsByTag := func(n *html.Node) {
+		if n != nil && n.Type == html.ElementNode {
+			for _, name := range names {
+				if name == n.Data {
+					tags = append(tags, n)
+				}
+			}
+		}
+	}
+	forEachNode(doc, elemsByTag, nil)
 	return tags
 }
 
-func forEachNode(n *html.Node, pre, post func(n *html.Node, tags []*html.Node, names ...string), tags []*html.Node, names ...string) {
+func forEachNode(n *html.Node, pre, post func(n *html.Node)) {
 	if pre != nil {
-		pre(n, tags, names...)
+		pre(n)
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		forEachNode(c, pre, post, tags, names...)
+		forEachNode(c, pre, post)
 	}
 
 	if post != nil {
-		post(n, tags, names...)
-	}
-}
-
-func findElementsByTag(n *html.Node, tags []*html.Node, names ...string) {
-	if n != nil && n.Type == html.ElementNode {
-		for _, name := range names {
-			if name == n.Data {
-				fmt.Println("tag found", n.Data)
-				tags = append(tags, n)
-			}
-		}
+		post(n)
 	}
 }
 
