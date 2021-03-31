@@ -1,33 +1,44 @@
 package main
 
-// Exercise 6.5
-
 import (
 	"bytes"
 	"fmt"
 )
 
+func main() {
+	i := &IntSet{}
+	i.Add(5)
+	i.Add(2)
+	i.Add(3)
+	fmt.Println(i)
+}
+
 const size = 32 << (^uint(0) >> 63)
 
+// An IntSet is a set of small non-negative integers.
+// Its zero value represents the empty set.
 type IntSet struct {
 	words []uint
 }
 
+// Has reports whether the set contains the non-negative value x.
 func (s *IntSet) Has(x int) bool {
 	word, bit := x/size, uint(x%size)
-	return int(word) < len(s.words) && s.words[word]&(1<<bit) != 0
+	return word < len(s.words) && s.words[word]&(1<<bit) != 0
 }
 
+// Add adds the non-negative value x to the set.
 func (s *IntSet) Add(x int) {
 	word, bit := x/size, uint(x%size)
-	for int(word) >= len(s.words) {
+	for word >= len(s.words) {
 		s.words = append(s.words, 0)
 	}
 	s.words[word] |= 1 << bit
 }
 
+// UnionWith sets s to the union of s and t.
 func (s *IntSet) UnionWith(t *IntSet) {
-	for i, tword := range s.words {
+	for i, tword := range t.words {
 		if i < len(s.words) {
 			s.words[i] |= tword
 		} else {
@@ -36,6 +47,7 @@ func (s *IntSet) UnionWith(t *IntSet) {
 	}
 }
 
+// String returns the set as a string of the form "{1 2 3}".
 func (s *IntSet) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
@@ -43,7 +55,7 @@ func (s *IntSet) String() string {
 		if word == 0 {
 			continue
 		}
-		for j := 0; j < int(size); j++ {
+		for j := 0; j < size; j++ {
 			if word&(1<<uint(j)) != 0 {
 				if buf.Len() > len("{") {
 					buf.WriteByte(' ')
