@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jonathantorres/gopl/ch7/tempconv"
+
+	"github.com/jonathantorres/gopl/ch7/7-6/tempconv"
 )
 
 var temp = tempconv.CelsiusFlag("temp", 20.0, "the temperature")
