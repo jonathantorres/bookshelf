@@ -14,7 +14,7 @@ type Expr interface {
 type Var string
 
 // A literal is a numeric constant, e.g., 3.141.
-type literal float64
+type Literal float64
 
 // A unary represents a unary operator expression, e.g., -x.
 type unary struct {
@@ -32,4 +32,10 @@ type binary struct {
 type call struct {
 	fn   string // one of "pow", "sin", "sqrt"
 	args []Expr
+}
+
+// A min computes the minimum value of it's operands
+type Min struct {
+	Op   string // just "min"
+	X, Y Expr
 }

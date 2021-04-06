@@ -108,6 +108,7 @@ func parsePrimary(lex *lexer) Expr {
 	switch lex.token {
 	case scanner.Ident:
 		id := lex.text()
+		fmt.Printf("ID: %s\n", id)
 		lex.next() // consume Ident
 		if lex.token != '(' {
 			return Var(id)
@@ -136,7 +137,7 @@ func parsePrimary(lex *lexer) Expr {
 			panic(lexPanic(err.Error()))
 		}
 		lex.next() // consume number
-		return literal(f)
+		return Literal(f)
 
 	case '(':
 		lex.next() // consume '('

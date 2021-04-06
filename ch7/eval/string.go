@@ -1,40 +1,31 @@
 package eval
 
-// Exercise 7.13
-// Exercise 7.14
-
-import (
-	"fmt"
-)
+import "fmt"
 
 func (v Var) String() string {
 	return string(v)
 }
 
 func (l literal) String() string {
-	return fmt.Sprintf("%.2f", l)
+	return fmt.Sprintf("%g", l)
 }
 
 func (u unary) String() string {
-	return string(u.op) + u.x.String()
+	return fmt.Sprintf("%c%s", u.op, u.x)
 }
 
 func (b binary) String() string {
-	return b.x.String() + string(b.op) + b.y.String()
+	return fmt.Sprintf("%s%c%s", b.x, b.op, b.y)
 }
 
 func (c call) String() string {
-	callStr := ""+c.fn+"("
-	for i, expr := range c.args {
-		if i != 0 {
-			callStr += ", "
+	s := fmt.Sprintf("%s(", c.fn)
+	for i, arg := range c.args {
+		if i > 0 {
+			s += ", "
 		}
-		callStr += expr.String()
+		s += fmt.Sprintf("%s", arg)
 	}
-	callStr += ")"
-	return callStr
-}
-
-func (m min) String() string {
-	return "min("+m.x.String()+","+m.y.String()+")"
+	s += ")"
+	return s
 }

@@ -10,7 +10,7 @@ func (v Var) Check(vars map[Var]bool) error {
 	return nil
 }
 
-func (literal) Check(vars map[Var]bool) error {
+func (Literal) Check(vars map[Var]bool) error {
 	return nil
 }
 
@@ -46,6 +46,16 @@ func (c call) Check(vars map[Var]bool) error {
 		}
 	}
 	return nil
+}
+
+func (m Min) Check(vars map[Var]bool) error {
+	if m.Op != "min" {
+		return fmt.Errorf("unknown operation %s", m.Op)
+	}
+	if err := m.X.Check(vars); err != nil {
+		return err
+	}
+	return m.Y.Check(vars)
 }
 
 var numParams = map[string]int{"pow": 2, "sin": 1, "sqrt": 1}

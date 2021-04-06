@@ -11,7 +11,7 @@ func (v Var) Eval(env Env) float64 {
 	return env[v]
 }
 
-func (l literal) Eval(_ Env) float64 {
+func (l Literal) Eval(_ Env) float64 {
 	return float64(l)
 }
 
@@ -49,4 +49,8 @@ func (c call) Eval(env Env) float64 {
 		return math.Sqrt(c.args[0].Eval(env))
 	}
 	panic(fmt.Sprintf("unsupported function call: %s", c.fn))
+}
+
+func (m Min) Eval(env Env) float64 {
+	return math.Min(m.X.Eval(env), m.Y.Eval(env))
 }

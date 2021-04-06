@@ -1,7 +1,5 @@
 package main
 
-// Exercise 7.10
-
 import (
 	"fmt"
 	"sort"
@@ -24,20 +22,20 @@ func (s str) Swap(i, j int) {
 }
 
 func main() {
-	var s1 str = str(strings.Replace("Hello World", " ", "", -1))
-	var s2 str = "anna"
-	var s3 str = str(strings.Replace("amen icy cinema", " ", "", -1))
+	s1 := str("madam")
+	s2 := str("noon")
+	s3 := str(strings.Replace("red rum sir is murder", " ", "", -1))
 	fmt.Println(isPalindrome(s1))
 	fmt.Println(isPalindrome(s2))
 	fmt.Println(isPalindrome(s3))
 }
 
 func isPalindrome(s sort.Interface) bool {
-	palindrome := true
+	ispal := true
 	for i, j := 0, s.Len()-1; i < j; i, j = i+1, j-1 {
 		if !(!s.Less(i, j) && !s.Less(j, i)) {
-			palindrome = false
+			ispal = false
 		}
 	}
-	return palindrome
+	return ispal
 }
