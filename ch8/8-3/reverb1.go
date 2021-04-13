@@ -10,14 +10,14 @@ import (
 )
 
 func main() {
-	l, err := net.Listen("tcp", "localhost:9999")
+	l, err := net.Listen("tcp", "localhost:9090")
 	if err != nil {
 		log.Fatal(err)
 	}
 	for {
 		conn, err := l.Accept()
 		if err != nil {
-			log.Print(err)
+			log.Print(err) // e.g., connection aborted
 			continue
 		}
 		go handleConn(conn)
@@ -35,7 +35,8 @@ func echo(c net.Conn, shout string, delay time.Duration) {
 func handleConn(c net.Conn) {
 	input := bufio.NewScanner(c)
 	for input.Scan() {
-		go echo(c, input.Text(), 1*time.Second)
+		echo(c, input.Text(), 1*time.Second)
 	}
+	// NOTE: ignoring potential errors from input.Err()
 	c.Close()
 }
