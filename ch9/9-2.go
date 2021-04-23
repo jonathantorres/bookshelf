@@ -1,31 +1,26 @@
 package main
 
-// Exercise 9.2
-
 import (
 	"fmt"
 	"sync"
 )
 
-// pc[i] is the population count of i
+// pc[i] is the population count of i.
 var pc [256]byte
-var lookupOnce sync.Once
 
 func main() {
-	fmt.Println(PopCount(100))
+	var once sync.Once
+	once.Do(loadTable)
+	fmt.Printf("%d\n", PopCount(100))
 }
 
-func init() {
-	lookupOnce.Do(loadLookup)
-}
-
-func loadLookup() {
+func loadTable() {
 	for i := range pc {
 		pc[i] = pc[i/2] + byte(i&1)
 	}
 }
 
-// PopCount returns the population count (number of set bits) of x
+// PopCount returns the population count (number of set bits) of x.
 func PopCount(x uint64) int {
 	return int(pc[byte(x>>(0*8))] +
 		pc[byte(x>>(1*8))] +
