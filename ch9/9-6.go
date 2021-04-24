@@ -1,7 +1,5 @@
 package main
 
-// Exercise 9.6
-
 import (
 	"image"
 	"image/color"
@@ -18,7 +16,6 @@ const (
 )
 
 func main() {
-	workers := runtime.GOMAXPROCS(-1)
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 	wg := sync.WaitGroup{}
 	rows := make(chan int, height)
@@ -26,7 +23,7 @@ func main() {
 		rows <- row
 	}
 	close(rows)
-	for i := 0; i < workers; i++ {
+	for i := 0; i < runtime.GOMAXPROCS(0); i++ {
 		wg.Add(1)
 		go func() {
 			for py := range rows {
