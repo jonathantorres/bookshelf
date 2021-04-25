@@ -1,12 +1,9 @@
 package main
 
-// Exercise 10.4
-
 import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"sort"
@@ -15,48 +12,39 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "usage: depends [packages]\n")
+		fmt.Fprintf(os.Stderr, "usage: go run 10-4 [packages]\n")
 		os.Exit(1)
 	}
-	pkgs := dependants(packages(os.Args[1:]))
+	pkgs := getDependants(getImportPaths(os.Args[1:]))
 	sort.StringSlice(pkgs).Sort()
 	for _, pkg := range pkgs {
 		fmt.Println(pkg)
 	}
 }
 
-func logError(context string, err error) {
-	ee, ok := err.(*exec.ExitError)
-	if !ok {
-		log.Fatalf("%s: %s", context, err)
-	}
-	log.Printf("%s: %s", context, err)
-	os.Stderr.Write(ee.Stderr)
-	os.Exit(1)
-}
-
-func packages(patterns []string) []string {
+func getImportPaths(pkgNames []string) []string {
 	args := []string{"list", "-f={{.ImportPath}}"}
-	for _, pkg := range patterns {
+	for _, pkg := range pkgNames {
 		args = append(args, pkg)
 	}
 	out, err := exec.Command("go", args...).Output()
 	if err != nil {
-		logError("resolve packages", err)
+		fmt.Fprintf(os.Stderr, "could not get packages: %s\n", err)
+		os.Exit(1)
 	}
 	return strings.Fields(string(out))
 }
 
-func dependants(packageNames []string) []string {
+func getDependants(packages []string) []string {
 	targets := make(map[string]bool)
-	for _, pkg := range packageNames {
+	for _, pkg := range packages {
 		targets[pkg] = true
 	}
-
 	args := []string{"list", `-f={{.ImportPath}} {{join .Deps " "}}`, "..."}
 	out, err := exec.Command("go", args...).Output()
 	if err != nil {
-		logError("find dependants", err)
+		fmt.Fprintf(os.Stderr, "could not parse dependants: %s\n", err)
+		os.Exit(1)
 	}
 	var pkgs []string
 	s := bufio.NewScanner(bytes.NewReader(out))
