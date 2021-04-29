@@ -1,11 +1,6 @@
 package palindrome
 
-// Exercise 11.3
-// Exercise 11.4
-
-import (
-	"unicode"
-)
+import "unicode"
 
 func IsPalindrome(s string) bool {
 	var letters []rune
