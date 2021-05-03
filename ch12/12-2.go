@@ -1,25 +1,29 @@
 package main
 
-// Exercise 12.1
-// Exercise 12.2
-
 import (
-	"bytes"
 	"fmt"
 	"reflect"
 	"strconv"
 )
 
+type cycle struct {
+	v    int
+	tail *cycle
+}
+
 func main() {
-	var x int
-	Display("num", x)
+	var c cycle
+	c = cycle{1, &c}
+	Display("c", c, 0)
 }
 
-func Display(name string, x interface{}) {
+func Display(name string, x interface{}, depth int) {
 	fmt.Printf("Display %s (%T):\n", name, x)
-	display(name, reflect.ValueOf(x), 0)
+	display(name, reflect.ValueOf(x), depth)
 }
 
+// formatAtom formats a value without inspecting its internal structure.
+// It is a copy of the the function in gopl.io/ch11/format.
 func formatAtom(v reflect.Value) string {
 	switch v.Kind() {
 	case reflect.Invalid:
@@ -46,9 +50,9 @@ func formatAtom(v reflect.Value) string {
 	}
 }
 
-func display(path string, v reflect.Value, level int) {
-	if level > 5 {
-		fmt.Printf("%s = %s\n", path, formatAtom(v))
+func display(path string, v reflect.Value, depth int) {
+	depth++
+	if depth > 10 {
 		return
 	}
 	switch v.Kind() {
@@ -56,60 +60,31 @@ func display(path string, v reflect.Value, level int) {
 		fmt.Printf("%s = invalid\n", path)
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < v.Len(); i++ {
-			display(fmt.Sprintf("%s[%d]", path, i), v.Index(i), level+1)
+			display(fmt.Sprintf("%s[%d]", path, i), v.Index(i), depth)
 		}
 	case reflect.Struct:
 		for i := 0; i < v.NumField(); i++ {
 			fieldPath := fmt.Sprintf("%s.%s", path, v.Type().Field(i).Name)
-			display(fieldPath, v.Field(i), level+1)
+			display(fieldPath, v.Field(i), depth)
 		}
 	case reflect.Map:
 		for _, key := range v.MapKeys() {
-			display(fmt.Sprintf("%s[%s]", path, formatMapKey(key)), v.MapIndex(key), level+1)
+			display(fmt.Sprintf("%s[%s]", path, formatAtom(key)), v.MapIndex(key), depth)
 		}
 	case reflect.Ptr:
 		if v.IsNil() {
 			fmt.Printf("%s = nil\n", path)
 		} else {
-			display(fmt.Sprintf("(*%s)", path), v.Elem(), level+1)
+			display(fmt.Sprintf("(*%s)", path), v.Elem(), depth)
 		}
 	case reflect.Interface:
 		if v.IsNil() {
 			fmt.Printf("%s = nil\n", path)
 		} else {
 			fmt.Printf("%s.type = %s\n", path, v.Elem().Type())
-			display(path+".value", v.Elem(), level+1)
+			display(path+".value", v.Elem(), depth)
 		}
 	default: // basic types, channels, funcs
 		fmt.Printf("%s = %s\n", path, formatAtom(v))
-	}
-}
-
-func formatMapKey(v reflect.Value) string {
-	switch v.Kind() {
-	case reflect.Struct:
-		b := &bytes.Buffer{}
-		b.WriteByte('{')
-		for i := 0; i < v.NumField(); i++ {
-			if i != 0 {
-				b.WriteString(", ")
-			}
-			fmt.Fprintf(b, "%s: %s", v.Type().Field(i).Name, formatAtom(v.Field(i)))
-		}
-		b.WriteByte('}')
-		return b.String()
-	case reflect.Array:
-		b := &bytes.Buffer{}
-		b.WriteByte('{')
-		for i := 0; i < v.Len(); i++ {
-			if i != 0 {
-				b.WriteString(", ")
-			}
-			b.WriteString(formatAtom(v.Index(i)))
-		}
-		b.WriteByte('}')
-		return b.String()
-	default:
-		return formatAtom(v)
 	}
 }
