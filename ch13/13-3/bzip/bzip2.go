@@ -1,8 +1,5 @@
 package bzip
 
-// Exercise 13.3
-// Exercise 13.4
-
 /*
 #cgo CFLAGS: -I/usr/include
 #cgo LDFLAGS: -L/usr/lib -lbz2
@@ -17,50 +14,15 @@ import "C"
 
 import (
 	"io"
-	"os/exec"
 	"sync"
 	"unsafe"
 )
 
 type writer struct {
 	w      io.Writer // underlying output stream
+	mu     sync.Mutex
 	stream *C.bz_stream
 	outbuf [64 * 1024]byte
-	sync.Mutex
-}
-
-type writer2 struct {
-	cmd   exec.Cmd
-	stdin io.WriteCloser
-}
-
-func NewWriter2(w io.Writer) (io.WriteCloser, error) {
-	cmd := exec.Cmd{Path: "/bin/bzip2", Stdout: w}
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return nil, err
-	}
-	cmd.Start()
-	if err != nil {
-		return nil, err
-	}
-	return &writer2{cmd, stdin}, nil
-}
-
-func (w *writer2) Write(data []byte) (int, error) {
-	return w.stdin.Write(data)
-}
-
-func (w *writer2) Close() error {
-	pipeErr := w.stdin.Close()
-	cmdErr := w.cmd.Wait()
-	if pipeErr != nil {
-		return pipeErr
-	}
-	if cmdErr != nil {
-		return cmdErr
-	}
-	return nil
 }
 
 // NewWriter returns a writer for bzip2-compressed streams.
@@ -78,9 +40,8 @@ func (w *writer) Write(data []byte) (int, error) {
 		panic("closed")
 	}
 	var total int // uncompressed bytes written
-
-	w.Lock()
-	defer w.Unlock()
+	defer w.mu.Unlock()
+	w.mu.Lock()
 	for len(data) > 0 {
 		inlen, outlen := C.uint(len(data)), C.uint(cap(w.outbuf))
 		C.bz2compress(w.stream, C.BZ_RUN,
@@ -101,11 +62,11 @@ func (w *writer) Close() error {
 	if w.stream == nil {
 		panic("closed")
 	}
-	w.Lock()
+	w.mu.Lock()
 	defer func() {
 		C.BZ2_bzCompressEnd(w.stream)
 		C.bz2free(w.stream)
-		w.Unlock()
+		w.mu.Unlock()
 		w.stream = nil
 	}()
 	for {

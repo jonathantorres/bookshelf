@@ -1,12 +1,26 @@
-package equal
-
-// Exercise 13.1
-// Exercise 13.2
+package main
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 )
+
+type list struct {
+	v int
+	n *list
+}
+
+type msg string
+
+func main() {
+	a := msg("Hello, world")
+	b := list{1, nil}
+	c := list{2, &list{3, &list{4, &b}}}
+	b.n = &c
+	fmt.Println(Cyclic(a))
+	fmt.Println(Cyclic(b))
+}
 
 func Cyclic(x interface{}) bool {
 	seen := make(map[ptr]bool)
@@ -29,7 +43,6 @@ func cyclic(x reflect.Value, seen map[ptr]bool) bool {
 	switch x.Kind() {
 	case reflect.Ptr, reflect.Interface:
 		return cyclic(x.Elem(), seen)
-
 	case reflect.Array, reflect.Slice:
 		for i := 0; i < x.Len(); i++ {
 			if cyclic(x.Index(i), seen) {
@@ -37,7 +50,6 @@ func cyclic(x reflect.Value, seen map[ptr]bool) bool {
 			}
 		}
 		return false
-
 	case reflect.Struct:
 		for i, n := 0, x.NumField(); i < n; i++ {
 			if cyclic(x.Field(i), seen) {
@@ -45,7 +57,6 @@ func cyclic(x reflect.Value, seen map[ptr]bool) bool {
 			}
 		}
 		return false
-
 	case reflect.Map:
 		for _, k := range x.MapKeys() {
 			if cyclic(x.MapIndex(k), seen) || cyclic(k, seen) {

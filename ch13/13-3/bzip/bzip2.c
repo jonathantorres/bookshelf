@@ -1,8 +1,5 @@
 #include <bzlib.h>
 
-// Exercise 13.3
-// Exercise 13.4
-
 int bz2compress(bz_stream *s, int action, char *in, unsigned *inlen, char *out, unsigned *outlen) {
     s->next_in = in;
     s->avail_in = *inlen;

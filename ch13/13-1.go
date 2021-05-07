@@ -1,16 +1,19 @@
-package equal
-
-// Exercise 13.1
-// Exercise 13.2
+package main
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 )
 
-func Equal(x, y interface{}) bool {
-	seen := make(map[comparison]bool)
-	return equal(reflect.ValueOf(x), reflect.ValueOf(y), seen)
+func main() {
+	var a []int
+	b := make([]int, 10)
+	fmt.Println(Equal(a, b))
+
+	c := []string{"f", "g"}
+	d := []string{"f", "g"}
+	fmt.Println(Equal(c, d))
 }
 
 type comparison struct {
@@ -18,21 +21,9 @@ type comparison struct {
 	t    reflect.Type
 }
 
-func numbersEqual(x, y float64) bool {
-	if x == y {
-		return true
-	}
-	var diff float64
-	if x > y {
-		diff = x - y
-	} else {
-		diff = y - x
-	}
-	d := diff * 1000000000
-	if d < x && d < y {
-		return true
-	}
-	return false
+func Equal(x, y interface{}) bool {
+	seen := make(map[comparison]bool)
+	return equal(reflect.ValueOf(x), reflect.ValueOf(y), seen)
 }
 
 func equal(x, y reflect.Value, seen map[comparison]bool) bool {
@@ -58,35 +49,22 @@ func equal(x, y reflect.Value, seen map[comparison]bool) bool {
 	switch x.Kind() {
 	case reflect.Bool:
 		return x.Bool() == y.Bool()
-
 	case reflect.String:
 		return x.String() == y.String()
-
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32,
-		reflect.Int64:
-		return numbersEqual(float64(x.Int()), float64(y.Int()))
-
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32,
-		reflect.Uint64:
-		return numbersEqual(float64(x.Uint()), float64(y.Uint()))
-
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return numEqual(float64(x.Int()), float64(y.Int()))
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return numEqual(float64(x.Uint()), float64(y.Uint()))
 	case reflect.Float32, reflect.Float64:
-		return numbersEqual(float64(x.Float()), float64(y.Float()))
-
+		return numEqual(float64(x.Float()), float64(y.Float()))
 	case reflect.Complex64, reflect.Complex128:
-		realEqual := numbersEqual(float64(real(x.Complex())), float64(real(y.Complex())))
-		imagEqual := numbersEqual(float64(imag(x.Complex())), float64(imag(y.Complex())))
-		return realEqual && imagEqual
-
-	case reflect.Uintptr:
-		return x.Uint() == y.Uint()
-
+		eEq := numEqual(float64(real(x.Complex())), float64(real(y.Complex())))
+		imgEq := numEqual(float64(imag(x.Complex())), float64(imag(y.Complex())))
+		return eEq && imgEq
 	case reflect.Chan, reflect.UnsafePointer, reflect.Func:
 		return x.Pointer() == y.Pointer()
-
 	case reflect.Ptr, reflect.Interface:
 		return equal(x.Elem(), y.Elem(), seen)
-
 	case reflect.Array, reflect.Slice:
 		if x.Len() != y.Len() {
 			return false
@@ -97,7 +75,6 @@ func equal(x, y reflect.Value, seen map[comparison]bool) bool {
 			}
 		}
 		return true
-
 	case reflect.Struct:
 		for i, n := 0, x.NumField(); i < n; i++ {
 			if !equal(x.Field(i), y.Field(i), seen) {
@@ -105,7 +82,6 @@ func equal(x, y reflect.Value, seen map[comparison]bool) bool {
 			}
 		}
 		return true
-
 	case reflect.Map:
 		if x.Len() != y.Len() {
 			return false
@@ -118,4 +94,21 @@ func equal(x, y reflect.Value, seen map[comparison]bool) bool {
 		return true
 	}
 	panic("unreachable")
+}
+
+func numEqual(x, y float64) bool {
+	if x == y {
+		return true
+	}
+	var diff float64
+	if x > y {
+		diff = x - y
+	} else {
+		diff = y - x
+	}
+	d := diff * 1000000000
+	if d < x && d < y {
+		return true
+	}
+	return false
 }
