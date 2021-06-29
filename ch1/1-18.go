@@ -30,7 +30,7 @@ func main() {
 		}
 
 		var rTrails int
-		for i := len - 1; i >= 0; i-- {
+		for i := len; i >= 0; i-- {
 			if rune(line[i]) == '\n' {
 				continue
 			}
@@ -44,7 +44,8 @@ func main() {
 		// remove right trailing blanks and tabs
 		if rTrails > 0 {
 			len -= rTrails
-			line[len-1] = byte('\n')
+			line[len] = byte('\n')
+			line = line[:len+1]
 		}
 
 		allBlanks := true
