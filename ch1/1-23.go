@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 )
 
@@ -10,6 +11,18 @@ const maxLine = 1000
 func main() {
 	for {
 		line, l := getLine(maxLine)
+		var ignore bool
+		for i := 0; i < l; i++ {
+			if rune(line[i]) == '/' && i+1 < l && rune(line[i+1]) == '/' {
+				ignore = true
+			}
+			if !ignore {
+				fmt.Printf("%c", rune(line[i]))
+			}
+		}
+		if ignore {
+			fmt.Printf("\n")
+		}
 	}
 }
 
