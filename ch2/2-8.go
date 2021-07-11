@@ -5,7 +5,7 @@ import "fmt"
 func main() {
 	var x uint = 150
 	n := 3
-	fmt.Printf("%u rightrot -> %u\n", x, rightrot(x, n)) // expected result: 210
+	fmt.Printf("%d rightrot -> %d\n", x, rightrot(x, n)) // expected result: 210
 }
 
 func rightrot(x uint, n int) uint {
@@ -22,5 +22,5 @@ func setbits(x uint, p int, n int, y uint) uint {
 }
 
 func getbits(x uint, p int, n int) uint {
-	return (x >> (p + 1 - n)) & ^(^0 << n)
+	return (x >> (p + 1 - n)) & ^(^uint(0) << n)
 }

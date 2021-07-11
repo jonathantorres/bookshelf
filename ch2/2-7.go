@@ -6,7 +6,7 @@ func main() {
 	var x uint = 225
 	p := 4
 	n := 2
-	fmt.Printf("%u inverted = %u\n", x, invert(x, p, n))
+	fmt.Printf("%d inverted = %d\n", x, invert(x, p, n))
 }
 
 func invert(x uint, p int, n int) uint {
@@ -22,5 +22,5 @@ func setbits(x uint, p int, n int, y uint) uint {
 }
 
 func getbits(x uint, p int, n int) uint {
-	return (x >> (p + 1 - n)) & ^(^0 << n)
+	return (x >> (p + 1 - n)) & ^(^uint(0) << n)
 }
