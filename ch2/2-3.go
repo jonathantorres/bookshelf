@@ -13,7 +13,7 @@ func main() {
 
 	fmt.Printf("%s = %d\n", s1, htoi(s1))
 	fmt.Printf("%s = %d\n", s2, htoi(s2))
-	fmt.Printf("%s = %d\n", s3, htoi(s2))
+	fmt.Printf("%s = %d\n", s3, htoi(s3))
 }
 
 func getMap(c rune) int {
@@ -30,15 +30,15 @@ func getMap(c rune) int {
 
 func htoi(s string) int {
 	var total int
-	var withPrefix bool
+	var prefix bool
 	var i int
 	if s[0] == '0' && (s[1] == 'x' || s[1] == 'X') {
 		i = 2
-		withPrefix = true
+		prefix = true
 	}
 	for j := len(s) - 1; i <= len(s)-1; i, j = i+1, j-1 {
 		var amt int
-		if withPrefix {
+		if prefix {
 			amt = 2
 		}
 		total += getMap(rune(s[i])) * int(math.Pow(16.0, float64(j-amt)))

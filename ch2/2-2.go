@@ -26,6 +26,7 @@ func main() {
 		} else {
 			fmt.Printf("%s\n", string(s))
 			i = 0
+			s = make([]byte, maxLine)
 		}
 	}
 }
