@@ -2,51 +2,42 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"io"
 	"os"
 )
 
-const maxLine = 1000
-
 func main() {
-	for {
-		line, l := getLine(maxLine)
-		entab(line, l)
-	}
-}
-
-func entab(s []byte, l int) {
-	var tabAdded bool
-	for i := 0; i < l; i++ {
-		if rune(s[i]) == ' ' && rune(s[i+1]) == ' ' && rune(s[i+2]) == ' ' && rune(s[i+3]) == ' ' {
-			fmt.Printf("\t")
-			tabAdded = true
-		} else if rune(s[i]) == ' ' {
-			if !tabAdded {
-				fmt.Printf("%c", rune(s[i]))
-			}
-		} else {
-			tabAdded = false
-			fmt.Printf("%c", rune(s[i]))
-		}
-	}
-}
-
-func getLine(lim int) ([]byte, int) {
-	var c byte
-	var i int
-	s := make([]byte, lim)
 	r := bufio.NewReader(os.Stdin)
-	for i = 0; i < lim-1; i++ {
-		c, err := r.ReadByte()
-		if rune(c) == '\n' || err != nil {
+	for {
+		line, err := r.ReadBytes(byte('\n'))
+		if err != nil {
+			if err != io.EOF {
+				fmt.Printf("error: %s\n", err)
+			}
 			break
 		}
-		s[i] = c
+		line = entab(line)
+		fmt.Printf("%s", string(line))
 	}
-	if rune(c) == '\n' {
-		s[i] = c
-		i++
+}
+
+func entab(s []byte) []byte {
+	var tab bool
+	var res bytes.Buffer
+	for i, b := range s {
+		if rune(s[i]) == ' ' && rune(s[i+1]) == ' ' && rune(s[i+2]) == ' ' && rune(s[i+3]) == ' ' {
+			res.WriteByte(byte('\t'))
+			tab = true
+		} else if rune(b) == ' ' {
+			if !tab {
+				res.WriteByte(byte(' '))
+			}
+		} else {
+			tab = false
+			res.WriteByte(b)
+		}
 	}
-	return s, i
+	return res.Bytes()
 }

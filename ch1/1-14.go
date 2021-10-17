@@ -26,16 +26,16 @@ func main() {
 			break
 		}
 
-		var inChars int
+		var inChars bool
 		for i := 0; i < leng; i++ {
 			if chars[i] == c {
-				inChars = 1
+				inChars = true
 				freqs[i]++
 				break
 			}
 		}
 
-		if inChars == 0 {
+		if !inChars {
 			chars[leng] = c
 			freqs[leng] = 1
 			leng++

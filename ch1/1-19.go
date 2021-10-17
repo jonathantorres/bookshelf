@@ -14,12 +14,19 @@ func main() {
 		line, l := getLine(maxLine)
 		reverse(line, rev, l)
 		fmt.Printf("%s\n", string(rev))
+		reset(rev)
 	}
 }
 
 func reverse(s []byte, rev []byte, lim int) {
 	for i, j := lim-1, 0; i >= 0; i, j = i-1, j+1 {
 		rev[j] = s[i]
+	}
+}
+
+func reset(s []byte) {
+	for i := range s {
+		s[i] = 0
 	}
 }
 

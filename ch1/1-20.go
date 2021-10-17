@@ -2,50 +2,39 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"io"
 	"os"
 )
 
-const maxLine = 1000
 const tabLen = 4
 
 func main() {
-	for {
-		line, l := getLine(maxLine)
-		detab(line, l)
-		fmt.Printf("%s\n", string(line))
-	}
-}
-
-func detab(s []byte, l int) {
-	for i := 0; i < l; i++ {
-		if rune(s[i]) == '\t' {
-			s[i] = byte(' ')
-			for j := l - 1; j >= i+1; j-- {
-				s[j+(tabLen-1)] = s[j]
-			}
-			for k := 1; k < tabLen; k++ {
-				s[i+k] = byte(' ')
-			}
-		}
-	}
-}
-
-func getLine(lim int) ([]byte, int) {
-	var c byte
-	var i int
-	s := make([]byte, lim)
 	r := bufio.NewReader(os.Stdin)
-	for i = 0; i < lim-1; i++ {
-		c, err := r.ReadByte()
-		if rune(c) == '\n' || err != nil {
+	for {
+		line, err := r.ReadBytes(byte('\n'))
+		if err != nil {
+			if err != io.EOF {
+				fmt.Printf("error: %s\n", err)
+			}
 			break
 		}
-		s[i] = c
+		line = detab(line)
+		fmt.Printf("%s", string(line))
 	}
-	if rune(c) == '\n' {
-		s[i] = c
-		i++
+}
+
+func detab(s []byte) []byte {
+	var res bytes.Buffer
+	for _, b := range s {
+		if rune(b) == '\t' {
+			for k := 0; k < tabLen; k++ {
+				res.WriteByte(byte(' '))
+			}
+		} else {
+			res.WriteByte(b)
+		}
 	}
-	return s, i
+	return res.Bytes()
 }
