@@ -39,8 +39,9 @@ func main() {
 
 func calc(line []byte) (float64, error) {
 	var num []byte
-	for _, b := range line {
+	for i, b := range line {
 		c := rune(b)
+		var isNegative bool
 		if unicode.IsSpace(c) {
 			if c != '\n' && len(num) > 0 {
 				n, err := strconv.ParseFloat(string(num), 64)
@@ -52,7 +53,10 @@ func calc(line []byte) (float64, error) {
 			}
 			continue
 		}
-		if unicode.IsDigit(c) || c == '.' {
+		if c == '-' && i+1 < len(line) && unicode.IsDigit(rune(line[i+1])) {
+			isNegative = true
+		}
+		if unicode.IsDigit(c) || c == '.' || isNegative {
 			num = append(num, b)
 			continue
 		}
