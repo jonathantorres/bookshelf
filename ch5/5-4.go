@@ -5,7 +5,9 @@ import "fmt"
 func main() {
 	s1 := []byte("first")
 	s2 := []byte("rst")
-	fmt.Printf("%d\n", strend(s1, s2))
+	s3 := []byte("foo")
+	fmt.Printf("%d\n", strend(s1, s2)) // 1
+	fmt.Printf("%d\n", strend(s1, s3)) // 0
 }
 
 func strend(s []byte, t []byte) int {

@@ -6,13 +6,13 @@ import (
 	"os"
 )
 
-const MaxLen = 1000
+const maxLen = 1000
 
 func main() {
 	var line []byte
 	var l int
 	for {
-		line, l = getLine(MaxLen)
+		line, l = getLine(maxLen)
 		if l <= 0 {
 			break
 		}
