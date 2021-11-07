@@ -2,192 +2,149 @@ package main
 
 import (
 	"bufio"
-	"bytes"
+	"flag"
 	"fmt"
+	"io"
 	"os"
+	"sort"
 	"strconv"
+	"strings"
+	"unicode"
 )
 
-const (
-	maxLines = 5000
-	maxLen   = 1000
-)
-
-var lineptr [][]byte
+var numeric = flag.Bool("n", false, "sort numerically")
+var fold = flag.Bool("f", false, "fold upper and lowercase together")
+var dir = flag.Bool("d", false, "directory order")
+var pos1 int
+var pos2 int
+var usePos bool
 
 func main() {
-	lineptr = make([][]byte, maxLines)
-	nlines := 0
-	var numeric bool
-	var reversed bool
-	var fold bool
-	var dir bool
-	var flag bool
-	if len(os.Args) > 1 {
-		for _, s := range os.Args {
-			if s == "-n" {
-				numeric = true
-			}
-			if s == "-r" {
-				reversed = true
-			}
-			if s == "-f" {
-				fold = true
-			}
-			if s == "-d" {
-				dir = true
-			}
-			if s == "-c" {
-				flag = true
-			}
+	flag.Parse()
+	var err error
+	if len(flag.Args()) == 2 {
+		usePos = true
+		pos1, err = strconv.Atoi(flag.Args()[0])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		pos2, err = strconv.Atoi(flag.Args()[1])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		if pos1 < 0 || pos2 < 0 {
+			fmt.Fprintf(os.Stderr, "The start and end positions must be greater than or equal to 0")
+			os.Exit(1)
 		}
 	}
-	nlines = readlines(lineptr, maxLines)
-	if nlines >= 0 {
-		var cmpfunc func(s1, s2 []byte, dir bool, flag bool) int
-		if numeric {
-			cmpfunc = numcmp
-		} else {
-			cmpfunc = strcmp
+	var inputLines []string
+	r := bufio.NewReader(os.Stdin)
+	for {
+		line, err := r.ReadBytes(byte('\n'))
+		if err != nil {
+			if err != io.EOF {
+				fmt.Printf("error: %s\n", err)
+			}
+			break
 		}
-		qsort2(lineptr, 0, nlines-1, cmpfunc, reversed, fold, dir, flag)
-		writelines(lineptr)
-	} else {
-		fmt.Printf("input too big to sort\n")
+		inputLines = append(inputLines, strings.TrimSpace(string(line)))
+	}
+	sortLines(inputLines)
+	fmt.Println()
+	for _, l := range inputLines {
+		fmt.Printf("%s\n", l)
 	}
 }
 
-func qsort2(v [][]byte, left int, right int, comp func(s1, s2 []byte, dir bool, flag bool) int, reversed bool, fold bool, dir bool, flag bool) {
-	var i, last int
-	v1, v2 := make([]byte, 1000), make([]byte, 1000)
-	if left >= right {
-		return
-	}
-	swap(v, left, (left+right)/2)
-	last = left
-	for i = left + 1; i <= right; i++ {
-		if fold {
-			copy(v1, v[i])
-			copy(v2, v[left])
-			v1 = bytes.ToLower(v1)
-			v2 = bytes.ToLower(v2)
-		} else {
-			copy(v1, v[i])
-			copy(v2, v[left])
-		}
-		if !reversed {
-			if comp(v[i], v[left], dir, flag) < 0 {
-				last++
-				swap(v, last, i)
+func sortLines(lines []string) {
+	if !*numeric && !*fold && !*dir {
+		sort.Slice(lines, func(i, j int) bool {
+			var si string
+			var sj string
+			if usePos {
+				si = lines[i][pos1:pos2]
+				sj = lines[j][pos1:pos2]
 			} else {
-				if comp(v[i], v[left], dir, flag) > 0 {
-					last++
-					swap(v, last, i)
+				si = lines[i]
+				sj = lines[j]
+			}
+			return si < sj
+		})
+	} else if !*numeric && !*dir && *fold {
+		sort.Slice(lines, func(i, j int) bool {
+			var si string
+			var sj string
+			if usePos {
+				si = lines[i][pos1:pos2]
+				sj = lines[j][pos1:pos2]
+			} else {
+				si = lines[i]
+				sj = lines[j]
+			}
+			si = strings.ToLower(si)
+			sj = strings.ToLower(sj)
+			return si < sj
+		})
+	} else if !*numeric && !*fold && *dir {
+		sort.Slice(lines, func(i, j int) bool {
+			var sib strings.Builder
+			var sjb strings.Builder
+			var si string
+			var sj string
+			if usePos {
+				si = lines[i][pos1:pos2]
+				sj = lines[j][pos1:pos2]
+			} else {
+				si = lines[i]
+				sj = lines[j]
+			}
+			for _, r := range si {
+				if unicode.IsLetter(r) || unicode.IsSpace(r) || unicode.IsDigit(r) {
+					sib.WriteRune(r)
 				}
 			}
-		}
-	}
-	swap(v, left, last)
-	qsort2(v, left, last-1, comp, reversed, fold, dir, flag)
-	qsort2(v, last+1, right, comp, reversed, fold, dir, flag)
-}
+			for _, r := range sj {
+				if unicode.IsLetter(r) || unicode.IsSpace(r) || unicode.IsDigit(r) {
+					sjb.WriteRune(r)
+				}
+			}
+			return sib.String() < sjb.String()
+		})
+	} else if !*numeric && *fold && *dir {
+		sort.Slice(lines, func(i, j int) bool {
+			var sib strings.Builder
+			var sjb strings.Builder
+			var si string
+			var sj string
+			if usePos {
+				si = lines[i][pos1:pos2]
+				sj = lines[j][pos1:pos2]
+			} else {
+				si = lines[i]
+				sj = lines[j]
+			}
 
-func swap(v [][]byte, i int, j int) {
-	var tmp []byte
-	tmp = v[i]
-	v[i] = v[j]
-	v[j] = tmp
-}
-
-func readlines(lineptr [][]byte, maxlines int) int {
-	var nlines int
-	p := make([]byte, maxLen)
-	for {
-		l, n := getLine(maxLen)
-		if n <= 0 {
-			break
-		}
-		if nlines >= maxlines {
-			return -1
-		} else {
-			copy(p, l)
-			lineptr[nlines] = p
-			nlines++
-		}
-	}
-	return nlines
-}
-
-func writelines(lineptr [][]byte) {
-	fmt.Printf("\n")
-	for _, l := range lineptr {
-		fmt.Printf("%s\n", string(l))
-	}
-}
-
-func getLine(lim int) ([]byte, int) {
-	var c byte
-	var i int
-	s := make([]byte, lim)
-	r := bufio.NewReader(os.Stdin)
-	for i = 0; i < lim-1; i++ {
-		c, err := r.ReadByte()
-		if rune(c) == '\n' || err != nil {
-			break
-		}
-		s[i] = c
-	}
-	if rune(c) == '\n' {
-		s[i] = c
-		i++
-	}
-	return s, i
-}
-
-func numcmp(s1, s2 []byte, dir bool, flag bool) int {
-	var v1, v2 float64
-	var err error
-	if dir || flag {
-		// ignore on this case
-	}
-	v1, err = strconv.ParseFloat(string(s1), 64)
-	if err != nil {
-		return -1
-	}
-	v2, err = strconv.ParseFloat(string(s2), 64)
-	if err != nil {
-		return -1
-	}
-	if v1 < v2 {
-		return -1
-	} else if v1 > v2 {
-		return 1
+			for _, r := range si {
+				if unicode.IsLetter(r) || unicode.IsSpace(r) || unicode.IsDigit(r) {
+					sib.WriteRune(r)
+				}
+			}
+			for _, r := range sj {
+				if unicode.IsLetter(r) || unicode.IsSpace(r) || unicode.IsDigit(r) {
+					sjb.WriteRune(r)
+				}
+			}
+			return strings.ToLower(sib.String()) < strings.ToLower(sjb.String())
+		})
+	} else if *numeric {
+		sort.Slice(lines, func(i, j int) bool {
+			fi, _ := strconv.ParseFloat(lines[i], 64)
+			fj, _ := strconv.ParseFloat(lines[j], 64)
+			return fi < fj
+		})
 	} else {
-		return 0
-	}
-}
-
-func strcmp(s1, s2 []byte, dir bool, flag bool) int {
-	old := "!@#$%^&*()_"
-	var v1 string
-	var v2 string
-	if dir {
-		v1 = string(bytes.ReplaceAll(s1, []byte(old), []byte("")))
-		v2 = string(bytes.ReplaceAll(s2, []byte(old), []byte("")))
-	} else {
-		v1 = string(s1)
-		v2 = string(s2)
-	}
-
-	if flag {
-		// add flag capability
-	}
-
-	if v1 > v2 {
-		return 1
-	} else if v1 < v2 {
-		return -1
-	} else {
-		return 0
+		panic("sorting configuration not recognized")
 	}
 }

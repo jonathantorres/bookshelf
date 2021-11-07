@@ -2,108 +2,39 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
+	"io"
 	"os"
-	"strconv"
-	"unicode"
 )
-
-const (
-	maxLines = 5000
-	pLines   = 10
-	maxLen   = 1000
-)
-
-var lineptr [][]byte
 
 func main() {
-	var nlines int
-	lineptr = make([][]byte, maxLines)
-	switch len(os.Args) {
-	case 1:
-		nlines = pLines
-		break
-	case 2:
-		nlines = process_input(os.Args)
-		if nlines == -1 {
-			fmt.Printf("Invalid format for optional argument -n\n")
-			return
-		}
-		break
-	default:
-		fmt.Printf("Too many arguments!\n")
-		return
-	}
-
-	n := readlines(lineptr, maxLines)
-	if n >= 0 {
-		writelines(lineptr)
-	} else {
-		fmt.Printf("error: input too big\n")
-	}
-}
-
-func process_input(v []string) int {
-	n := []byte(v[1])
-	var c byte
-	if rune(n[0]) != '-' {
-		return -1
-	} else {
-		for _, r := range n {
-			c = byte(r)
-			if !unicode.IsDigit(rune(c)) {
-				break
-			}
-		}
-		r, err := strconv.Atoi(string(n))
-		if err != nil {
-			return -1
-		}
-		return r
-	}
-}
-
-func readlines(lineptr [][]byte, maxlines int) int {
-	var nlines int
-	p := make([]byte, maxLen)
-	for {
-		l, n := getLine(maxLen)
-		if n <= 0 {
-			break
-		}
-		if nlines >= maxlines {
-			return -1
-		} else {
-			copy(p, l)
-			lineptr[nlines] = p
-			nlines++
-		}
-	}
-	return nlines
-}
-
-func writelines(lineptr [][]byte) {
-	fmt.Printf("\n")
-	for _, l := range lineptr {
-		fmt.Printf("%s\n", string(l))
-	}
-}
-
-func getLine(lim int) ([]byte, int) {
-	var c byte
-	var i int
-	s := make([]byte, lim)
+	var n = flag.Int("n", 10, "number of lines to print")
+	flag.Parse()
+	var inputLines [][]byte
 	r := bufio.NewReader(os.Stdin)
-	for i = 0; i < lim-1; i++ {
-		c, err := r.ReadByte()
-		if rune(c) == '\n' || err != nil {
+	for {
+		line, err := r.ReadBytes(byte('\n'))
+		if err != nil {
+			if err != io.EOF {
+				fmt.Printf("error: %s\n", err)
+			}
 			break
 		}
-		s[i] = c
+		inputLines = append(inputLines, line)
 	}
-	if rune(c) == '\n' {
-		s[i] = c
-		i++
+	printLines(inputLines, *n)
+}
+
+func printLines(lines [][]byte, n int) {
+	var linesToPrint [][]byte
+	if len(lines) <= n {
+		// print everything
+		linesToPrint = lines
+	} else {
+		linesToPrint = lines[len(lines)-n:]
 	}
-	return s, i
+	for _, l := range linesToPrint {
+		fmt.Printf("%s", string(l))
+	}
 }
