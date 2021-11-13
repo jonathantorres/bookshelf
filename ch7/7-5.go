@@ -7,6 +7,19 @@ import (
 	"strings"
 )
 
+func main() {
+	sr := strings.NewReader("Hi, this is a message")
+	r := LimitReader(sr, 5)
+	b := make([]byte, 10)
+	n, err := r.Read(b)
+	if err != nil && err != io.EOF {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("%s\n", string(b))
+	fmt.Printf("bytes read: %d\n", n)
+}
+
 type LimitedReader struct {
 	r io.Reader
 	n int64
@@ -26,19 +39,6 @@ func (r *LimitedReader) Read(p []byte) (n int, err error) {
 	n, err = r.r.Read(p[:end])
 	r.n -= int64(n)
 	return
-}
-
-func main() {
-	sr := strings.NewReader("Hi, this is a message")
-	r := LimitReader(sr, 5)
-	b := make([]byte, 10)
-	n, err := r.Read(b)
-	if err != nil && err != io.EOF {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
-	}
-	fmt.Printf("%s\n", string(b))
-	fmt.Printf("bytes read: %d\n", n)
 }
 
 func LimitReader(r io.Reader, n int64) io.Reader {

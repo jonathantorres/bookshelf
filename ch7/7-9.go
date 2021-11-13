@@ -51,6 +51,11 @@ th, td {
 </html>
 `
 
+func main() {
+	http.HandleFunc("/", tracks)
+	log.Fatal(http.ListenAndServe("localhost:8888", nil))
+}
+
 type Track struct {
 	Title  string
 	Artist string
@@ -91,11 +96,6 @@ func (s multiTier) less(i, j int) bool {
 		}
 	}
 	return false
-}
-
-func main() {
-	http.HandleFunc("/", tracks)
-	log.Fatal(http.ListenAndServe("localhost:8888", nil))
 }
 
 func tracks(w http.ResponseWriter, r *http.Request) {

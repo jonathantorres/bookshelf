@@ -6,6 +6,15 @@ import (
 	"fmt"
 )
 
+func main() {
+	var wc WordCounter
+	var lc LineCounter
+	wc.Write([]byte("Jonathan Torres"))
+	lc.Write([]byte("First line\nSecond line\nThird line"))
+	fmt.Println(wc)
+	fmt.Println(lc)
+}
+
 type WordCounter int
 type LineCounter int
 
@@ -32,13 +41,4 @@ func (c *LineCounter) Write(p []byte) (int, error) {
 		return 0, nil
 	}
 	return len(p), nil
-}
-
-func main() {
-	var wc WordCounter
-	var lc LineCounter
-	wc.Write([]byte("Jonathan Torres"))
-	lc.Write([]byte("First line\nSecond line\nThird line"))
-	fmt.Println(wc)
-	fmt.Println(lc)
 }

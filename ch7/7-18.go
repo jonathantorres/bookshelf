@@ -12,35 +12,6 @@ type Node interface{} // CharData or *Element
 
 type CharData string
 
-type Element struct {
-	Type     xml.Name
-	Attr     []xml.Attr
-	Children []Node
-}
-
-type stack []*Element
-
-func (s stack) push(e *Element) stack {
-	s = append(s, e)
-	return s
-}
-
-func (s stack) peek() *Element {
-	if len(s) == 0 {
-		return nil
-	}
-	return s[len(s)-1]
-}
-
-func (s stack) pop() (stack, *Element) {
-	if len(s) == 0 {
-		return s, nil
-	}
-	el := s[len(s)-1]
-	s = s[:len(s)-1]
-	return s, el
-}
-
 func main() {
 	dec := xml.NewDecoder(os.Stdin)
 	var tree Node
@@ -77,6 +48,35 @@ func main() {
 		}
 	}
 	printXml(os.Stdout, tree, 0)
+}
+
+type Element struct {
+	Type     xml.Name
+	Attr     []xml.Attr
+	Children []Node
+}
+
+type stack []*Element
+
+func (s stack) push(e *Element) stack {
+	s = append(s, e)
+	return s
+}
+
+func (s stack) peek() *Element {
+	if len(s) == 0 {
+		return nil
+	}
+	return s[len(s)-1]
+}
+
+func (s stack) pop() (stack, *Element) {
+	if len(s) == 0 {
+		return s, nil
+	}
+	el := s[len(s)-1]
+	s = s[:len(s)-1]
+	return s, el
 }
 
 func createElement(e xml.StartElement) *Element {

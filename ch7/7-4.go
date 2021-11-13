@@ -8,6 +8,17 @@ import (
 	"golang.org/x/net/html"
 )
 
+func main() {
+	doc, err := html.Parse(NewReader(s))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+	for _, link := range visit(nil, doc) {
+		fmt.Println(link)
+	}
+}
+
 type StringReader struct {
 	s string
 }
@@ -48,17 +59,6 @@ var s string = `<!DOCTYPE html>
     </body>
 </html>
 `
-
-func main() {
-	doc, err := html.Parse(NewReader(s))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
-	}
-	for _, link := range visit(nil, doc) {
-		fmt.Println(link)
-	}
-}
 
 // visit appends to links each link found in n and returns the result.
 func visit(links []string, n *html.Node) []string {

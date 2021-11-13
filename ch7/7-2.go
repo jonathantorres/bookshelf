@@ -6,6 +6,14 @@ import (
 	"os"
 )
 
+func main() {
+	w, n := CountingWriter(os.Stdout)
+	w.Write([]byte("Hola\n"))
+	fmt.Println(*n)
+	w.Write([]byte("Hello\n"))
+	fmt.Println(*n)
+}
+
 type CW struct {
 	n int64
 	w io.Writer
@@ -18,14 +26,6 @@ func (c *CW) Write(p []byte) (int, error) {
 	}
 	c.n += int64(n)
 	return n, err
-}
-
-func main() {
-	w, n := CountingWriter(os.Stdout)
-	w.Write([]byte("Hola\n"))
-	fmt.Println(*n)
-	w.Write([]byte("Hello\n"))
-	fmt.Println(*n)
 }
 
 func CountingWriter(w io.Writer) (io.Writer, *int64) {
