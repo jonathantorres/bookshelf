@@ -39,22 +39,22 @@ func comma(s string) string {
 		}
 		buf.WriteByte(s[i])
 	}
-	r := buf.String()
+	r := buf.Bytes()
 	r = reverse(r)
+	res := string(r)
 
 	if sign == '-' || sign == '+' {
-		r = string(sign) + r
+		res = string(sign) + res
 	}
 	if decs != "" {
-		r = r + decs
+		res = res + decs
 	}
-	return r
+	return res
 }
 
-func reverse(s string) string {
-	r := []byte(s)
+func reverse(r []byte) []byte {
 	for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {
 		r[i], r[j] = r[j], r[i]
 	}
-	return string(r)
+	return r
 }
