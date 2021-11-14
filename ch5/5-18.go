@@ -2,200 +2,234 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"errors"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 	"unicode"
 )
 
 const (
-	maxToken = 100
-	bufSize  = 100
+	name rune = iota
+	parens
+	brackets
+	syntaxErr
 )
 
-var (
-	bufp      int
-	tokentype int
-)
-
-var (
-	buf      []byte
-	token    []byte
-	name     []byte
-	datatype []byte
-	out      []byte
-)
+var buf *bytes.Buffer
+var token bytes.Buffer
+var out bytes.Buffer
+var iname string
+var datatype string
+var tokentype rune
 
 func main() {
-	buf = make([]byte, bufSize)
-	token = make([]byte, maxToken)
-	name = make([]byte, maxToken)
-	datatype = make([]byte, maxToken)
-	out = make([]byte, 1000)
-
+	r := bufio.NewReader(os.Stdin)
 	for {
-		err := gettoken()
+		l, err := r.ReadBytes('\n')
 		if err != nil {
 			break
 		}
-		copy(datatype, token)
-		dcl()
+		decl, err := parse(l)
+		if err != nil {
+			fmt.Printf("%s\n", err)
+			continue
+		}
+		fmt.Printf("%s\n", decl)
+	}
+}
+
+func parse(exp []byte) (string, error) {
+	buf = bytes.NewBuffer(exp)
+	for {
+		_, err := getToken()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return "", err
+		}
+		datatype = token.String()
+		token.Reset()
+		err = dcl()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return "", err
+		}
 		if tokentype == ']' {
-			fmt.Printf("syntax error, missing ]\n")
+			return "", errors.New("syntax error, missing ]")
 		}
-		fmt.Printf("%s: %s %s\n", string(name), string(out), string(datatype))
 	}
+	outStr := out.String()
+	outStr = strings.TrimSpace(cleanOutStr(outStr))
+	s := fmt.Sprintf("%s: %s %s", iname, outStr, datatype)
+	out.Reset()
+
+	return s, nil
 }
 
-func gettoken() error {
-	var c byte
+func cleanOutStr(outStr string) string {
+	var res strings.Builder
+	ss := strings.Split(outStr, " ")
+	for i, s := range ss {
+		res.WriteString(strings.TrimSpace(s))
+		if i < len(ss)-1 {
+			res.WriteString(" ")
+		}
+	}
+	return res.String()
+}
+
+func getToken() (rune, error) {
+	var c rune
 	var err error
 	for {
-		c, err = getch()
+		c, _, err = buf.ReadRune()
 		if err != nil {
-			return err
+			return 0, err
 		}
-		if rune(c) != ' ' || rune(c) != '\t' {
-			break
+		if unicode.IsSpace(c) {
+			continue
+		}
+		if c == '(' {
+			c, _, err := buf.ReadRune()
+			if err != nil {
+				if err == io.EOF {
+					return 0, nil
+				}
+				return 0, err
+			}
+			if c == ')' {
+				tokentype = parens
+				return tokentype, nil
+			}
+			buf.UnreadRune()
+			tokentype = '('
+			return tokentype, nil
+		} else if c == '[' {
+			last := writeTokenChars(c)
+			if last == ']' {
+				tokentype = brackets
+				return tokentype, nil
+			}
+			tokentype = ']'
+			return tokentype, nil
+		} else if unicode.IsLetter(c) {
+			writeTokenName(c)
+			tokentype = name
+			return tokentype, nil
+		} else {
+			tokentype = c
+			return tokentype, nil
 		}
 	}
-	if rune(c) == '(' {
-		c, err = getch()
-		if err != nil {
-			return err
-		}
-		if rune(c) == ')' {
-			copy(token, []byte("()"))
-			tokentype = 1
-			return nil
-		} else {
-			ungetch(c)
-			tokentype = 2
-			return nil
-		}
-	} else if rune(c) == '[' {
-		var i int
-		var cc byte
-		token[i] = c
-		for {
-			cc, err = getch()
-			if err != nil {
-				break
-			}
-			if rune(cc) == ']' {
-				break
-			}
-			i++
-			token[i] = cc
-		}
-		if rune(cc) == ']' {
-			tokentype = 3
-			return nil
-		} else {
-			tokentype = 4
-			return nil
-		}
-	} else if unicode.IsLetter(rune(c)) || unicode.IsNumber(rune(c)) {
-		var i int
-		var cc byte
-		for {
-			cc, err = getch()
-			if err != nil {
-				break
-			}
-			i++
-			token[i] = cc
-			ungetch(c)
-			tokentype = 5
-			return nil
-		}
-	} else {
-		tokentype = int(c)
-		fmt.Printf("%c", rune(c))
-		return nil
-	}
-	return nil
+	return 0, errors.New("unreachable")
 }
 
-func dcl() {
+func dcl() error {
 	var ns int
-	var err error
 	for {
-		err = gettoken()
+		r, err := getToken()
 		if err != nil {
-			break
+			return err
 		}
-		if tokentype == int('*') {
+		if r == '*' {
 			ns++
 		} else {
 			break
 		}
 	}
-	dirdcl()
-	for {
-		ns--
-		if ns == 0 {
-			break
-		}
-		out = append(out, []byte(" pointer to")...)
+	err := dirdcl()
+	if err != nil && err != io.EOF {
+		return err
 	}
+	for i := ns; i > 0; i-- {
+		out.WriteString("pointer to ")
+	}
+	return nil
 }
 
-func dirdcl() {
-	var err error
-	if tokentype == 1 {
-		dcl()
-		if tokentype != 1 {
-			fmt.Printf("error: missing )\n")
-			fmt.Printf("syntax error\n")
-			tokentype = -1
-			return
+func dirdcl() error {
+	if tokentype == '(' {
+		err := dcl()
+		if err != nil {
+			return err
 		}
-	} else if tokentype == 5 {
-		copy(name, token)
+		if tokentype != ')' {
+			err := errors.New("error: missing ) syntax error")
+			tokentype = syntaxErr
+			return err
+		}
+	} else if tokentype == name {
+		iname = token.String()
+		token.Reset()
 	} else {
-		fmt.Printf("error: expected nameor (dcl)\n")
-		fmt.Printf("syntax error\n")
-		tokentype = -1
-		return
+		err := errors.New("error: expected name or (dcl) syntax error")
+		tokentype = syntaxErr
+		return err
 	}
 	for {
-		err = gettoken()
+		r, err := getToken()
 		if err != nil {
-			break
+			return err
 		}
-		if tokentype == 2 || tokentype == 3 {
-			if tokentype == 2 {
-				out = append(out, []byte(" function returning")...)
+		if r == parens || r == brackets {
+			if r == parens {
+				out.WriteString("function returning ")
 			} else {
-				out = append(out, []byte(" array")...)
-				out = append(out, token...)
-				out = append(out, []byte(" of")...)
-
+				out.WriteString("array ")
+				out.WriteString(token.String())
+				out.WriteString(" of ")
+				token.Reset()
 			}
 		} else {
 			break
 		}
 	}
+	return nil
 }
 
-func getch() (byte, error) {
-	var c byte
-	var err error
-	if bufp > 0 {
-		bufp--
-		c = buf[bufp]
-	} else {
-		r := bufio.NewReader(os.Stdin)
-		c, err = r.ReadByte()
+func writeTokenChars(f rune) rune {
+	var last rune
+	token.WriteRune(f) // write first rune
+	for {
+		c, _, err := buf.ReadRune()
+		if err != nil {
+			break
+		}
+		// continue writing until we find the closing ]
+		if c == ']' || c == '\n' {
+			if c == ']' {
+				token.WriteRune(c)
+				last = c
+			}
+			break
+		}
+		token.WriteRune(c)
+		last = c
 	}
-	return c, err
+	return last
 }
 
-func ungetch(c byte) {
-	if bufp >= bufSize {
-		fmt.Printf("ungetch: too many characters\n")
-	} else {
-		bufp++
-		buf[bufp] = c
+func writeTokenName(f rune) {
+	token.WriteRune(f) // write first rune in name
+	for {
+		c, _, err := buf.ReadRune()
+		if err != nil {
+			break
+		}
+		// write the rest of the name
+		if unicode.IsLetter(c) || unicode.IsNumber(c) {
+			token.WriteRune(c)
+			continue
+		}
+		// stop here, since we found another character
+		// push it back into the buffer
+		buf.UnreadRune()
+		break
 	}
 }
