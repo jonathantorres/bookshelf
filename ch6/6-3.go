@@ -5,119 +5,58 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strings"
 )
 
-const MaxLine = 8192
-
-type linelist struct {
-	next *linelist
-	line int
-}
-
-type wordtree struct {
-	word      string
-	firstline *linelist
-	left      *wordtree
-	right     *wordtree
+type tnode struct {
+	word  string
+	lines []int
+	left  *tnode
+	right *tnode
 }
 
 func main() {
-	var buffer []byte
-	var s []byte
-	var word []byte
-	var line, n int
-	var giveup bool
-	var tree *wordtree
-	delims := " \t\n\r\a\f\v!\"%^&*()_=+{}[]\\|/,.<>:;#~?"
-
-	for {
-		buffer, n = getLine(MaxLine)
-		if giveup || n == 0 {
-			break
-		}
-		line++
-		s = buffer
-		for {
-			word = tokenise(s, delims)
-			if giveup || word == nil {
-				break
-			}
-			if !noiseword(word) {
-				w := addword(tree, word, line)
-				if w == nil {
-					fmt.Printf("Error adding data into memory. Giving up.\n")
-					giveup = true
-				}
-			}
-		}
+	var root *tnode
+	r := bufio.NewReader(os.Stdin)
+	scanner := bufio.NewScanner(r)
+	var ln int
+	for scanner.Scan() {
+		l := scanner.Bytes()
+		ln++
+		root = addWords(root, l, ln)
 	}
-	if !giveup {
-		fmt.Printf("%s Line Numbers\n", "Word")
-		printtree(tree)
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("%s\n", err)
+		os.Exit(1)
 	}
-	deleteword(tree)
+	printTree(root)
 }
 
-func deleteword(node *wordtree) {
-	var tmp *wordtree
-	if node != nil {
-		if node.right != nil {
-			tmp = node
-			deleteword(tmp.right)
-		}
-		if node.left != nil {
-			tmp = node
-			deleteword(tmp.left)
-		}
-		if node.firstline != nil {
-			deletelist(node.firstline)
-		}
+func addWords(root *tnode, l []byte, ln int) *tnode {
+	words := getWords(l)
+	if len(words) == 0 {
+		return root
 	}
+	for _, w := range words {
+		root = addTree(root, w, ln)
+	}
+	return root
 }
 
-func addword(node *wordtree, word []byte, line int) *wordtree {
-	var wordloc *wordtree
-	if node == nil {
-		wordloc = new(wordtree)
-		wordloc.left = nil
-		wordloc.right = nil
-		wordloc.word = string(word)
-		wordloc.firstline = addlink(line)
-	} else {
-		newline := addlink(line)
-		comp := bytes.Compare(word, []byte(node.word))
-		if comp == 0 {
-			wordloc = node
-			newline.next = node.firstline
-			node.firstline = newline
-		} else if comp < 0 {
-			tmp := node
-			wordloc = addword(tmp.left, word, line)
-		} else {
-			tmp := node
-			wordloc = addword(tmp.right, word, line)
+func getWords(l []byte) []string {
+	var words []string
+	spl := bytes.Split(l, []byte(" "))
+	for _, word := range spl {
+		w := string(bytes.TrimSpace(word))
+		if !isNoiseWord(w) && w != "" {
+			words = append(words, w)
 		}
 	}
-	if wordloc == nil {
-		deleteword(wordloc)
-	}
-	return wordloc
+	return words
 }
 
-func tokenise(s []byte, delims string) []byte {
-	var r []byte
-	var b byte
-	for _, ss := range s {
-		if !bytes.ContainsRune([]byte(delims), rune(ss)) {
-			b = ss
-			r = append(r, b+1)
-		}
-	}
-	return r
-}
-
-func noiseword(s []byte) bool {
-	list := []string{
+func isNoiseWord(word string) bool {
+	var words = []string{
 		"a",
 		"an",
 		"and",
@@ -136,65 +75,38 @@ func noiseword(s []byte) bool {
 		"they",
 		"you",
 	}
-	var found bool
-	for {
-		if found {
-			break
-		}
-		for _, l := range list {
-			if bytes.ContainsAny(s, l) {
-				found = true
-			}
+	for _, w := range words {
+		if strings.ToLower(word) == w {
+			return true
 		}
 	}
-	return found
+	return false
 }
 
-func deletelist(listnode *linelist) {
-	if listnode != nil {
-		deletelist(listnode.next)
+func addTree(node *tnode, word string, ln int) *tnode {
+	if node == nil {
+		return &tnode{
+			word:  word,
+			lines: []int{ln},
+		}
+	} else if cmp := strings.Compare(strings.ToLower(word), strings.ToLower(node.word)); cmp == 0 {
+		node.lines = append(node.lines, ln)
+	} else if cmp < 0 {
+		node.left = addTree(node.left, word, ln)
+	} else {
+		node.right = addTree(node.right, word, ln)
 	}
+	return node
 }
 
-func addlink(line int) *linelist {
-	ll := new(linelist)
-	ll.line = line
-	ll.next = nil
-	return ll
-}
-
-func printtree(node *wordtree) {
+func printTree(node *tnode) {
 	if node != nil {
-		printtree(node.left)
-		fmt.Printf("%s ", node.word)
-		printlist(node.firstline)
-		fmt.Println()
-		printtree(node.right)
-	}
-}
-
-func printlist(list *linelist) {
-	if list != nil {
-		printlist(list.next)
-		fmt.Printf("%d ", list.line)
-	}
-}
-
-func getLine(lim int) ([]byte, int) {
-	var c byte
-	var i int
-	s := make([]byte, lim)
-	r := bufio.NewReader(os.Stdin)
-	for i = 0; i < lim-1; i++ {
-		c, err := r.ReadByte()
-		if rune(c) == '\n' || err != nil {
-			break
+		printTree(node.left)
+		fmt.Printf("%s\t\t", node.word)
+		for _, n := range node.lines {
+			fmt.Printf("%d,", n)
 		}
-		s[i] = c
+		fmt.Println()
+		printTree(node.right)
 	}
-	if rune(c) == '\n' {
-		s[i] = c
-		i++
-	}
-	return s, i
 }

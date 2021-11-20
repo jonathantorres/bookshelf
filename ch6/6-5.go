@@ -6,11 +6,7 @@ import (
 	"strings"
 )
 
-const (
-	HashSize = 101
-	MaxWord  = 1000
-	BufSize  = 100
-)
+const hashSize = 101
 
 type nlist struct {
 	next *nlist
@@ -21,14 +17,21 @@ type nlist struct {
 var hashtab []*nlist
 
 func main() {
-	hashtab = make([]*nlist, HashSize)
+	hashtab = make([]*nlist, hashSize)
 	lu := install("Jonathan", "def")
 	if lu == nil {
 		fmt.Println("Error!")
 		os.Exit(1)
 	}
-	if lookup("Jonathan") == nil {
+	var r *nlist
+	if r = lookup("Jonathan"); r == nil {
 		fmt.Println("Error with lookup")
+		os.Exit(1)
+	}
+	fmt.Println(r.name, r.defn)
+	undef("Jonathan")
+	if r = lookup("Jonathan"); r != nil {
+		fmt.Println("Error with lookup, Jonathan should not be there")
 		os.Exit(1)
 	}
 }
@@ -81,5 +84,5 @@ func hash(s string) uint {
 	for _, c := range s {
 		hashval = uint(int(c) + 31*int(hashval))
 	}
-	return hashval % HashSize
+	return hashval % hashSize
 }
