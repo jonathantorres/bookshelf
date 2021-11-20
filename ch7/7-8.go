@@ -6,10 +6,7 @@ import (
 	"os"
 )
 
-const (
-	MaxLine  = 1000
-	PageRows = 50
-)
+const pageRows = 25
 
 func main() {
 	var pages, rows int
@@ -26,7 +23,7 @@ func main() {
 			fmt.Printf("%s\n", err)
 			os.Exit(1)
 		}
-		pages = count_pages(f)
+		pages = countPages(f)
 		fmt.Printf("File: %s, %d", n, pages)
 		if pages > 1 {
 			fmt.Printf(" pages")
@@ -35,24 +32,29 @@ func main() {
 		}
 		fmt.Println()
 		rows = 0
+		_, err = f.Seek(0, 0)
+		if err != nil {
+			fmt.Printf("%s\n", err)
+			os.Exit(1)
+		}
 		s := bufio.NewScanner(f)
 		for s.Scan() {
 			line := s.Text()
 			rows++
-			fmt.Printf("%s", line)
+			fmt.Printf("%s\n", line)
 		}
 		if err := s.Err(); err != nil {
 			fmt.Printf("%s\n", err)
 			os.Exit(1)
 		}
-		for i := rows % PageRows; i <= PageRows; i++ {
+		for i := rows % pageRows; i <= pageRows; i++ {
 			fmt.Println()
 		}
 		f.Close()
 	}
 }
 
-func count_pages(f *os.File) int {
+func countPages(f *os.File) int {
 	var rows int
 	s := bufio.NewScanner(f)
 	for s.Scan() {
@@ -62,5 +64,5 @@ func count_pages(f *os.File) int {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)
 	}
-	return int(rows/PageRows + 1)
+	return int(rows/pageRows + 1)
 }

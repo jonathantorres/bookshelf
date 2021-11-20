@@ -6,8 +6,6 @@ import (
 	"os"
 )
 
-const MaxLine = 100
-
 func main() {
 	if len(os.Args) != 3 {
 		fmt.Printf("error: the program takes 2 arguments\n")
@@ -18,7 +16,7 @@ func main() {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)
 	}
-	f2, err := os.Open(os.Args[1])
+	f2, err := os.Open(os.Args[2])
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)
@@ -41,7 +39,7 @@ func main() {
 	for s1.Scan() && s2.Scan() {
 		l1 := s1.Text()
 		l2 := s2.Text()
-		if l1 == l2 {
+		if l1 != l2 {
 			fmt.Printf("%s\n", l1)
 			fmt.Printf("%s\n", l2)
 			return

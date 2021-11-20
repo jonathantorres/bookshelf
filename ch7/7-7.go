@@ -2,84 +2,63 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
 )
 
-const (
-	MaxLine    = 1000
-	PatternLen = 100
-)
-
-func main() {
-	var f *os.File
-	var lineno int
-	var c rune
-	var except, number, pat_found bool
-	var pattern, filename string
-	var err error
-
-	for i := 1; i < len(os.Args); i++ {
-		if os.Args[i][0] == '-' {
-			c = rune(os.Args[i][1])
-			switch c {
-			case 'x':
-				except = true
-				break
-			case 'n':
-				number = true
-				break
-			default:
-				fmt.Printf("find: illegal option %c\n", c)
-				os.Exit(1)
-				break
-			}
-		} else {
-			if !pat_found {
-				pattern = os.Args[i]
-				pat_found = true
-			} else {
-				filename = os.Args[i]
-			}
-		}
-	}
-	f, err = os.Open(filename)
-	if err != nil {
-		fmt.Printf("find: %s\n", err)
-		os.Exit(1)
-	}
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		l := s.Text()
-		if except {
-			// do something
-		}
-		if strings.Contains(l, pattern) {
-			if number {
-				lineno++
-				fmt.Printf("%d:", lineno)
-			}
-			fmt.Printf("%s\n", l)
-		}
-	}
+type match struct {
+	lineNum int
+	line    string
 }
 
-func getLine(lim int) ([]byte, int) {
-	var c byte
-	var i int
-	s := make([]byte, lim)
-	r := bufio.NewReader(os.Stdin)
-	for i = 0; i < lim-1; i++ {
-		c, err := r.ReadByte()
-		if rune(c) == '\n' || err != nil {
-			break
+var nFlag = flag.Bool("n", false, "print line numbers")
+var xFlag = flag.Bool("x", false, "print lines that do not match instead")
+
+func main() {
+	flag.Parse()
+	var pattern string
+	matches := make([]*match, 0, 5)
+	for i, arg := range flag.Args() {
+		if i == 0 {
+			pattern = arg
+			continue
 		}
-		s[i] = c
+		f, err := os.Open(arg)
+		if err != nil {
+			fmt.Printf("find: %s\n", err)
+			os.Exit(1)
+		}
+		scanner := bufio.NewScanner(f)
+		var ln int
+		for scanner.Scan() {
+			l := scanner.Text()
+			ln++
+			found := strings.Contains(l, pattern)
+			if *xFlag == false && found {
+				m := &match{
+					lineNum: ln,
+					line:    l,
+				}
+				matches = append(matches, m)
+			} else if *xFlag && !found {
+				m := &match{
+					lineNum: ln,
+					line:    l,
+				}
+				matches = append(matches, m)
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Printf("find: %s\n", err)
+			os.Exit(1)
+		}
 	}
-	if rune(c) == '\n' {
-		s[i] = c
-		i++
+	for _, m := range matches {
+		if *nFlag {
+			fmt.Printf("%d: ", m.lineNum)
+		}
+		fmt.Printf("%s\n", m.line)
 	}
-	return s, i
 }

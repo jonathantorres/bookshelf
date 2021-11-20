@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	LineLen = 10
-	OctLen  = 3
+	linelen = 10
+	octLen  = 3
 )
 
 func main() {
@@ -24,16 +24,16 @@ func main() {
 		} else {
 			cnum = printnor(int(b), cnum)
 		}
-		if cnum >= LineLen {
-			cnum = cnum - LineLen
+		if cnum >= linelen {
+			cnum = cnum - linelen
 		}
 	}
 }
 
 func printoct(c, n int) int {
 	var l int
-	l = n + OctLen
-	if l <= LineLen {
+	l = n + octLen
+	if l <= linelen {
 		fmt.Printf("%o", c)
 	} else {
 		fmt.Printf("\n%o", c)
@@ -44,7 +44,7 @@ func printoct(c, n int) int {
 func printnor(c, n int) int {
 	var l int
 	l = n + 1
-	if l <= LineLen {
+	if l <= linelen {
 		fmt.Printf("%c", c)
 	} else {
 		fmt.Printf("\n%c", c)

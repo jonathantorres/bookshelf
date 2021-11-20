@@ -4,6 +4,8 @@ import "fmt"
 
 func main() {
 	miniprintf("This is the letter %c\n", 's')
+	miniprintf("This is a string %s\n", "Jonathan")
+	miniprintf("This is the number %d\n", 100)
 }
 
 func miniprintf(fm string, ap ...interface{}) {
@@ -50,7 +52,6 @@ func miniprintf(fm string, ap ...interface{}) {
 			fmt.Printf("%v", v)
 			j++
 			break
-
 		}
 	}
 }
