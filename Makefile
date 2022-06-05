@@ -5,6 +5,8 @@ CH1_PROGS = 1-0 1-1 1-2 1-3 1-4 1-5 1-6
 CH2_PROGS = 2-0 2-1 2-2 2-3 2-4 2-5               \
             2-6 2-7 2-8 2-9 2-10
 CH3_PROGS = 3-0 3-1 3-2 3-3 3-4 3-5 3-6
+CH4_PROGS = 4-0 4-1 4-2 4-3 4-4 4-5 4-6           \
+            4-7 4-8
 
 # chapter 0 programs
 $(CH0_PROGS):%: ch00/%.cpp
@@ -23,6 +25,11 @@ $(CH2_PROGS):%: ch02/%.cpp
 
 # chapter 3 programs
 $(CH3_PROGS):%: ch03/%.cpp
+	$(CPPFLAGS) $^ -o bin/$@
+	./bin/$@
+
+# chapter 4 programs
+$(CH4_PROGS):%: ch04/%.cpp
 	$(CPPFLAGS) $^ -o bin/$@
 	./bin/$@
 
