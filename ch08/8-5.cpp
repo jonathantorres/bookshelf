@@ -1,9 +1,9 @@
-// TODO: Reimplement using output iterators
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <iterator>
 #include <cctype>
 
 using std::string;
@@ -17,12 +17,15 @@ using std::endl;
 bool space(char c);
 bool not_space(char c);
 std::vector<std::string> split(const std::string& str);
-map<string, vector<int>> xref(istream& in, vector<string> find_words(const string& str));
+
+template <class It>
+void xref(istream& in, It ret, vector<string> find_words(const string& str));
 
 int main(void)
 {
     // call xref using split by default
-    map<string, vector<int>> ret = xref(cin, split);
+    map<string, vector<int>> ret;
+    xref(cin, std::inserter(ret, ret.begin()), split);
 
     // write the results
     for (map<string, vector<int>>::const_iterator it = ret.begin(); it != ret.end(); ++it) {
@@ -46,11 +49,12 @@ int main(void)
 }
 
 // find all the lines that refer to each word in the input
-map<string, vector<int>> xref(istream& in, vector<string> find_words(const string& str))
+template <class It>
+void xref(istream& in, It ret, vector<string> find_words(const string& str))
 {
     string line;
     int line_number = 0;
-    map<string, vector<int>> ret;
+    map<string, vector<int>> m;
 
     // read the next line
     while (getline(in, line)) {
@@ -61,10 +65,10 @@ map<string, vector<int>> xref(istream& in, vector<string> find_words(const strin
 
         // remember that each word occurs on the current line
         for (vector<string>::const_iterator it = words.begin(); it != words.end(); ++it) {
-            ret[*it].push_back(line_number);
+            m[*it].push_back(line_number);
         }
     }
-    return ret;
+    copy(m.begin(), m.end(), ret);
 }
 
 vector<string> split(const string& str)
