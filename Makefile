@@ -15,6 +15,8 @@ CH7_PROGS = 7-0 7-1 7-2 7-3 7-4 7-5 7-6           \
             7-7 7-8 7-9
 CH8_PROGS = 8-0 8-1 8-2 8-3 8-4 8-5 8-6           \
             8-7 8-8
+CH9_PROGS = 9-0 9-1 9-2 9-3 9-4 9-5 9-6           \
+            9-7
 
 # chapter 0 programs
 $(CH0_PROGS):%: ch00/%.cpp
@@ -58,6 +60,11 @@ $(CH7_PROGS):%: ch07/%.cpp
 
 # chapter 8 programs
 $(CH8_PROGS):%: ch08/%.cpp
+	$(CPPFLAGS) $^ -o bin/$@
+	./bin/$@
+
+# chapter 9 programs
+$(CH9_PROGS):%: ch09/%.cpp
 	$(CPPFLAGS) $^ -o bin/$@
 	./bin/$@
 
