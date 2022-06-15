@@ -20,6 +20,9 @@ CH9_PROGS = 9-0 9-1 9-2 9-3 9-4 9-5 9-6           \
 CH10_PROGS = 10-0 10-1 10-2 10-3 10-4 10-5 10-6
 CH11_PROGS = 11-0 11-1 11-2 11-3 11-4 11-5 11-6   \
              11-7 11-8 11-9
+CH12_PROGS = 12-0 12-1 12-2 12-3 12-4 12-5 12-6   \
+             12-7 12-8 12-9 12-10 12-11 12-12     \
+             12-13 12-14 12-15
 
 # chapter 0 programs
 $(CH0_PROGS):%: ch00/%.cpp
@@ -78,6 +81,11 @@ $(CH10_PROGS):%: ch10/%.cpp
 
 # chapter 11 programs
 $(CH11_PROGS):%: ch11/%.cpp
+	$(CPPFLAGS) $^ -o bin/$@
+	./bin/$@
+
+# chapter 12 programs
+$(CH12_PROGS):%: ch12/%.cpp
 	$(CPPFLAGS) $^ -o bin/$@
 	./bin/$@
 
