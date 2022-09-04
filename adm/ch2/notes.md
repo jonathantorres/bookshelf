@@ -9,12 +9,12 @@
 
 Formal definitions of the __**Big Oh**__:
 
-![big_oh](https://github.com/jonathantorres/adm/blob/master/ch2/img/big_oh.png) - Big Oh - Upper bound on `f(n)`
+![big_oh](https://github.com/jonathantorres/bookshelf/blob/master/adm/ch2/img/big_oh.png) - Big Oh - Upper bound on `f(n)`
 
-![big_omega](https://github.com/jonathantorres/adm/blob/master/ch2/img/big_omega.png) - Big Omega - Lower bound on `f(n)`
+![big_omega](https://github.com/jonathantorres/bookshelf/blob/master/adm/ch2/img/big_omega.png) - Big Omega - Lower bound on `f(n)`
 
-![big_theta](https://github.com/jonathantorres/adm/blob/master/ch2/img/big_theta.png) - Big Theta - `c1` is a lower bound on `f(n)` and `c2` is an upper bound on `f(n)`
+![big_theta](https://github.com/jonathantorres/bookshelf/blob/master/adm/ch2/img/big_theta.png) - Big Theta - `c1` is a lower bound on `f(n)` and `c2` is an upper bound on `f(n)`
 
 Order of dominance of functions in the __**Big Oh**__:
 
-![dominance](https://github.com/jonathantorres/adm/blob/master/ch2/img/dominance.png)
+![dominance](https://github.com/jonathantorres/bookshelf/blob/master/adm/ch2/img/dominance.png)
