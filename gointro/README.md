@@ -1,7 +1,7 @@
 # Go Intro
 Exercises and answers to questions from the "Introducing Go" book.  
 
-![Book Cover](https://github.com/jonathantorres/gointro/blob/master/cover.jpg)
+![Book Cover](https://github.com/jonathantorres/bookshelf/blob/master/gointro/cover.jpg)
 
 ## Compile and run programs
 Download, compile and run your programs with these commands
