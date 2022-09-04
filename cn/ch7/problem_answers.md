@@ -55,7 +55,7 @@ Both procedures are similar, they use the same formula, resulting in exponential
 - No packets will arrive
 
 #### P12
-![problem12](https://github.com/jonathantorres/cn/blob/master/ch7/img/p12.jpg)
+![problem12](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch7/img/p12.jpg)
 
 #### P13
 - Both schemes require 25% more bandwidth
@@ -88,22 +88,22 @@ Both procedures are similar, they use the same formula, resulting in exponential
 - 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 3
 
 #### P18
-![problem18](https://github.com/jonathantorres/cn/blob/master/ch7/img/p18.jpg)
+![problem18](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch7/img/p18.jpg)
 
 #### P19
-![problem19](https://github.com/jonathantorres/cn/blob/master/ch7/img/p19.jpg)
+![problem19](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch7/img/p19.jpg)
 
 #### P20
-![problem20](https://github.com/jonathantorres/cn/blob/master/ch7/img/p20.jpg)
+![problem20](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch7/img/p20.jpg)
 
 #### P21
-![problem21](https://github.com/jonathantorres/cn/blob/master/ch7/img/p21.jpg)
+![problem21](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch7/img/p21.jpg)
 
 #### P22
 Is the process of how to design a network topology (where to place routers, how to interconnect routers with links, and what capacity to assign to links) to achieve a given level of end-to-end performance
 
 #### P23
-![problem23](https://github.com/jonathantorres/cn/blob/master/ch7/img/p23.jpg)
+![problem23](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch7/img/p23.jpg)
 
 #### P24
 No, not at all

@@ -56,13 +56,13 @@ lim E(p * ) = 1/2 * 1/e = 1/2e
 - efficiency = p(success in a slot) = 4p(1-p)3
 
 #### P12
-![problem12](https://github.com/jonathantorres/cn/blob/master/ch5/img/p12.jpg)
+![problem12](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch5/img/p12.jpg)
 
 #### P13
 NQ / N(Q / R + d(poll)) = R / 1+d(poll) / Q
 
 #### P14
-![problem14](https://github.com/jonathantorres/cn/blob/master/ch5/img/p14.jpg)
+![problem14](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch5/img/p14.jpg)
 - Forwarding table in E reveals that the datagram should be router to 192.168.3.002
 - E Ethernet packet is destined to 88-88-88-88-88-88
 - Router 2 receives packet and extracts datagram, datagram to be routed to 198.162.2.002
@@ -116,7 +116,7 @@ Because A's retransmission reaches B before B's scheduled retransmission time (8
 - Clearly K/K+e-1 approaches 1 as k -> Infinity
 
 #### P21
-![problem21](https://github.com/jonathantorres/cn/blob/master/ch5/img/p21.jpg)
+![problem21](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch5/img/p21.jpg)
 i) from A to left router:
 - Source MAC address = 00-00-00-00-00-00
 - Destination MAC address = 22-22-22-22-22-22
@@ -164,7 +164,7 @@ If each departamental hub can have maximum throughput of 100Mbps, and the web se
 All of the 11 end systems will lie in the same collision domain. The maximum total aggregate throughput of 100Mbps is possible among the 11 end systems
 
 #### P26
-![problem26](https://github.com/jonathantorres/cn/blob/master/ch5/img/p26.jpg)
+![problem26](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch5/img/p26.jpg)
 
 #### P27
 - L * 8 / 128 * 10^3 sec = L/16 msec
@@ -177,10 +177,10 @@ All of the 11 end systems will lie in the same collision domain. The maximum tot
 - The IP addresses for those 3 computers in CS department are: 111.111.2.1, 111.111.2.2, 111.111.2.3, the subnet mask is 111.111.2/24
 
 #### P29
-![problem29](https://github.com/jonathantorres/cn/blob/master/ch5/img/p29.jpg)
+![problem29](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch5/img/p29.jpg)
 
 #### P30
-![problem30](https://github.com/jonathantorres/cn/blob/master/ch5/img/p30.jpg)
+![problem30](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch5/img/p30.jpg)
 
 #### P31
 - Computer uses DHCP to obtain IP address

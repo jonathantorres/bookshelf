@@ -27,13 +27,13 @@ The value is stored in the TCP segment
 Host A must continue to send segments with one data byte. These will be acknowledged and eventually the buffer will begin to empty and the acknowledgments will contain a nonzero `rwnd` value
 
 #### P8
-![problem8](https://github.com/jonathantorres/cn/blob/master/ch3/img/p8.jpg)
+![problem8](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch3/img/p8.jpg)
 
 #### P9
-![problem9](https://github.com/jonathantorres/cn/blob/master/ch3/img/p9.jpg)
+![problem9](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch3/img/p9.jpg)
 
 #### P10
-![problem10](https://github.com/jonathantorres/cn/blob/master/ch3/img/p10.jpg)
+![problem10](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch3/img/p10.jpg)
 
 #### P11
 No, since the ACK from the receiver won't be sent. It won't take an action
@@ -42,7 +42,7 @@ No, since the ACK from the receiver won't be sent. It won't take an action
 Yes, it would still work, but the packets in error would have to be retransmitted
 
 #### P13
-![problem13](https://github.com/jonathantorres/cn/blob/master/ch3/img/p13.jpg)
+![problem13](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch3/img/p13.jpg)
 
 #### P14
 No, since it's only acknowledging failures. It would not be guaranteeing the receival of the packets on the receival's end
@@ -58,7 +58,7 @@ No, since it's only acknowledging failures. It would not be guaranteeing the rec
 - The received receives this and ends it's connection
 
 #### P17
-![problem8](https://github.com/jonathantorres/cn/blob/master/ch3/img/p8.jpg)
+![problem8](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch3/img/p8.jpg)
 
 #### P18
 - Send two messages at a time
@@ -101,7 +101,7 @@ The host will send a special ICMP datagram
 - Sequence #168, source port is 80 and destination port is 302
 - ACK # is 128, source port is 80 and destination port is 302
 - The ACK is # 167
-- ![problem27](https://github.com/jonathantorres/cn/blob/master/ch3/img/p27.jpg)
+- ![problem27](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch3/img/p27.jpg)
 
 #### P28
 Massive overflow, a lot of packets would have to be re-sent. The other end read the data out at a much slower rate than that it goes in

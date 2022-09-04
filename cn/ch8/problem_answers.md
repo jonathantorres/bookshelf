@@ -40,10 +40,10 @@ Since every letter of the alphabet is on that phrase, the Caesar cipher would be
     = (TA^SB) mod p = S
 - p = 11, g = 2
 - p = 11, g = 2
-![problem9](https://github.com/jonathantorres/cn/blob/master/ch8/img/p9.jpg)
+![problem9](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch8/img/p9.jpg)
 
 #### P10
-![problem10](https://github.com/jonathantorres/cn/blob/master/ch8/img/p10.jpg)
+![problem10](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch8/img/p10.jpg)
 
 #### P11
 The message has the same checksum:
@@ -54,7 +54,7 @@ O B O B
 ```
 
 #### P12
-![problem12](https://github.com/jonathantorres/cn/blob/master/ch8/img/p12.jpg)
+![problem12](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch8/img/p12.jpg)
 
 #### P13
 File is broken into blocks of equal size, for each block calculate a hash (MD5 or SHA-1). When a peer downloads a block, calculate the has of this block and compare it to the hash in the `.torrent` file. If they are equal, the file is valid, otherwise it's a bogus file
@@ -75,7 +75,7 @@ Bob does not know if he's talking to Trudy or Alice initially, Bob and Alice sha
 This wouldn't solve the problem. Just as Bob thinks that he's authenticating Alice, so too can Trudy fool Alice into thinking that she is authenticating Bob
 
 #### P17
-![problem17](https://github.com/jonathantorres/cn/blob/master/ch8/img/p17.jpg)
+![problem17](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch8/img/p17.jpg)
 
 #### P18
 - No, without a public-private key pair, Bob cannot verify that Alice created the message
@@ -114,7 +114,7 @@ If Trudy does not bother to change the sequence number, R2 will detect the dupli
 - For a) the message was 01011010 flipping the first bit gives, 11011010 and then Trudy XOR's this message with keystream: 11011010 XOR 11111010 = 00100000
 
 #### P25
-![problem25](https://github.com/jonathantorres/cn/blob/master/ch8/img/p25.jpg)
+![problem25](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch8/img/p25.jpg)
 
 #### P26
-![problem26](https://github.com/jonathantorres/cn/blob/master/ch8/img/p26.jpg)
+![problem26](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch8/img/p26.jpg)

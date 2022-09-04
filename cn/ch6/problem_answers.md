@@ -47,7 +47,7 @@ It sets the power management bit in the header of the frame to 1, a timer in the
 - The time it takes for a router to learn a path to the mobile node depends on the number of hops between the router and the edge router of the foreign network for the node
 
 #### P12
-![problem12](https://github.com/jonathantorres/cn/blob/master/ch6/img/p12.jpg)
+![problem12](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch6/img/p12.jpg)
 
 #### P13
 Because datagrams must be first forwarded to the home agent, and from there to the mobile agent, the delays will generally be longer than via direct routing

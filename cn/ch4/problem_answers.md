@@ -167,13 +167,13 @@ Z to W
 z-w, z-y-w, z-y-x-w, z-y-x-v-w, z-y-x-u-w, z-y-x-u-v-w, z-y-x-v-u-w
 
 #### P26
-![problem26](https://github.com/jonathantorres/cn/blob/master/ch4/img/p26.jpg)
+![problem26](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p26.jpg)
 
 #### P27
-![problem27](https://github.com/jonathantorres/cn/blob/master/ch4/img/p27.jpg)
+![problem27](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p27.jpg)
 
 #### P28
-![problem28](https://github.com/jonathantorres/cn/blob/master/ch4/img/p28.jpg)
+![problem28](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p28.jpg)
 
 #### P29
 At each iteration, a node exchanges distance tables with it's neighbors. If you are node A and your neighbor is B all of B's neighbors will know the shortest cost path of one or two hops to you after one iteration. If the algorithm is run as a result of a change in link costs, there is no a priority bound in the number of iterations required
@@ -184,7 +184,7 @@ At each iteration, a node exchanges distance tables with it's neighbors. If you 
 - Any change in link cost c(x,y) will not cause x to inform it's neighbors of a new minimum cost path to u
 
 #### P31
-![problem31](https://github.com/jonathantorres/cn/blob/master/ch4/img/p31.jpg)
+![problem31](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p31.jpg)
 
 #### P32
 No, not at all
@@ -241,13 +241,13 @@ There's nothing Z can do from preventing traffic from X to transit through Z
 
 #### P45
 The 32 receivers are connected to the sender in the binary tree
-![problem45](https://github.com/jonathantorres/cn/blob/master/ch4/img/p45.jpg)
+![problem45](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p45.jpg)
 
 #### P46
-![problem46](https://github.com/jonathantorres/cn/blob/master/ch4/img/p46.jpg)
+![problem46](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p46.jpg)
 
 #### P47
-![problem47](https://github.com/jonathantorres/cn/blob/master/ch4/img/p47.jpg)
+![problem47](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p47.jpg)
 
 #### P48
 AS-PATH and NEXT-HOP
@@ -259,7 +259,7 @@ The topology in the original figure connects A to C, B to C, E to C and F to C d
 It's caused it by an endless cycling of broadcast packets
 
 #### P51
-![problem51](https://github.com/jonathantorres/cn/blob/master/ch4/img/p51.jpg)
+![problem51](https://github.com/jonathantorres/bookshelf/blob/master/cn/ch4/img/p51.jpg)
 
 #### P52
 - After 1 step -> 3 copies are transmitted
