@@ -1,7 +1,7 @@
 # gopl
 Exercises and answers to questions from the "The Go Programming Language" book.
 
-![Book Cover](https://github.com/jonathantorres/gopl/blob/master/cover.jpg)
+![Book Cover](https://github.com/jonathantorres/bookshelf/blob/master/gopl/cover.jpg)
 
 ## Compile and run programs
 After cloning your repository, you can run any of the solutions with `go run`. For example, to run exercise 6 of chapter 1:
