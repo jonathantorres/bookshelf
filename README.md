@@ -13,6 +13,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | kr          | The C Programming Language |
 | lcthw       | Learn C The Hard Way |
 | lp3thw      | Learn Python 3 The Hard Way |
+| math        | Discrete Mathematics |
 | moho        | The Rust Programming Language |
 | ostep       | Operating Systems: Three Easy Pieces |
 | rim         | Rust In Motion: Video Course |
