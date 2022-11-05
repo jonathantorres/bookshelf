@@ -14,7 +14,7 @@ function fast_expt_iter(b, n, a) {
         return a;
     }
     if (is_even(n)) {
-        return fast_expt_iter(b*b, n/2, a);
+        return fast_expt_iter(square(b), n/2, a);
     }
     return fast_expt_iter(b, n-1, b*a);
 }
