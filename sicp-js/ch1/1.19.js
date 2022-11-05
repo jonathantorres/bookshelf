@@ -1,12 +1,9 @@
 import { display } from 'sicp';
 
-for (let i = 0; i <= 10; i++) {
-    console.log(fib(i));
-}
+display(fib(25));
 
 function fib(n) {
     return fib_iter(1, 0, 0, 1, n);
-    // return fib2(n);
 }
 
 function fib_iter(a, b, p, q, count) {
@@ -23,16 +20,6 @@ function fib_iter(a, b, p, q, count) {
                       p,
                       q,
                       count - 1);
-}
-
-function fib2(n) {
-    if (n === 0) {
-        return 0;
-    }
-    if (n === 1) {
-        return 1;
-    }
-    return fib2(n-1) + fib2(n-2);
 }
 
 function is_even(n) {
