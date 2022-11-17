@@ -17,7 +17,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | moho        | The Rust Programming Language |
 | ostep       | Operating Systems: Three Easy Pieces |
 | rim         | Rust In Motion: Video Course |
-| sqmm        | SQL Queries for Mere Mortals (MySQL |
+| sqmm        | SQL Queries for Mere Mortals (MySQL) |
 | tyc         | Teach Yourself C in 21 Days |
 | tycpp       | Teach Yourself C++ in 21 Days |
 | unp         | UNIX Network Programming: First Edition |
