@@ -39,11 +39,11 @@ function div_interval(x, y) {
 }
 
 function upper_bound(i) {
-    return head(i);
+    return tail(i);
 }
 
 function lower_bound(i) {
-    return tail(i);
+    return head(i);
 }
 
 function print_interval(i) {
