@@ -4,19 +4,11 @@ import {
 } from 'sicp';
 
 const v = list(10, 20, 30);
-
-// 1 2 3
-// 3 5 1
-// 1 1 1
 const m1 = list(
     list(1, 2, 3),
     list(3, 5, 1),
     list(1, 1, 1)
 );
-
-// 1 2 3
-// 4 5 6
-// 7 8 9
 const m2 = list(
     list(1, 2, 3),
     list(4, 5, 6),
@@ -47,29 +39,12 @@ function transpose(mat) {
     }, list(), mat);
 }
 
-// n = 
-// 1 2 3
-// 3 5 1
-// 1 1 1
-
-// m = 
-// 1 2 3
-// 4 5 6
-// 7 8 9
-
-// transpose(n) = 
-// 1 3 1
-// 2 5 1
-// 3 1 1
-
-// 30 46 42
-// 30 39 48
-// 12 15 18
-// list(list(30, 36, 42), list(30, 39, 48), list(12, 15, 18))
-function matrix_times_matrix(n, m) {
+function matrix_times_matrix(m, n) {
     const cols = transpose(n);
     return map(r => {
-        return matrix_times_vector(transpose(m), matrix_times_vector(cols, r));
+        return map(x => {
+            return dot_product(r, x);
+        }, cols);
     }, m);
 }
 
