@@ -1,14 +1,11 @@
 import {
-    display, display_list, list, head, map, length,
+    display, display_list, list, head, map, length, for_each,
     tail, is_null, pair, is_pair, accumulate, append, filter
 } from 'sicp';
 
 const empty_board = null;
 
-display_list(length(queens(4)));
-
-// a solution, looks like this:
-// list(pair(2,1), pair(4,2), pair(1,3), pair(3,4))
+display_list(length(queens(8)));
 
 function queens(board_size) {
     function queen_cols(k) {
@@ -26,9 +23,22 @@ function queens(board_size) {
 }
 
 function is_safe(k, positions) {
-    display_list(k, "k:");
-    display_list(positions, "pos:");
-    return true;
+    let safe = true;
+    const fr = head(head(positions));
+    const fc = tail(head(positions));
+    for_each(x => {
+        const r = head(x);
+        const c = tail(x);
+        if (
+            fr-fc === r-c
+            || fr+fc === r+c
+            || fr === r
+        ) {
+            safe = false;
+        }
+    }, tail(positions));
+
+    return safe;
 }
 
 function adjoin_position(new_row, k, rest_of_queens) {
