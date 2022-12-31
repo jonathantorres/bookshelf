@@ -18,6 +18,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | ostep       | Operating Systems: Three Easy Pieces |
 | rim         | Rust In Motion: Video Course |
 | sqmm        | SQL Queries for Mere Mortals (MySQL) |
+| sicp-js     | Structure and Interpretation of Computer Programs (JavaScript Edition) |
 | tyc         | Teach Yourself C in 21 Days |
 | tycpp       | Teach Yourself C++ in 21 Days |
 | unp         | UNIX Network Programming: First Edition |
