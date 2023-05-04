@@ -6,6 +6,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | acc         | Accelerated C++  |
 | adm         | The Algorithm Design Manual |
 | cn          | Computer Networking - A Top Down Approach |
+| csapp       | Computer Systems - A Programmer's Perspective |
 | gkr         | The C Programming Language (Rewritten in Go) |
 | gointro     | Introducing Go |
 | gopl        | The Go Programming Language |
