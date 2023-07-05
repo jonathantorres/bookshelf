@@ -1,3 +1,6 @@
+#define N 16
+typedef int fix_matrix[N][N];
+
 void fix_set_diag_opt(fix_matrix A, int val)
 {
     int *a   = &A[0][0];
