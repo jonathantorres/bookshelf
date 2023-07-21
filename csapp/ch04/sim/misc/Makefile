@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-Wall -O1 -g
-LCFLAGS=-O1
+CFLAGS=-Wall -O1 -g -fcommon -DUSE_INTERP_RESULT
+LCFLAGS=-O1 -fcommon
 LEX = flex
 YACC=bison
 LEXLIB = -lfl
