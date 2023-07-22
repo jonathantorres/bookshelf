@@ -1,0 +1,25 @@
+# A:
+    irmovq $-4, %rbx
+    rmmovq %rsi, 0x800(%rbx)
+    halt
+
+# B:
+    pushq %rsi
+    call 0x20C
+    halt
+    irmovq $10, %rbx
+    ret
+
+# C:
+    mrmovq 7(%rsp), %rbp # Byte starting at F0 is invalid
+    nop
+    popq %rcx
+
+# D:
+    subq %rcx, %rbx
+    je 0x400
+    halt
+
+# E:
+    xorq %rsi, %rdx
+    pushq # Byte F0 is invalid

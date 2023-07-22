@@ -1,0 +1,48 @@
+# Execution begins at address 0 
+    .pos 0
+    irmovq stack, %rsp  # Set up stack pointer
+    call main           # Execute main program
+    halt                # Terminate program 
+
+# Array of 4 elements
+    .align 8
+array:
+    .quad 0x000d000d000d
+    .quad 0x00c000c000c0
+    .quad 0x0b000b000b00
+    .quad 0xa000a000a000
+
+main:
+    irmovq array,%rdi
+    irmovq $4,%rsi
+    call abssum
+    ret
+
+# long abssum(long *start, long count)
+# start in %rdi, count in %rsi
+abssum:
+    irmovq $8, %r8
+    irmovq $1, %r9
+    irmovq $-1, %r11
+    xorq %rax,%rax
+    andq %rsi,%rsi
+    jmp     test
+loop:
+    mrmovq (%rdi),%r10
+    rrmovq %r10,%r12
+    xorq %r11, %r12 # complement
+    addq %r9, %r12  # add one
+    andq %r10, %r10
+    cmovl %r12, %r10
+    andq %r10, %r10
+add:
+    addq %r10,%rax
+    addq %r8,%rdi
+    subq %r9,%rsi
+test:
+    jne    loop
+    ret
+
+# Stack starts here and grows to lower addresses
+    .pos 0x200
+stack:
