@@ -1,0 +1,56 @@
+(define (make-interval a b)
+  (cons a b))
+
+(define (lower-bound x)
+  (car x))
+
+(define (upper-bound x)
+  (cdr x))
+
+(define (print-interval x)
+  (display (lower-bound x))
+  (display ",")
+  (display (upper-bound x))
+  (newline))
+
+(define (add-interval x y)
+  (make-interval
+    (+ (lower-bound x) (lower-bound y))
+    (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (define (positive? number)
+    (<= 0 number))
+  (define (negative? number)
+    (<= number 0))
+  (let ((xl (lower-bound x))
+        (xu (upper-bound x))
+        (yl (lower-bound y))
+        (yu (upper-bound y)))
+    (cond ((and (positive? xl) (positive? xu) (positive? yl) (positive? yu))
+           (make-interval (* xl yl) (* xu yu)))
+          ((and (positive? xl) (positive? xu) (negative? yl) (positive? yu))
+           (make-interval (* xu yl) (* xu yu)))
+          ((and (positive? xl) (positive? xu) (negative? yl) (negative? yu))
+           (make-interval (* xu yl) (* xl yu)))
+          ((and (negative? xl) (positive? xu) (positive? yl) (positive? yu))
+           (make-interval (* xl yu) (* xu yu)))
+          ((and (negative? xl) (positive? xu) (negative? yl) (positive? yu))
+           (make-interval (min (* xl yu) (* xu yl)) (max (* xl yl) (* xu yu))))
+          ((and (negative? xl) (positive? xu) (negative? yl) (negative? yu))
+           (make-interval (* xu yl) (* xl yl)))
+          ((and (negative? xl) (negative? xu) (positive? yl) (positive? yu))
+           (make-interval (* xl yu) (* xu yl)))
+          ((and (negative? xl) (negative? xu) (negative? yl) (positive? yu))
+           (make-interval (* xl yu) (* xl yl)))
+          ((and (negative? xl) (negative? xu) (negative? yl) (negative? yu))
+           (make-interval (* xu yu) (* xl yl))))))
+
+(define a (make-interval 4 9))
+(print-interval a)
+
+(define b (make-interval 9 22))
+(print-interval b)
+
+(define c (mul-interval a b)) ; 36,198
+(print-interval c)
