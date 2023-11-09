@@ -7,24 +7,15 @@ display(f(1, 3, 2)); // 13
 display(f(4, 7, 2)); // 65
 
 function f(a, b, c) {
-    let lar1 = a;
-    let lar2 = a;
-
-    if (b > a && b > c) {
-        lar1 = b;
-    } else if (c > a && c > b) {
-        lar1 = c;
-    }
-
-    if (lar1 == a) {
-        lar2 = b > c ? b : c;
-    } else if (lar1 == b) {
-        lar2 = a > c ? a : c;
-    } else {
-        lar2 = a > b ? a : b;
-    }
-
-    return square(lar1) + square(lar2);
+    return (a <= b && a <= c)
+        ? sum_squares(b, c)
+        : (b <= a && b <= c)
+        ? sum_squares(a, c)
+        : sum_squares(a, b);
+}
+  
+function sum_squares(a, b) {
+    return square(a) + square(b);
 }
 
 function square(x) {
