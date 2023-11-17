@@ -42,9 +42,7 @@ function transpose(mat) {
 function matrix_times_matrix(m, n) {
     const cols = transpose(n);
     return map(r => {
-        return map(x => {
-            return dot_product(r, x);
-        }, cols);
+        return matrix_times_vector(cols, r);
     }, m);
 }
 
@@ -53,14 +51,10 @@ function dot_product(v, w) {
 }
 
 function accumulate_n(op, init, seqs) {
-    if (is_null(head(seqs))) {
-        return null;
-    }
-
-    return pair(
-        accumulate(op, init, map(sl => head(sl), seqs)),
-        accumulate_n(op, init, map(sl => tail(sl), seqs))
-    );
+    return is_null(head(seqs))
+        ? null
+        : pair(accumulate(op, init, map(head, seqs)),
+               accumulate_n(op, init, map(tail, seqs)));
 }
 
 function plus(x, y) {
