@@ -21,7 +21,7 @@
         (else
           (filter pred? (cdr seq)))))
 
-; out ordered triples procedure
+; our ordered triples procedure
 (define (ord-triples n s)
   (define (add-to-s? t)
     (= s (accumulate + 0 t)))
