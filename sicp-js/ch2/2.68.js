@@ -17,10 +17,9 @@ display(equal(
 ));
 
 function encode(message, tree) {
-    if (is_null(message)) {
-        return null;
-    }
-    return append(encode_symbol(head(message), tree), encode(tail(message), tree));
+    return is_null(message)
+            ? null
+            : append(encode_symbol(head(message), tree), encode(tail(message), tree));
 }
 
 function decode(bits, tree) {
@@ -40,43 +39,17 @@ function decode(bits, tree) {
 }
 
 function encode_symbol(symbol, tree) {
-    if (is_null(symbol)) {
+    if (is_leaf(tree)) {
         return null;
+    } else {
+        const left = left_branch(tree);
+        const right = right_branch(tree);
+        return is_element_of_set(symbol, symbols(left))
+                ? pair(0, encode_symbol(symbol, left))
+                : is_element_of_set(symbol, symbols(right))
+                ? pair(1, encode_symbol(symbol, right))
+                : error(symbol, "symbol is not in tree -- ENCODE SYMBOL");
     }
-    const next_branch_bit = choose_side(symbol, tree);
-    const next_branch = head(next_branch_bit);
-    const bit = tail(next_branch_bit);
-
-    if (is_leaf(next_branch)) {
-        return pair(bit, null);
-    }
-    return pair(bit, encode_symbol(symbol, next_branch));
-}
-
-function choose_side(symbol, branch) {
-    const l = left_branch(branch);
-    const r = right_branch(branch);
-
-    if (is_leaf(l)) {
-        if (equal(symbol, symbol_leaf(l))) {
-            return pair(l, 0);
-        }
-        return pair(r, 1);
-    }
-    if (is_element_of_set(symbol, symbols(l))) {
-        return pair(l, 0);
-    }
-
-    if (is_leaf(r)) {
-        if (equal(symbol, symbol_leaf(r))) {
-            return pair(r, 1);
-        }
-        return pair(l, 0);
-    }
-    if (is_element_of_set(symbol, symbols(r))) {
-        return pair(r, 1);
-    }
-    return error(symbol, "bad symbol -- choose_branch");
 }
 
 function is_element_of_set(x, set) {
