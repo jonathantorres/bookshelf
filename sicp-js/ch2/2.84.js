@@ -55,7 +55,7 @@ function apply_generic(op, args) {
             const type2 = head(tail(type_tags));
             const a1 = head(args);
             const a2 = head(tail(args));
-            
+
             if (level(type1, hierarchy) > level(type2, hierarchy)) {
                 return apply_generic(op, list(a1, successive_raising(a2, type1)));
             } else if (level(type2, hierarchy) > level(type1, hierarchy)) {
