@@ -8,20 +8,11 @@ const operation_table = make_table();
 const get = operation_table("lookup");
 const put = operation_table("insert");
 
-// coercion support
-let coercion_list = null;
-
 install_javascript_number_package();
 install_rational_package();
 install_rectangular_package();
 install_polar_package();
 install_complex_package();
-
-put_coercion("javascript_number", "complex", javascript_number_to_complex);
-put("add", list("complex", "complex", "complex"),
-  (x, y, z) => attach_tag("complex", make_complex_from_real_imag(
-    real_part(x) + real_part(y) + real_part(z),
-    imag_part(x) + imag_part(y) + imag_part(z))));
 
 const a = make_javascript_number(1);
 const b = make_rational(2,3);
@@ -29,12 +20,9 @@ const b = make_rational(2,3);
 display(raise(a));
 display(raise(b));
 
-function raise(x){
+// our generic "raise" function
+function raise(x) {
    return apply_generic("raise", list(x));
-}
-
-function javascript_number_to_complex(n) {
-    return make_complex_from_real_imag(contents(n), 0);
 }
 
 // install complex package
@@ -145,7 +133,7 @@ function make_complex_from_mag_ang(r, a){
    return get("make_from_mag_ang", "complex")(r, a);
 }
 
-// rational package
+// rational package, this gets raised to complex
 function install_rational_package() {
     // internal functions
     function numer(x) { return head(x); }
@@ -185,7 +173,7 @@ function install_rational_package() {
     put("make", "rational",
         (n, d) => tag(make_rat(n, d)));
     put("raise", list("rational"),
-        (x) => make_complex_from_real_imag(x, 0));
+        (x) => make_complex_from_real_imag(1.0 * (numer(x) / denom(x)), 0));
     return "done";
 }
 
@@ -193,7 +181,7 @@ function make_rational(n, d) {
     return get("make", "rational")(n, d);
 }
 
-// javascript number package
+// javascript number package, this gets raised to rational
 function install_javascript_number_package() {
     function tag(x) {
         return attach_tag("javascript_number", x);
@@ -214,6 +202,7 @@ function install_javascript_number_package() {
     return "done";
 }
 
+// our generic functions
 function add(x, y) { return apply_generic("add", list(x, y)); }
 
 function sub(x, y) { return apply_generic("sub", list(x, y)); }
@@ -257,89 +246,11 @@ function apply(fun, args) {
 function apply_generic(op, args) {
     const type_tags = map(type_tag, args);
     const fun = get(op, type_tags);
-    if (! is_undefined(fun)) {
-        return apply(fun, map(contents, args));
-    } else {
-        if (length(args) === 2) {
-            const type1 = head(type_tags);
-            const type2 = head(tail(type_tags));
-            const a1 = head(args);
-            const a2 = head(tail(args));
-            const t1_to_t2 = get_coercion(type1, type2);
-            const t2_to_t1 = get_coercion(type2, type1);
-            return ! is_undefined(t1_to_t2)
-                   ? apply_generic(op, list(t1_to_t2(a1), a2))
-                   : ! is_undefined(t2_to_t1)
-                   ? apply_generic(op, list(a1, t2_to_t1(a2)))
-                   : error(list(op, type_tags),
-                           "no method for these types");
-        } else {
-            return error(list(op, type_tags),
-                         "no method for these types");
-        }
-    }
-}
 
-function can_coerce_to(type_tags, target_type) {
-    return accumulate((type_tag, result) =>
-                        result &&
-                        (type_tag === target_type ||
-                         ! is_undefined(get_coercion(type_tag, target_type))),
-                      true,
-                      type_tags);
-}
-
-function find_coerced_type(type_tags) {
-    return is_null(type_tags)
-           ? undefined
-           : can_coerce_to(type_tags, head(type_tags))
-           ? head(type_tags)
-           : find_coerced_type(tail(type_tags));
-}
-
-function coerce_all(args, target_type) {
-    return map(arg => type_tag(arg) === target_type
-                      ? arg
-                      : get_coercion(type_tag(arg), target_type)(arg),
-               args);
-}
-
-// coercion support
-function clear_coercion_list() {
-    coercion_list = null;
-}
-
-function put_coercion(type1, type2, item) {
-    if (is_undefined(get_coercion(type1, type2))) {
-        coercion_list = pair(list(type1, type2, item),
-                             coercion_list);
-    } else {
-        return coercion_list;
-    }
-}
-
-function get_coercion(type1, type2) {
-    function get_type1(list_item) {
-        return head(list_item);
-    }
-    function get_type2(list_item) {
-        return head(tail(list_item));
-    }
-    function get_item(list_item) {
-        return head(tail(tail(list_item)));
-    }
-    function get_coercion_iter(items) {
-        if (is_null(items)) {
-            return undefined;
-        } else {
-            const top = head(items);
-            return equal(type1, get_type1(top)) &&
-                   equal(type2, get_type2(top))
-                   ? get_item(top)
-                   : get_coercion_iter(tail(items));
-        }
-    }
-    return get_coercion_iter(coercion_list);
+    return !is_undefined(fun)
+           ? apply_in_underlying_javascript(fun, map(contents, args))
+           : error(list(op, type_tags),
+                   "no method for these types -- apply_generic");
 }
 
 function gcd(a, b) {
