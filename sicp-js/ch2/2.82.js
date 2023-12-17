@@ -8,6 +8,12 @@ const operation_table = make_table();
 const get = operation_table("lookup");
 const put = operation_table("insert");
 
+// A situation in which coercion won't work as expected is if we have 3 types: A, B and C
+// and we have the following coercion operations: A->B and C->B
+// if we evaluate a procedure call for (A B C) will attempt to coerce (A B C) and (B B B)
+// and fail, while we can coerce C to B and attempt the same operation successfully
+
+
 // coercion support
 let coercion_list = null;
 
