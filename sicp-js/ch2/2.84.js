@@ -8,9 +8,6 @@ const operation_table = make_table();
 const get = operation_table("lookup");
 const put = operation_table("insert");
 
-put("supertype", "javascript_number", "rational");
-put("supertype", "rational", "complex");
-
 install_javascript_number_package();
 install_rational_package();
 install_rectangular_package();
@@ -27,22 +24,26 @@ display(add(a, b));
 display(add(a, c));
 display(add(b, c));
 
-function is_supertype(type1, type2) {
-    const p = supertype(type2);
+// the hierarchy of types
+const hierarchy = list("javascript_number", "rational", "complex");
 
-    if (equal(type1, p)) {
-        return true;
-    } else if (is_undefined(p)) {
-        return false;
-    } else {
-        return is_supertype(type1, p);
-    }
+// get the level of a type in the hierarchy
+function level(type, type_list) {
+    return is_null(type_list)
+        ? error(type, "type is not supported")
+        : equal(type, head(type_list))
+        ? 1
+        : 1 + level(type, tail(type_list));
 }
 
-function supertype(type) {
-    return get("supertype", type);
+// raise a type to the next level of the hierarchy
+function successive_raising(type, to_type_tag) {
+    return level(type_tag(type), hierarchy) === level(to_type_tag, hierarchy)
+        ? type
+        : successive_raising(raise(type), to_type_tag);
 }
 
+// our re-written apply_generic function to use successive_raising
 function apply_generic(op, args) {
     const type_tags = map(type_tag, args);
     const fun = get(op, type_tags);
@@ -54,11 +55,11 @@ function apply_generic(op, args) {
             const type2 = head(tail(type_tags));
             const a1 = head(args);
             const a2 = head(tail(args));
-
-            if (is_supertype(type1, type2)) {
-                return apply_generic(op, list(a1, raise(a2)));
-            } else if (is_supertype(type2, type1)) {
-                return apply_generic(op, list(raise(a1), a2));
+            
+            if (level(type1, hierarchy) > level(type2, hierarchy)) {
+                return apply_generic(op, list(a1, successive_raising(a2, type1)));
+            } else if (level(type2, hierarchy) > level(type1, hierarchy)) {
+                return apply_generic(op, list(successive_raising(a1, type2), a2));
             } else {
                 return error(list(op, type_tags), "no method for these types");
             }
