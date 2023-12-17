@@ -8,22 +8,14 @@ const operation_table = make_table();
 const get = operation_table("lookup");
 const put = operation_table("insert");
 
-// coercion support
-let coercion_list = null;
+put("supertype", "javascript_number", "rational");
+put("supertype", "rational", "complex");
 
 install_javascript_number_package();
 install_rational_package();
 install_rectangular_package();
 install_polar_package();
 install_complex_package();
-
-put("supertype", "javascript_number", "rational");
-put("supertype", "rational", "complex");
-put_coercion("javascript_number", "complex", javascript_number_to_complex);
-put("add", list("complex", "complex", "complex"),
-  (x, y, z) => attach_tag("complex", make_complex_from_real_imag(
-    real_part(x) + real_part(y) + real_part(z),
-    imag_part(x) + imag_part(y) + imag_part(z))));
 
 const a = make_javascript_number(10);
 const b = make_rational(2, 3);
@@ -75,69 +67,6 @@ function apply_generic(op, args) {
         }
     }
 }
-
-function can_coerce_to(type_tags, target_type) {
-    return accumulate((type_tag, result) =>
-                        result &&
-                        (type_tag === target_type ||
-                         ! is_undefined(get_coercion(type_tag, target_type))),
-                      true,
-                      type_tags);
-}
-
-function find_coerced_type(type_tags) {
-    return is_null(type_tags)
-           ? undefined
-           : can_coerce_to(type_tags, head(type_tags))
-           ? head(type_tags)
-           : find_coerced_type(tail(type_tags));
-}
-
-function coerce_all(args, target_type) {
-    return map(arg => type_tag(arg) === target_type
-                      ? arg
-                      : get_coercion(type_tag(arg), target_type)(arg),
-               args);
-}
-
-// coercion support
-function clear_coercion_list() {
-    coercion_list = null;
-}
-
-function put_coercion(type1, type2, item) {
-    if (is_undefined(get_coercion(type1, type2))) {
-        coercion_list = pair(list(type1, type2, item),
-                             coercion_list);
-    } else {
-        return coercion_list;
-    }
-}
-
-function get_coercion(type1, type2) {
-    function get_type1(list_item) {
-        return head(list_item);
-    }
-    function get_type2(list_item) {
-        return head(tail(list_item));
-    }
-    function get_item(list_item) {
-        return head(tail(tail(list_item)));
-    }
-    function get_coercion_iter(items) {
-        if (is_null(items)) {
-            return undefined;
-        } else {
-            const top = head(items);
-            return equal(type1, get_type1(top)) &&
-                   equal(type2, get_type2(top))
-                   ? get_item(top)
-                   : get_coercion_iter(tail(items));
-        }
-    }
-    return get_coercion_iter(coercion_list);
-}
-
 
 // install complex package
 function install_complex_package() {
@@ -287,7 +216,7 @@ function install_rational_package() {
     put("make", "rational",
         (n, d) => tag(make_rat(n, d)));
     put("raise", list("rational"),
-        (x) => make_complex_from_real_imag(x, 0));
+        (x) => make_complex_from_real_imag(1.0 * (numer(x) / denom(x)), 0));
     return "done";
 }
 
@@ -336,12 +265,8 @@ function make_javascript_number(n) {
     return get("make", "javascript_number")(n);
 }
 
-function raise(x){
+function raise(x) {
    return apply_generic("raise", list(x));
-}
-
-function javascript_number_to_complex(n) {
-    return make_complex_from_real_imag(contents(n), 0);
 }
 
 function attach_tag(type_tag, contents) {
