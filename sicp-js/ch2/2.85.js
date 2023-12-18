@@ -8,136 +8,96 @@ const operation_table = make_table();
 const get = operation_table("lookup");
 const put = operation_table("insert");
 
-// coercion support
-let coercion_list = null;
-
 install_javascript_number_package();
 install_rational_package();
 install_rectangular_package();
 install_polar_package();
 install_complex_package();
 
-put("supertype", "javascript_number", "rational");
-put("supertype", "rational", "complex");
-put_coercion("javascript_number", "complex", javascript_number_to_complex);
-put("add", list("complex", "complex", "complex"),
-  (x, y, z) => attach_tag("complex", make_complex_from_real_imag(
-    real_part(x) + real_part(y) + real_part(z),
-    imag_part(x) + imag_part(y) + imag_part(z))));
-
-const a = make_rational(2, 3);
-const b = make_javascript_number(10);
+const a = make_javascript_number(10);
+const b = make_rational(2, 3);
+const c = make_complex_from_real_imag(4, 8);
 
 display(add(a, a));
 display(add(b, b));
+display(add(a, b));
+display(add(a, c));
+display(add(b, c));
 
-function drop(x) {
-    if (is_projectable(x)) {
-        const p = project(x);
-        const r = raise(p);
-        if (equal(r, x)) {
-            return drop(p);
-        }
-        return x;
-    }
-    return x;
-}
-
-function is_projectable(x) {
-    return is_pair(x) && tail(x) && !is_undefined(project(x));
-}
-
+// our apply_generic procedure that uses "drop" to simplify answers
 function apply_generic(op, args) {
     const type_tags = map(type_tag, args);
     const fun = get(op, type_tags);
     if (!is_undefined(fun)) {
-        const res = apply(fun, map(contents, args));
-        if (length(args) === 2 && is_projectable(res)) {
-            return drop(res);
-        }
-        return res;
-    } else {
-        return error(list(op, type_tags), "no method for these types");
-    }
-}
-
-function is_supertype(type1, type2) {
-    const p = supertype(type2);
-
-    if (equal(type1, p)) {
-        return true;
-    } else if (is_undefined(p)) {
-        return false;
-    } else {
-        return is_supertype(type1, p);
-    }
-}
-
-function supertype(type) {
-    return get("supertype", type);
-}
-
-function can_coerce_to(type_tags, target_type) {
-    return accumulate((type_tag, result) =>
-                        result &&
-                        (type_tag === target_type ||
-                         ! is_undefined(get_coercion(type_tag, target_type))),
-                      true,
-                      type_tags);
-}
-
-function find_coerced_type(type_tags) {
-    return is_null(type_tags)
-           ? undefined
-           : can_coerce_to(type_tags, head(type_tags))
-           ? head(type_tags)
-           : find_coerced_type(tail(type_tags));
-}
-
-function coerce_all(args, target_type) {
-    return map(arg => type_tag(arg) === target_type
-                      ? arg
-                      : get_coercion(type_tag(arg), target_type)(arg),
-               args);
-}
-
-// coercion support
-function clear_coercion_list() {
-    coercion_list = null;
-}
-
-function put_coercion(type1, type2, item) {
-    if (is_undefined(get_coercion(type1, type2))) {
-        coercion_list = pair(list(type1, type2, item), coercion_list);
-    } else {
-        return coercion_list;
-    }
-}
-
-function get_coercion(type1, type2) {
-    function get_type1(list_item) {
-        return head(list_item);
-    }
-    function get_type2(list_item) {
-        return head(tail(list_item));
-    }
-    function get_item(list_item) {
-        return head(tail(tail(list_item)));
-    }
-    function get_coercion_iter(items) {
-        if (is_null(items)) {
-            return undefined;
+        if (should_simplify(op)) {
+            return drop(apply(fun, map(contents, args)));
         } else {
-            const top = head(items);
-            return equal(type1, get_type1(top)) &&
-                   equal(type2, get_type2(top))
-                   ? get_item(top)
-                   : get_coercion_iter(tail(items));
+            return apply(fun, map(contents, args));
+        }
+    } else {
+        if (length(args) === 2) {
+            const type1 = head(type_tags);
+            const type2 = head(tail(type_tags));
+            const a1 = head(args);
+            const a2 = head(tail(args));
+            
+            if (level(type1, hierarchy) > level(type2, hierarchy)) {
+                return apply_generic(op, list(a1, succesive_raising(a2, type1)));
+            } else if (level(type2, hierarchy) > level(type1, hierarchy)) {
+                return apply_generic(op, list(succesive_raising(a1, type2), a2));
+            } else {
+                return error(list(op, type_tags), "no method for these types");
+            }
+        } else {
+            return error(list(op, type_tags), "no method for these types");
         }
     }
-    return get_coercion_iter(coercion_list);
 }
 
+// the hierarchy of types
+const hierarchy = list("javascript_number", "rational", "complex");
+
+// our "drop" function to attempt to drop a type down in the hierarchy as low as possible
+function drop(type) {
+    function is_js_number(x) {
+        return equal(type_tag(x), "javascript_number");
+    }
+    if (is_js_number(type)) {
+        return type;
+    } else {
+        const projected = project(type);
+        return !equal(type_tag(type), type_tag(projected))
+            && is_equal(raise(projected), type)
+            ? drop(projected)
+            : type;
+    }
+}
+
+// get the level of a type in the hierarchy
+function level(type, type_list) {
+    return is_null(type_list)
+        ? error(type, "type is not supported")
+        : equal(type, head(type_list))
+        ? 1
+        : 1 + level(type, tail(type_list));
+}
+
+// raise a type to the next level of the hierarchy
+function succesive_raising(type, to_type_tag) {
+    return level(type_tag(type), hierarchy) === level(to_type_tag, hierarchy)
+        ? type
+        : succesive_raising(raise(type), to_type_tag);
+}
+
+// check if the operation needs to be simplified
+function should_simplify(op) {
+    return equal(op, "add")
+        || equal(op, "sub")
+        || equal(op, "mul")
+        || equal(op, "div")
+        ? true
+        : false;
+}
 
 // install complex package
 function install_complex_package() {
@@ -168,8 +128,14 @@ function install_complex_package() {
     function is_equal_complex(z1, z2) {
         return real_part(z1) === real_part(z2) && imag_part(z1) === imag_part(z2);
     }
-    // interface to rest of the system
     function tag(z) { return attach_tag("complex", z); }
+    function project_complex(z) {
+        return imag_part(z) === 0
+            ? make_rational(real_part(z), 1)
+            : tag(z);
+    }
+
+    // interface to rest of the system
     put("add", list("complex", "complex"),
         (z1, z2) => tag(add_complex(z1, z2)));
     put("sub", list("complex", "complex"),
@@ -180,12 +146,12 @@ function install_complex_package() {
         (z1, z2) => tag(div_complex(z1, z2)));
     put("is_equal", list("complex", "complex"),
         (z1, z2) => tag(is_equal_complex(z1, z2)));
+    put("project", list("complex"),
+        (z) => project_complex(z));
     put("make_from_real_imag", "complex",
         (x, y) => tag(make_from_real_imag(x, y)));
     put("make_from_mag_ang", "complex",
         (r, a) => tag(make_from_mag_ang(r, a)));
-    put("project", list("complex"),
-        (z) => make_rational(real_part(z), imag_part(z)));
     return "done";
 }
 
@@ -282,10 +248,16 @@ function install_rational_package() {
     function is_equal_rat(x, y) {
         return numer(x) * denom(y) === numer(y) * denom(x);
     }
-    // interface to rest of the system
     function tag(x) {
         return attach_tag("rational", x);
     }
+    function project_rational(x) {
+        return denom(x) === 1
+            ? make_javascript_number(numer(x))
+            : tag(x);
+    }
+
+    // interface to rest of the system
     put("add", list("rational", "rational"),
         (x, y) => tag(add_rat(x, y)));
     put("sub", list("rational", "rational"),
@@ -299,9 +271,9 @@ function install_rational_package() {
     put("make", "rational",
         (n, d) => tag(make_rat(n, d)));
     put("raise", list("rational"),
-        (x) => make_complex_from_real_imag(x, 0));
+        (x) => make_complex_from_real_imag(1.0 * (numer(x) / denom(x)), 0));
     put("project", list("rational"),
-        (x) => make_javascript_number(numer(x)));
+        (x) => project_rational(x));
     return "done";
 }
 
@@ -330,9 +302,12 @@ function install_javascript_number_package() {
         x => make_rational(x, 1));
     put("project", list("javascript_number"),
         x => tag(x));
+
     return "done";
 }
 
+// our generic functions, we included a generic "project" function
+// that will drop the type to the next lower in the hierarchy
 function add(x, y) { return apply_generic("add", list(x, y)); }
 
 function sub(x, y) { return apply_generic("sub", list(x, y)); }
