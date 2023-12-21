@@ -9,6 +9,7 @@ const get = operation_table("lookup");
 const put = operation_table("insert");
 
 install_javascript_number_package();
+install_rational_package();
 install_polynomial_package();
 
 const p1 = make_polynomial("x",
@@ -94,16 +95,17 @@ function install_polynomial_package() {
     }
 
     function sub_poly(p1, p2) {
-        return add_poly(p1, negate_poly(p2));
+        return is_same_variable(variable(p1), variable(p2))
+               ? add_poly(p1, negate_poly(p2))
+               : error(list(p1, p2), "polys not in same var -- sub_poly");
     }
 
     function negate_poly(p) {
-        return tail(make_polynomial("x", map(negate_term, tail(p))));
+        return tail(make_polynomial(variable(p), map(negate_term, term_list(p))));
     }
 
     function negate_term(t) {
-        const n = -tail(coeff(t));
-        return make_term(order(t), make_javascript_number(n));
+        return make_term(order(t), neg(coeff(t)));
     }
 
     function mul_terms(L1, L2) {
@@ -141,6 +143,62 @@ function install_polynomial_package() {
     return "done";
 }
 
+// rational package
+function install_rational_package() {
+    // internal functions
+    function numer(x) { return head(x); }
+    function denom(x) { return tail(x); }
+    function make_rat(n, d) {
+        const g = gcd(n, d);
+        return pair(n / g, d / g);
+    }
+    function add_rat(x, y) {
+        return make_rat(numer(x) * denom(y) + numer(y) * denom(x),
+                        denom(x) * denom(y));
+    }
+    function sub_rat(x, y) {
+        return make_rat(numer(x) * denom(y) - numer(y) * denom(x),
+                        denom(x) * denom(y));
+    }
+    function mul_rat(x, y) {
+        return make_rat(numer(x) * numer(y),
+                        denom(x) * denom(y));
+    }
+    function div_rat(x, y) {
+        return make_rat(numer(x) * denom(y),
+                        denom(x) * numer(y));
+    }
+    function neg_rat(x) {
+        return make_rat(numer(x) * -1, denom(x));
+    }
+    function is_equal_to_zero_rat(x) {
+        return numer(x) === 0;
+    }
+    // interface to rest of the system
+    function tag(x) {
+        return attach_tag("rational", x);
+    }
+    put("add", list("rational", "rational"),
+        (x, y) => tag(add_rat(x, y)));
+    put("sub", list("rational", "rational"),
+        (x, y) => tag(sub_rat(x, y)));
+    put("mul", list("rational", "rational"),
+        (x, y) => tag(mul_rat(x, y)));
+    put("div", list("rational", "rational"),
+        (x, y) => tag(div_rat(x, y)));
+    put("is_equal_to_zero", list("rational"),
+        (x) => is_equal_to_zero_rat(x));
+    put("neg", list("rational"),
+        (x) => tag(neg_rat(x)));
+    put("make", "rational",
+        (n, d) => tag(make_rat(n, d)));
+    return "done";
+}
+
+function make_rational(n, d) {
+    return get("make", "rational")(n, d);
+}
+
 // javascript number package
 function install_javascript_number_package() {
     function tag(x) {
@@ -155,6 +213,7 @@ function install_javascript_number_package() {
     put("div", list("javascript_number", "javascript_number"),
         (x, y) => tag(x / y));
     put("is_equal_to_zero", list("javascript_number"), x => x === 0);
+    put("neg", list("javascript_number"), x => tag(x * -1));
     put("make", "javascript_number", x => tag(x));
 
     return "done";
@@ -167,6 +226,8 @@ function sub(x, y) { return apply_generic("sub", list(x, y)); }
 function mul(x, y) { return apply_generic("mul", list(x, y)); }
 
 function div(x, y) { return apply_generic("div", list(x, y)); }
+
+function neg(x) { return apply_generic("neg", list(x)); }
 
 function is_equal_to_zero(x) {
     return apply_generic("is_equal_to_zero", list(x));
