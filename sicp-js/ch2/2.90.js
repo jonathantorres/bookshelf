@@ -247,31 +247,19 @@ function mul(x, y) { return apply_generic("mul", list(x, y)); }
 function div(x, y) { return apply_generic("div", list(x, y)); }
 
 function attach_tag(type_tag, contents) {
-    if (is_number(contents)) {
-        return pair("javascript_number", contents);
-    } else {
-        return pair(type_tag, contents);
-    }
+    return pair(type_tag, contents);
 }
 
 function type_tag(datum) {
-    if (is_number(datum)) {
-        return "javascript_number";
-    } else if (is_pair(datum)) {
-        return head(datum);
-    } else {
-        return error(datum, "bad tagged datum -- type_tag");
-    }
+    return is_pair(datum)
+           ? head(datum)
+           : error(datum, "bad tagged datum -- type_tag");
 }
 
 function contents(datum) {
-    if (is_number(datum)) {
-        return datum;
-    } else if (is_pair(datum)) {
-        return tail(datum);
-    } else {
-        return error(datum, "bad tagged datum -- contents");
-    }
+    return is_pair(datum)
+           ? tail(datum)
+           : error(datum, "bad tagged datum -- contents");
 }
 
 function apply(fun, args) {
