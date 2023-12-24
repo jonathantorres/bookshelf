@@ -1,7 +1,7 @@
 import {
     pair, head, tail, display, display_list, list, math_cos, math_sin, is_pair, is_number,
     is_string, is_null, append, error, equal, length, is_undefined, set_tail,
-    map, apply_in_underlying_javascript, math_sqrt, math_atan
+    map, apply_in_underlying_javascript, math_sqrt, math_atan, math_pow
 } from 'sicp';
 
 const operation_table = make_table();
@@ -10,42 +10,35 @@ const put = operation_table("insert");
 
 install_javascript_number_package();
 install_rational_package();
-install_rectangular_package();
-install_polar_package();
-install_complex_package();
 install_polynomial_package();
 
-const p1 = make_polynomial("x", list(make_term(4, 1), make_term(3, -1),
-                                     make_term(2, -2), make_term(1, 2)));
-const p2 = make_polynomial("x", list(make_term(3, 1), make_term(1, -1)));
+// test polynomials
+const p1 = make_polynomial("x", list(list(1, 1), list(0, 1)));
+const p2 = make_polynomial("x", list(list(3, 1), list(0, -1)));
+const p3 = make_polynomial("x", list(list(1, 1)));
+const p4 = make_polynomial("x", list(list(2, 1), list(0, -1)));
 
-// TODO: Fix error thrown on the tail() call when running this example
-// display_list(reduce_poly(p1, p2));
+const rf1 = make_rational(p1, p2);
+const rf2 = make_rational(p3, p4);
 
-// polynomial package
-function make_term(order, coeff) {
-    return list(order, coeff);
-}
+display_list(add(rf1, rf2));
+
 
 function install_polynomial_package() {
     // internal functions
-    // representation of poly
     function make_poly(variable, term_list) {
         return pair(variable, term_list);
     }
+    function make_term(order, coeff) {
+       return list(order, coeff);
+    }
     function variable(p) { return head(p); }
     function term_list(p) { return tail(p); }
-
-    // representation of terms and term lists
-    function adjoin_term(term, term_list) {
-        return is_equal_to_zero(coeff(term))
-               ? term_list
-               : pair(coeff(term), term_list);
-    }
-    const the_empty_termlist = null;
     function first_term(term_list) {
-        return make_term(head(term_list), length(term_list)-1);
+        return head(term_list);
     }
+
+    const the_empty_termlist = null;
     function rest_terms(term_list) {
         return tail(term_list);
     }
@@ -58,7 +51,19 @@ function install_polynomial_package() {
     function coeff(term) {
         return head(tail(term));
     }
+    function is_variable(x) { return is_string(x); }
 
+    function is_same_variable(v1, v2) {
+        return is_variable(v1) && is_variable(v2) && v1 === v2;
+    }
+
+    function adjoin_term(term, term_list) {
+        return is_equal_to_zero(coeff(term))
+               ? term_list
+               : pair(term, term_list);
+    }
+    
+    // polynomial addition
     function add_poly(p1, p2) {
         return is_same_variable(variable(p1), variable(p2))
                ? make_poly(variable(p1),
@@ -86,36 +91,27 @@ function install_polynomial_package() {
                                            rest_terms(L2)));
         }
     }
-
+    
+    // polynomial subtraction
+    function sub_poly(p1, p2) {
+        return is_same_variable(variable(p1), variable(p2))
+               ? make_poly(variable(p1),
+                           sub_terms(term_list(p1),
+                                     term_list(p2)))
+               : error(list(p1, p2), "polys not in same var -- sub_poly");
+    }
+    
+    function sub_terms(L1, L2) {
+        return add_terms(L1, negate_terms(L2));
+    }
+    
+    // polynomial multiplication
     function mul_poly(p1, p2) {
         return is_same_variable(variable(p1), variable(p2))
                ? make_poly(variable(p1),
                            mul_terms(term_list(p1),
                                      term_list(p2)))
                : error(list(p1, p2), "polys not in same var -- mul_poly");
-    }
-
-    function sub_poly(p1, p2) {
-        return add_poly(p1, negate_poly(p2));
-    }
-
-    function negate_poly(p) {
-        return tail(make_polynomial("x", map(negate_term, tail(p))));
-    }
-
-    function negate_term(t) {
-        const n = -tail(coeff(t));
-        return make_term(order(t), make_javascript_number(n));
-    }
-    function is_poly_equal_to_zero(p) {
-        return is_termlist_equal_to_zero(term_list(p));
-    }
-    function is_termlist_equal_to_zero(termlist) {
-        return is_empty_termlist(termlist)
-               ? true
-               : is_equal_to_zero(coeff(first_term(termlist)))
-               ? is_termlist_equal_to_zero(rest_terms(termlist))
-               : false;
     }
 
     function mul_terms(L1, L2) {
@@ -125,6 +121,7 @@ function install_polynomial_package() {
                                      first_term(L1), L2),
                            mul_terms(rest_terms(L1), L2));
     }
+
     function mul_term_by_all_terms(t1, L) {
         if (is_empty_termlist(L)) {
             return the_empty_termlist;
@@ -136,14 +133,19 @@ function install_polynomial_package() {
                        mul_term_by_all_terms(t1, rest_terms(L)));
         }
     }
+
+    // polynomial division
     function div_poly(p1, p2) {
         if (is_same_variable(variable(p1), variable(p2))) {
-            return map(term_list => make_poly(variable(p1), term_list),
-                div_terms(term_list(p1), term_list(p2)));
+            const result = div_terms(term_list(p1), term_list(p2));
+            const quotient = head(result);
+            const remainder = head(tail(result));
+            return list(make_poly(variable(p1), quotient), make_poly(variable(p1), remainder));
+        } else {
+            return error("Polynomials not in same var - div_poly", list(p1, p2));
         }
-        return error("Polynomials not in same var - div_poly", list(p1, p2));
     }
-
+    
     function div_terms(L1, L2) {
         if (is_empty_termlist(L1)) {
             return list(the_empty_termlist, the_empty_termlist);
@@ -153,59 +155,70 @@ function install_polynomial_package() {
             if (order(t2) > order(t1)) {
                 return list(the_empty_termlist, L1);
             } else {
-                const new_c = div(coeff(t1), coeff(t2));
+                const new_c = coeff(t1) / coeff(t2);
                 const new_o = order(t1) - order(t2);
-                const term = list(new_o, new_c);
                 const rest_of_result = div_terms(
-                    sub_poly(L1, mul_terms(adjoin_term(term, the_empty_termlist), L2)),
+                    sub_terms(L1, mul_term_by_all_terms(make_term(new_o, new_c), L2)),
                     L2
                 );
-                return list(adjoin_term(term, head(rest_of_result)), tail(rest_of_result));
+                return list(adjoin_term(make_term(new_o, new_c), head(rest_of_result)), head(tail(rest_of_result)));
             }
         }
     }
-
-    function reduce_terms(n, d) {
-        const gt = gcd_terms(n, d);
-        return list(head(div_terms(n, gt)), head(div_terms(d, gt)));
+    
+    // gcd for polynomials
+    function gcd_poly(p1, p2) {
+        return is_same_variable(variable(p1), variable(p2))
+               ? make_poly(variable(p1),
+                           gcd_terms(term_list(p1),
+                                     term_list(p2)))
+               : error(list(p1, p2), "polys not in same var -- gcd_poly");
     }
-
-    function reduce_poly(p1, p2) {
-        if (is_same_variable(variable(p1), variable(p2))) {
-            const res = reduce_terms(term_list(p1), term_list(p2));
-            return list(
-                make_poly(variable(p1), head(res)),
-                make_poly(variable(p1), head(tail(res)))
-            );
-        }
-        return error("not the same variable -- reduce_poly", list(p1, p2));
+    
+    function pseudoremainder_terms(L1, L2) {
+        const o1 = order(first_term(L1));
+        const o2 = order(first_term(L2));
+        const int_factor = math_pow(coeff(first_term(L2)), (1 + o1 + (o2 * -1)));
+        const term = make_term(0, int_factor);
+        
+        return head(tail(div_terms(mul_term_by_all_terms(term, L1), L2)));
     }
-
-    function pseudoremainder_terms(p1, p2) {
-        const o1 = head(order(first_term(p1)));
-        const o2 = head(order(first_term(p2)));
-        const c = coeff(first_term(p2));
-        const dividend = mul_terms(make_term(0, expt(c, (o1-o2)+1)), p1);
-
-        return head(tail(div_terms(dividend, p2)));
-    }
-
-    function remainder_terms(p1, p2) {
-        return head(tail(div_terms(p1, p2)));
-    }
-
+    
     function gcd_terms(a, b) {
         if (is_empty_termlist(b)) {
-            return a;
+            const divisor = apply(gcd, map(coeff, a));
+            const term = make_term(0, divisor);
+            return head(div_terms(a, adjoin_term(term, the_empty_termlist)));
+        } else {
+            return gcd_terms(b, pseudoremainder_terms(a, b));
         }
-        return gcd_terms(b, pseudoremainder_terms(a, b));
+    }
+    
+    // a: implementation of reduce_terms and reduce_poly
+    function reduce_terms(n, d) {
+        const terms = gcd_terms(n, d);
+        return list(head(div_terms(n, terms)), head(div_terms(d, terms)));
+    }
+    
+    function reduce_poly(p1, p2) {
+        if (is_same_variable(variable(p1), variable(p2))) {
+            const reduced = reduce_terms(term_list(p1), term_list(p2));
+            return list(
+                    make_poly(variable(p1), head(reduced)),
+                    make_poly(variable(p1), head(tail(reduced))));
+        } else {
+            return error(list(p1, p2), "polys not in same var -- reduce_poly");
+        }
     }
 
-    function gcd_poly(p1, p2) {
-        if (is_same_variable(variable(p1), variable(p2))) {
-            return make_poly(variable(p1), gcd_terms(term_list(p1), term_list(p2)));
+    function negate_terms(tl) {
+        if (is_empty_termlist(tl)) {
+            return the_empty_termlist;
+        } else {
+            const first = first_term(tl);
+            const rest = rest_terms(tl);
+            return adjoin_term(make_term(order(first), neg(coeff(first))), negate_terms(rest));
         }
-        return error("not the same variable -- gcd_poly", list(p1, p2));
     }
 
     // interface to rest of the system
@@ -220,149 +233,47 @@ function install_polynomial_package() {
         (p1, p2) => tag(mul_poly(p1, p2)));
     put("div", list("polynomial", "polynomial"),
         (p1, p2) => tag(div_poly(p1, p2)));
-    put("is_equal_to_zero", list("polynomial"), p => tag(is_poly_equal_to_zero(p)));
     put("greatest_common_divisor", list("polynomial", "polynomial"),
         (p1, p2) => tag(gcd_poly(p1, p2)));
-    put("reduce_poly", list("polynomial", "polynomial"),
-        (p1, p2) => tag(reduce_poly(p1, p2)));
+    put("reduce", list("polynomial", "polynomial"),
+        (p1, p2) => map(tag, reduce_poly(p1, p2)));
     put("make", "polynomial",
         (variable, terms) => tag(make_poly(variable, terms)));
 
     return "done";
 }
 
-// install complex package
-function install_complex_package() {
-    // imported functions from rectangular and polar packages
-    function make_from_real_imag(x, y) {
-        return get("make_from_real_imag", "rectangular")(x, y);
-    }
-    function make_from_mag_ang(r, a) {
-        return get("make_from_mag_ang", "polar")(r, a);
-    }
-    // internal functions
-    function add_complex(z1, z2) {
-        return make_from_real_imag(real_part(z1) + real_part(z2),
-                                   imag_part(z1) + imag_part(z2));
-    }
-    function sub_complex(z1, z2) {
-        return make_from_real_imag(real_part(z1) - real_part(z2),
-                                   imag_part(z1) - imag_part(z2));
-    }
-    function mul_complex(z1, z2) {
-        return make_from_mag_ang(magnitude(z1) * magnitude(z2),
-                                 angle(z1) + angle(z2));
-    }
-    function div_complex(z1, z2) {
-        return make_from_mag_ang(magnitude(z1) / magnitude(z2),
-                                 angle(z1) - angle(z2));
-    }
-    // interface to rest of the system
-    function tag(z) { return attach_tag("complex", z); }
-    put("add", list("complex", "complex"),
-        (z1, z2) => tag(add_complex(z1, z2)));
-    put("sub", list("complex", "complex"),
-        (z1, z2) => tag(sub_complex(z1, z2)));
-    put("mul", list("complex", "complex"),
-        (z1, z2) => tag(mul_complex(z1, z2)));
-    put("div", list("complex", "complex"),
-        (z1, z2) => tag(div_complex(z1, z2)));
-    put("make_from_real_imag", "complex",
-        (x, y) => tag(make_from_real_imag(x, y)));
-    put("make_from_mag_ang", "complex",
-        (r, a) => tag(make_from_mag_ang(r, a)));
-    return "done";
+function make_polynomial(variable, terms) {
+    return get("make", "polynomial")(variable, terms);
 }
 
-function install_rectangular_package() {
-    // internal functions
-    function real_part(z) { return head(z); }
-    function imag_part(z) { return tail(z); }
-    function make_from_real_imag(x, y) { return pair(x, y); }
-    function magnitude(z) {
-        return math_sqrt(square(real_part(z)) + square(imag_part(z)));
-    }
-    function angle(z) {
-        return math_atan(imag_part(z), real_part(z));
-    }
-    function make_from_mag_ang(r, a) {
-        return pair(r * math_cos(a), r * math_sin(a));
-    }
-
-    // interface to the rest of the system
-    function tag(x) { return attach_tag("rectangular", x); }
-    put("real_part", list("rectangular"), real_part);
-    put("imag_part", list("rectangular"), imag_part);
-    put("magnitude", list("rectangular"), magnitude);
-    put("angle", list("rectangular"), angle);
-    put("make_from_real_imag", "rectangular",
-        (x, y) => tag(make_from_real_imag(x, y)));
-    put("make_from_mag_ang", "rectangular",
-        (r, a) => tag(make_from_mag_ang(r, a)));
-    return "done";
-}
-
-function install_polar_package() {
-    // internal functions
-    function magnitude(z) { return head(z); }
-    function angle(z) { return tail(z); }
-    function make_from_mag_ang(r, a) { return pair(r, a); }
-    function real_part(z) {
-        return magnitude(z) * math_cos(angle(z));
-    }
-    function imag_part(z) {
-        return magnitude(z) * math_sin(angle(z));
-    }
-    function make_from_real_imag(x, y) {
-        return pair(math_sqrt(square(x) + square(y)),
-                    math_atan(y, x));
-    }
-
-    // interface to the rest of the system
-    function tag(x) { return attach_tag("polar", x); }
-    put("real_part", list("polar"), real_part);
-    put("imag_part", list("polar"), imag_part);
-    put("magnitude", list("polar"), magnitude);
-    put("angle", list("polar"), angle);
-    put("make_from_real_imag", "polar",
-        (x, y) => tag(make_from_real_imag(x, y)));
-    put("make_from_mag_ang", "polar",
-        (r, a) => tag(make_from_mag_ang(r, a)));
-    return "done";
-}
-
-function make_complex_from_real_imag(x, y){
-   return get("make_from_real_imag", "complex")(x, y);
-}
-
-function make_complex_from_mag_ang(r, a){
-   return get("make_from_mag_ang", "complex")(r, a);
-}
 
 // rational package
 function install_rational_package() {
     // internal functions
     function numer(x) { return head(x); }
     function denom(x) { return tail(x); }
+    
+    // b: use reduce before creating a rational number
     function make_rat(n, d) {
-        const g = gcd(n, d);
-        return pair(n / g, d / g);
+        const reduced = reduce(n, d);
+        return pair(head(reduced), head(tail(reduced)));
     }
     function add_rat(x, y) {
-        return make_rat(numer(x) * denom(y) + numer(y) * denom(x),
-                        denom(x) * denom(y));
+        return make_rat(add(mul(numer(x), denom(y)), mul(numer(y), denom(x))),
+                        mul(denom(x), denom(y)));
     }
     function sub_rat(x, y) {
-        return make_rat(numer(x) * denom(y) - numer(y) * denom(x),
-                        denom(x) * denom(y));
+        return make_rat(sub(mul(numer(x), denom(y)), mul(numer(y), denom(x))),
+                        mul(denom(x), denom(y)));
     }
     function mul_rat(x, y) {
-        return make_rat(numer(x) * numer(y),
-                        denom(x) * denom(y));
+        return make_rat(mul(numer(x), numer(y)),
+                        mul(denom(x), denom(y)));
     }
     function div_rat(x, y) {
-        return make_rat(numer(x) * denom(y),
-                        denom(x) * numer(y));
+        return make_rat(mul(numer(x), denom(y)),
+                        mul(denom(x), numer(y)));
     }
     // interface to rest of the system
     function tag(x) {
@@ -387,22 +298,29 @@ function make_rational(n, d) {
 
 // javascript number package
 function install_javascript_number_package() {
-    function tag(x) {
-        return attach_tag("javascript_number", x);
+    // b: reduce integers
+    function reduce_integers(n, d) {
+        const g = gcd(n, d);
+        return list(n/g, d/g);
     }
     put("add", list("javascript_number", "javascript_number"),
-        (x, y) => tag(x + y));
+        (x, y) => x + y);
     put("sub", list("javascript_number", "javascript_number"),
-        (x, y) => tag(x - y));
+        (x, y) => x - y);
     put("mul", list("javascript_number", "javascript_number"),
-        (x, y) => tag(x * y));
+        (x, y) => x * y);
     put("div", list("javascript_number", "javascript_number"),
-        (x, y) => tag(x / y));
-    put("is_equal_to_zero", list("javascript_number"), x => x === 0);
+        (x, y) => x / y);
+    put("neg", list("javascript_number"),
+        (x) => x * -1);
+    put("is_equal", list("javascript_number", "javascript_number"),
+        (x, y) => x === y);
+    put("is_equal_to_zero", list("javascript_number"),
+        (x) => x === 0);
     put("greatest_common_divisor", list("javascript_number", "javascript_number"),
-        (x, y) => tag(gcd(x, y)));
-    put("make", "javascript_number",
-        x => tag(x));
+        (x, y) => gcd(x, y));
+    put("reduce", list("javascript_number", "javascript_number"),
+        (x, y) => reduce_integers(x, y));
 
     return "done";
 }
@@ -415,67 +333,36 @@ function mul(x, y) { return apply_generic("mul", list(x, y)); }
 
 function div(x, y) { return apply_generic("div", list(x, y)); }
 
-function real_part(z) { return apply_generic("real_part", list(z)); }
+function is_equal(x, y) { return apply_generic("is_equal", list(x, y)); }
 
-function imag_part(z) { return apply_generic("imag_part", list(z)); }
+function is_equal_to_zero(x) { return apply_generic("is_equal_to_zero", list(x)); }
 
-function magnitude(z) { return apply_generic("magnitude", list(z)); }
+function neg(x) { return apply_generic("neg", list(x)); }
 
-function angle(z)     { return apply_generic("angle", list(z)); }
+function greatest_common_divisor(x, y) { return apply_generic("greatest_common_divisor", list(x, y)); }
 
-function make_javascript_number(n) {
-    return get("make", "javascript_number")(n);
-}
-
-function make_polynomial(variable, terms) {
-    return get("make", "polynomial")(variable, terms);
-}
-
-function greatest_common_divisor(a, b) {
-    return apply_generic("greatest_common_divisor", list(a, b));
-}
-
-function reduce_poly(a, b) {
-    return apply_generic("reduce_poly", list(a, b));
-}
-
-function is_equal_to_zero(x) {
-    return apply_generic("is_equal_to_zero", list(x));
-}
-
-function is_variable(x) { return is_string(x); }
-
-function is_same_variable(v1, v2) {
-    return is_variable(v1) && is_variable(v2) && v1 === v2;
-}
+function reduce(x, y) { return apply_generic("reduce", list(x, y)); }
 
 function attach_tag(type_tag, contents) {
-    if (is_number(contents)) {
-        return pair("javascript_number", contents);
-    }
-    return pair(type_tag, contents);
+    return type_tag === "javascript_number"
+        ? contents
+        : pair(type_tag, contents);
 }
 
 function type_tag(datum) {
-    if (is_number(datum)) {
-        return "javascript_number";
-    }
-    if (is_pair(datum)) {
-        return head(datum);
-    }
-
-    return error(datum, "bad tagged datum -- type_tag");
+    return is_number(datum)
+        ? "javascript_number"
+        : is_pair(datum)
+        ? head(datum)
+        : error(datum, "bad tagged datum -- type_tag");
 }
 
 function contents(datum) {
-    if (is_number(datum)) {
-        return datum;
-    }
-    if (is_pair(datum)) {
-        return tail(datum);
-    }
-
-    return error(datum, "bad tagged datum -- contents");
+    return is_number(datum)
+        ? datum
+        : is_pair(datum)
+        ? tail(datum)
+        : error(datum, "bad tagged datum -- contents");
 }
 
 function apply(fun, args) {
@@ -493,29 +380,9 @@ function apply_generic(op, args) {
 }
 
 function gcd(a, b) {
-    return b === 0 ? a : gcd(b, a % b);
-}
-
-function expt(b, n) {
-    return fast_expt_iter(b, n, 1);
-}
-
-function fast_expt_iter(b, n, a) {
-    if (n === 0) {
-        return a;
-    }
-    if (is_even(n)) {
-        return fast_expt_iter(square(b), n/2, a);
-    }
-    return fast_expt_iter(b, n-1, b*a);
-}
-
-function is_even(n) {
-    return n%2 === 0;
-}
-
-function square(n) {
-    return n*n;
+    return b === 0
+        ? a
+        : gcd(b, a % b);
 }
 
 // operation_table, put and get
