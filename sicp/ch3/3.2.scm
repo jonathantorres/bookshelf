@@ -1,0 +1,20 @@
+(define (make-monitored f)
+  (let ((counter 0))
+    (define (dispatch op)
+      (cond ((eq? op 'how-many-calls?)
+             counter)
+            ((eq? op 'reset-count)
+             (set! counter 0))
+            (else
+              (set! counter (+ counter 1))
+              (f op))))
+    dispatch))
+
+(define s (make-monitored sqrt))
+
+(display (s 100)) (newline)
+(display (s 'how-many-calls?)) (newline)
+(display (s 25)) (newline)
+(display (s 'how-many-calls?)) (newline)
+(display (s 'reset-count)) (newline)
+(display (s 'how-many-calls?)) (newline)
