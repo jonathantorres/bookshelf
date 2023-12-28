@@ -13,7 +13,7 @@
       (cond ((eq? m 'withdraw) withdraw)
             ((eq? m 'deposit deposit))
             (else
-            (error "Unknown request -- MAKE-ACCOUNT" m)))
+              (error "Unknown request -- MAKE-ACCOUNT" m)))
       (lambda (x) "Incorrect Password")))
   dispatch)
 
