@@ -61,7 +61,7 @@ function front_delete_deque(d) {
     }
 }
 
-function rear_delete_deque(d, item) {
+function rear_delete_deque(d) {
     if (is_empty_deque(d)) {
         error(d, "delete_deque called with an empty deque");
     } else {
