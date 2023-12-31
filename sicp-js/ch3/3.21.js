@@ -16,19 +16,15 @@ print_queue(q);
 function make_queue() { return pair(null, null); }
 
 function print_queue(queue) {
-    if (is_empty_queue(queue)) {
-        display("[]");
-        return;
-    }
     display(front_ptr(queue));
 }
 
 function front_queue(queue) {
     if (is_empty_queue(queue)) {
         return error(queue, "front_queue called with an empty queue");
+    } else {
+        return head(front_ptr(queue));
     }
-
-    return head(front_ptr(queue));
 }
 
 function delete_queue(queue) {
