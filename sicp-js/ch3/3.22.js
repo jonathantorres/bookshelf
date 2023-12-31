@@ -4,11 +4,23 @@ import {
 } from 'sicp';
 
 const q = make_queue();
-q("insert")("a");
-q("insert")("b");
-q("print")();
-q("delete")();
-q("print")();
+insert_queue(q, "a");
+insert_queue(q, "b");
+print_queue(q);
+delete_queue(q);
+print_queue(q);
+
+function insert_queue(q, item) {
+    return q("insert")(item);
+}
+
+function print_queue(q) {
+    return q("print")();
+}
+
+function delete_queue(q) {
+    return q("delete")();
+}
 
 function make_queue() {
     let front_ptr = null;
@@ -35,10 +47,6 @@ function make_queue() {
     }
 
     function print_queue() {
-        if (is_empty_queue()) {
-            display("[]");
-            return;
-        }
         display(front_ptr);
     }
 
