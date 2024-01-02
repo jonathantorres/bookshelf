@@ -12,7 +12,7 @@ const a = make_wire();
 const b = make_wire();
 const c = make_wire();
 
-// The delay time is two times inverter-delay plus one and-gate-delay
+// The delay time is two times inverter_delay plus one and_gate_delay
 or_gate(a, b, c);
 
 display(get_signal(c));
