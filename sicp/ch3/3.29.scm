@@ -1,0 +1,10 @@
+; The delay time is two times inverter-delay plus one and-gate-delay
+(define (or-gate a1 a2 output)
+  (let ((a (make-wire))
+        (b (make-wire))
+        (out (make-wire)))
+    (inverter a1 a)
+    (inverter a2 b)
+    (and-gate a b out)
+    (inverter out output)
+    'ok))
