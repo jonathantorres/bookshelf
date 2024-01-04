@@ -6,7 +6,9 @@ import {
 const C = make_connector();
 const F = celsius_fahrenheit_converter(C);
 
+probe("C", C);
 probe("F", F);
+set_value(C, 25, "user");
 
 function celsius_fahrenheit_converter(x) {
     return cplus(cmul(cdiv(cv(9), cv(5)), x), cv(32));
