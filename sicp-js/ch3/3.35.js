@@ -5,8 +5,11 @@ import {
 
 const a = make_connector();
 const b = make_connector();
-
 squarer(a, b);
+
+probe("a", a);
+probe("square", b);
+set_value(b, 64, "user");
 
 function squarer(a, b) {
     function process_new_value() {
