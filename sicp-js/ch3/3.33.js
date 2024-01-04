@@ -5,9 +5,13 @@ import {
 
 const a = make_connector();
 const b = make_connector();
-const c = make_connector();
+const avg = make_connector();
 
-averager(a, b, c);
+averager(a, b, avg);
+
+probe("average", avg);
+set_value(a, 8, "user");
+set_value(b, 2, "user");
 
 function averager(a, b, c) {
     const s = make_connector();
