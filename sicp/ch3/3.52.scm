@@ -10,8 +10,8 @@
 (define y (stream-filter even? seq))
 (define z (stream-filter (lambda (x) (= (remainder x 5) 0)) seq))
 
-; Using guile which evaluates without memoization
-; The value of sum is: 210
+; Using guile, which evaluates with memoization
+; The value of sum is: 10
 (display sum) (newline)
 
 ; The value returned by stream-ref is: 136
