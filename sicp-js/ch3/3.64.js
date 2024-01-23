@@ -3,7 +3,7 @@ import {
     stream_map, eval_stream, head, is_null, error, math_abs, stream_ref
 } from 'sicp';
 
-display(sqrt(25, 5));
+display(sqrt(25, 0.0000010));
 
 function stream_limit(s, tolerance) {
     if (math_abs(stream_ref(s, 0) - stream_ref(s, 1)) < tolerance) {
