@@ -32,8 +32,8 @@
         (cons-stream (weight p1)
                      (iter (stream-cdr s)))
         (iter (stream-cdr s)))))
-  (define nums (weighted-pairs integers integers weight))
-  (iter nums))
+  (let ((nums (weighted-pairs integers integers weight)))
+    (iter nums)))
 
 (define ones (cons-stream 1 ones))
 (define integers (cons-stream 1 (add-streams ones integers)))
