@@ -3,21 +3,18 @@ import {
     eval_stream, head, tail, is_null, error, stream_ref, stream_filter, list, append
 } from 'sicp';
 
-const ones = pair(1, () => ones);
-const integers = pair(1, () => add_streams(ones, integers));
+const rlc1 = rlc(5, 1, 1, 0.5)(1, 2);
 
-const rcl1 = rcl(5, 1, 1, 0.5)(1, 2);
+display(eval_stream(rlc1, 10));
 
-display(eval_stream(rcl1, 10));
-
-function rcl(r, l, c, dt) {
+function rlc(r, l, c, dt) {
     return (vc0, il0) => {
         const vc = integral(() => dvc, vc0, dt);
         const il = integral(() => dil, il0, dt);
         const dvc = scale_stream(il, -(1/c));
         const dil = add_streams(scale_stream(vc, 1/l), scale_stream(il, -(r/l)));
         return stream_map_2(pair, vc, il);
-    }
+    };
 }
 
 function integral(delayed_integrand, initial_value, dt) {
