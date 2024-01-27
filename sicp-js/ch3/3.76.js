@@ -6,7 +6,7 @@ import {
 const ones = pair(1, () => ones);
 const integers = pair(1, () => add_streams(ones, integers));
 
-const zero_crossings = make_zero_crossings(integers, 1, 2);
+const zero_crossings = make_zero_crossings(integers, 1);
 
 display(eval_stream(zero_crossings, 10));
 
