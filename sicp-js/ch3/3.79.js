@@ -3,7 +3,7 @@ import {
     eval_stream, head, tail, is_null, error, stream_ref, stream_filter, list, append
 } from 'sicp';
 
-display(eval_stream(solve_2nd(y => y, 1, 2, 0.001), 10));
+display(eval_stream(solve_2nd((x,y) => x/y, 1, 2, 0.001), 10));
 
 function solve_2nd(f, y0, dy0, dt) {
     const y = integral(() => dy, y0, dt);
