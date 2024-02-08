@@ -272,8 +272,19 @@
 (define primitive-procedures
   (list (list 'car car)
         (list 'cdr cdr)
+        (list 'cadr cadr)
+        (list 'caar caar)
         (list 'cons cons)
         (list 'null? null?)
+        (list 'display display)
+        (list 'newline newline)
+        (list 'equal? equal?)
+        (list '= =)
+        (list 'not not)
+        (list '+ +)
+        (list '- -)
+        (list '/ /)
+        (list '* *)
         ;; add more
         ))
 
