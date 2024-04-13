@@ -11,7 +11,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | gkr         | The C Programming Language (Rewritten in Go) |
 | gointro     | Introducing Go |
 | gopl        | The Go Programming Language |
-| jabba       | Java: A Beginner's Guide |
+| java        | Java: A Beginner's Guide |
 | kr          | The C Programming Language |
 | lcthw       | Learn C The Hard Way |
 | lp3thw      | Learn Python 3 The Hard Way |
