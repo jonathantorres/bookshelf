@@ -16,9 +16,9 @@ A collection of programs/notes from several books and courses, the list is organ
 | lcthw       | Learn C The Hard Way |
 | lp3thw      | Learn Python 3 The Hard Way |
 | math        | Discrete Mathematics |
-| rust        | The Rust Programming Language |
 | ostep       | Operating Systems: Three Easy Pieces |
 | rim         | Rust In Motion: Video Course |
+| rust        | The Rust Programming Language |
 | sqmm        | SQL Queries for Mere Mortals (MySQL) |
 | sicp        | Structure and Interpretation of Computer Programs |
 | sicp-js     | Structure and Interpretation of Computer Programs (JavaScript Edition) |
