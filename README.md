@@ -25,4 +25,5 @@ A collection of programs/notes from several books and courses, the list is organ
 | sql         | SQL Queries for Mere Mortals (MySQL) |
 | tyc         | Teach Yourself C in 21 Days |
 | tycpp       | Teach Yourself C++ in 21 Days |
-| unp         | UNIX Network Programming: First Edition |
+| unp         | UNIX Network Programming: Third Edition |
+| unp1        | UNIX Network Programming: First Edition |
