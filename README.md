@@ -5,6 +5,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | ----------- | ---------------- |
 | acc         | Accelerated C++  |
 | adm         | The Algorithm Design Manual |
+| apue        | Advanced Programming in the UNIX Environment: 2nd Edition |
 | cn          | Computer Networking - A Top Down Approach |
 | csapp       | Computer Systems - A Programmer's Perspective |
 | dmoi        | Discrete Mathematics - An Open Introduction |
