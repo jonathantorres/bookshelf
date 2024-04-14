@@ -6,7 +6,7 @@ Exercises and answers to questions from the "Introducing Go" book.
 ## Compile and run programs
 Download, compile and run your programs with these commands
 ```bash
-$ go get github.com/jonathantorres/gointro/ch1/helloworld
+$ go install github.com/jonathantorres/bookshelf/gointro/ch1/helloworld@latest
 $ $GOPATH/bin/helloworld
 Hello World
 ```
