@@ -1,4 +1,4 @@
-module github.com/jonathantorres/gopl
+module github.com/jonathantorres/bookshelf/gopl
 
 go 1.13
 
