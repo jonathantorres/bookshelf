@@ -2,10 +2,11 @@
 
 int main(void)
 {
+    long blanks   = 0;
+    long tabs     = 0;
+    long newlines = 0;
     int c;
-    int blanks = 0;
-    int tabs = 0;
-    int newlines = 0;
+
     while ((c = getchar()) != EOF) {
         if (c == ' ') {
             blanks++;
@@ -15,7 +16,7 @@ int main(void)
             newlines++;
         }
     }
-    printf("b:%d,t:%d,n:%d\n", blanks, tabs, newlines);
 
+    printf("blanks: %ld\ntabs: %ld\nnewlines: %ld\n", blanks, tabs, newlines);
     return 0;
 }

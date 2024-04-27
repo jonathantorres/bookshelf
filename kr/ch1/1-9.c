@@ -10,5 +10,6 @@ int main(void)
         }
         prev = c;
     }
+
     return 0;
 }
