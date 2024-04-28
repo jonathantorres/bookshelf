@@ -1,45 +1,33 @@
 #include <stdio.h>
 
-#define MAX 50
+#define LEN 256
 
 int main(void)
 {
     int c;
-    int len = 0;
-    char chars[MAX] = { 0 };
-    int freqs[MAX] = { 0 };
+    int chars[LEN];
+
+    for (int i = 0; i < LEN; i++) {
+        chars[i] = 0;
+    }
 
     while ((c = getchar()) != EOF) {
-        if (c == ' ') {
-            continue;
+        if (c != ' ' && c != '\t' && c != '\n' && c != '.' && c != ',') {
+            chars[c]++;
         }
+    }
 
-        if (c == '\n') {
-            break;
-        }
+    // print histogram
+    for (int i = 0; i < LEN; i++) {
+        if (chars[i] > 0) {
+            printf("%c ", i);
 
-        int in_chars = 0;
-        for (int i = 0; i < len; i++) {
-            if (chars[i] == c) {
-                in_chars = 1;
-                freqs[i]++;
-                break;
+            for (int j = 0; j < chars[i]; j++) {
+                putchar('-');
             }
-        }
-
-        if (in_chars == 0) {
-            chars[len] = c;
-            freqs[len] = 1;
-            len++;
+            putchar('\n');
         }
     }
 
-    for (int i = 0; i < len; i++) {
-        printf("%c ", chars[i]);
-        for (int j = 0; j < freqs[i]; j++) {
-            printf("-");
-        }
-        printf("\n");
-    }
     return 0;
 }
