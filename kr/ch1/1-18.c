@@ -2,73 +2,99 @@
 
 #define MAXLINE 1000
 
-int get_line(char line[], int maxline);
+int getline(char line[], int maxline);
+int line_is_blank(char line[], int size);
+void trimline(char line[], char tline[], int size);
 
 int main(void)
 {
     int len;
     char line[MAXLINE];
+    char tline[MAXLINE];
 
-    while ((len = get_line(line, MAXLINE)) > 0) {
-        int l_trails = 0;
-        for (int i = 0; i < len; i++) {
-            if (line[i] != ' ' && line[i] != '\t') {
-                break;
-            }
-            l_trails++;
-        }
-        // remove left trailing blanks and tabs
-        if (l_trails > 0) {
-            for (int i = 0; i < len; i++) {
-                line[i] = line[(i+l_trails)];
-            }
-            len -= l_trails;
-        }
+    for (int i = 0; i < MAXLINE; i++) {
+        line[i]  = 0;
+        tline[i] = 0;
+    }
 
-        int r_trails = 0;
-        for (int i = len-1; i >= 0; i--) {
-            if (line[i] == '\n') {
-                continue;
-            }
-            if (line[i] == ' ' || line[i] == '\t') {
-                r_trails++;
-            } else {
-                break;
-            }
-        }
-
-        // remove right trailing blanks and tabs
-        if (r_trails > 0) {
-            len -= r_trails;
-            line[len-1] = '\n';
-            line[len] = '\0';
-        }
-
-        int all_blanks = 1;
-        for (int j = 0; j < len; j++) {
-            if (line[j] != ' ' && line[j] != '\t' && line[j] != '\n' && line[j] != '\0') {
-                all_blanks = 0;
-            }
-        }
-        if (all_blanks) {
+    while ((len = getline(line, MAXLINE)) > 0) {
+        // ignore blank lines
+        if (line_is_blank(line, len)) {
             continue;
         }
-        printf("%s", line);
+
+        trimline(line, tline, len);
+
+        printf("%s", tline);
     }
+
     return 0;
 }
 
-int get_line(char s[], int lim)
+void trimline(char line[], char tline[], int size)
+{
+    // trim the beginning of the line
+    int found, i, j;
+    found = i = j = 0;
+
+    while (line[i] != '\0') {
+        if (line[i] != ' ' && line[i] != '\t') {
+            found = 1;
+        }
+
+        if (found) {
+            tline[j++] = line[i];
+        } else {
+            size--;
+        }
+        ++i;
+    }
+
+    // trim the end of the line
+    j = found = 0;
+    for (i = size - 2; i >= 0; --i) {
+        if (tline[i] != ' ' && tline[i] != '\t') {
+            found = 1;
+        }
+
+        if (found) {
+            j = i;
+            break;
+        }
+    }
+
+    tline[++j] = '\n';
+    tline[++j] = '\0';
+}
+
+int line_is_blank(char line[], int size)
+{
+    int blank = 1;
+
+    for (int i = 0; i < size - 1; ++i) {
+        int c = line[i];
+        if (c != ' ' && c != '\t' && c != '\n') {
+            blank = 0;
+            break;
+        }
+    }
+
+    return blank;
+}
+
+int getline(char s[], int lim)
 {
     int c, i;
 
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++) {
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
         s[i] = c;
     }
+
     if (c == '\n') {
         s[i] = c;
         ++i;
     }
+
     s[i] = '\0';
 
     return i;
