@@ -1,3 +1,5 @@
+(include "simulator.scm")
+
 (define (logical-or s1 s2)
   (cond ((= s1 1) 1)
         ((= s2 1) 1)
@@ -14,3 +16,14 @@
   (add-action! a1 or-action-procedure)
   (add-action! a2 or-action-procedure)
   'ok)
+
+(define a (make-wire))
+(define b (make-wire))
+(define out (make-wire))
+
+(probe 'out out)
+(set-signal! a 1)
+(set-signal! b 0)
+(or-gate a b out)
+(propagate)
+(newline)
