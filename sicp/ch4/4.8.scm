@@ -18,31 +18,6 @@
 (define (let-named-body exp)
   (cdddr exp))
 
-(define (make-application operator operands)
-  (cons operator operands))
-
-(define (make-let bindings body)
-  (list 'let bindings body))
-
-(define (make-definition var value)
-  (list 'define var value))
-
-
-; (define (fib n)
-; (define fib-iter (lambda (a b count)
-;   (if (= count 0)
-;     b
-;     (fib-iter (+ a b) a (- count 1)))))
-
-; (((lambda (fib-iter)
-;   (lambda (a b count)
-;     (if (= count 0)
-;       b
-;       (fib-iter (+ a b) a (- count 1))))) fib-iter) 1 0 n))
-
-; (display (fib 10)) (newline)
-
-
 ; our updated let->combination transformation to support "named let"
 (define (let->combination exp)
   (define (named-let? exp)
@@ -50,20 +25,17 @@
       true
       false))
   (if (named-let? exp)
-    (let ((lamb (make-lambda (list (let-name exp))
-                             (make-lambda
-                               (map car (let-named-bindings exp))
-                               (let-named-body exp)))))
-      (let ((inner-lambda (make-lambda
-                            (map car (let-named-bindings exp))
-                            (let-named-body exp))))
-        (make-application   
-          (make-application lamb
-                            (list (let-name exp)))
-          (map cadr (let-named-bindings exp)))))
+    (let ((bindings (map cadr (let-named-bindings exp)))
+          (let-names (map car (let-named-bindings exp))))
+      (list
+        (list 'lambda '()
+              (append
+                (list 'define (cons (let-name exp) let-names))
+                (let-named-body exp))
+              (cons (let-name exp) bindings))))
     (let ((lamb (make-lambda (map car (let-bindings exp))
                              (let-body exp))))
-      (make-application lamb (map cadr (let-bindings exp))))))
+      (list lamb (map cadr (let-bindings exp))))))
 
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
@@ -95,13 +67,6 @@
                          b
                          (fib-iter (+ a b) a (- count 1))))))
 (define fib-call '(fib 10))
-
-; (define fib-let '(let fib-iter ((a 1)
-;                                 (b 0)
-;                                 (count n))
-;                    (if (= count 0)
-;                      b
-;                      (fib-iter (+ a b) a (- count 1)))))
 
 (user-print (eval fib-prog the-global-environment)) (newline)
 (user-print (eval fib-call the-global-environment)) (newline)
