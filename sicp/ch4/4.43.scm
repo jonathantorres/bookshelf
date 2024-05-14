@@ -1,0 +1,38 @@
+(include "amb.scm")
+
+(define prog
+  '((define (require p)
+      (if (not p) (amb)))
+    (define (distinct? items)
+      (cond ((null? items) true)
+            ((null? (cdr items)) true)
+            ((member (car items) (cdr items)) false)
+            (else (distinct? (cdr items)))))
+    (define (father-daughter)
+      (let ((Moore 'Mary)
+            (Barnacle 'Melissa)
+            (Hall (amb 'Gabrielle 'Lorna))
+            (Downing (amb 'Gabrielle 'Lorna 'Rosalind))
+            (Parker (amb 'Lorna 'Rosalind)))
+        (require (cond ((eq? Hall 'Gabrielle) (eq? 'Rosalind Parker))
+                       ((eq? Downing 'Gabrielle) (eq? 'Melissa Parker))
+                       (else false)))
+        (require (distinct? (list Hall Downing Parker)))
+        (list (list 'Barnacle Barnacle)
+              (list 'Moore Moore)
+              (list 'Hall Hall)
+              (list 'Downing Downing)
+              (list 'Parker Parker))))
+    (begin
+      (display (father-daughter))
+      (newline))))
+
+(define (run)
+  (define env (setup-environment))
+  (for-each (lambda (p)
+              (ambeval p env
+                       (lambda (value fail) (cons value (fail)))
+                       (lambda () 'ok)))
+            prog))
+
+(run)
