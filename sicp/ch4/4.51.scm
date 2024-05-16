@@ -1,0 +1,60 @@
+(include "amb.scm")
+
+(define (permanent-set? exp) (tagged-list? exp 'permanent-set!))
+(define (permanent-set-var exp) (cadr exp))
+(define (permanent-set-val exp) (caddr exp))
+
+(define (analyze-permanent-set exp)
+  (let ((var (permanent-set-var exp))
+        (val (analyze (permanent-set-val exp))))
+    (lambda (env ok err)
+      (val env
+           (lambda (v err2)
+             (set-variable-value! var v env)
+             (ok 'ok err2))
+           err))))
+
+(define (analyze exp)
+  (cond ((self-evaluating? exp)
+         (analyze-self-evaluating exp))
+        ((quoted? exp) (analyze-quoted exp))
+        ((variable? exp) (analyze-variable exp))
+        ((assignment? exp) (analyze-assignment exp))
+        ((definition? exp) (analyze-definition exp))
+        ((if? exp) (analyze-if exp))
+        ((lambda? exp) (analyze-lambda exp))
+        ((begin? exp) (analyze-sequence (begin-actions exp)))
+        ((cond? exp) (analyze (cond->if exp)))
+        ((let? exp) (analyze (let->combination exp)))
+        ((amb? exp) (analyze-amb exp))
+        ((permanent-set? exp) (analyze-permanent-set exp))
+        ((application? exp) (analyze-application exp))
+        (else
+         (error "Unknown expression type -- ANALYZE" exp))))
+
+(define prog
+  '((define (require p)
+      (if (not p) (amb)))
+    (define (an-element-of items)
+      (require (not (null? items)))
+      (amb (car items) (an-element-of (cdr items))))))
+
+(define (run)
+  (define env (setup-environment))
+  (for-each (lambda (p)
+              (ambeval p env
+                       (lambda (value fail) (cons value fail))
+                       (lambda () 'done)))
+            prog)
+  (define exp '(begin
+                 (define count 0)
+                 (let ((x (an-element-of '(a b c)))
+                       (y (an-element-of '(a b c))))
+                   (permanent-set! count (+ count 1))
+                   (require (not (eq? x y)))
+                   (list x y count))))
+  (display (ambeval exp env
+                    (lambda (value fail) value)
+                    (lambda () 'done))))
+(run)
+(newline)
