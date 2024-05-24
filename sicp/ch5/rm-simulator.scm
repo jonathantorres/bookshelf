@@ -1,8 +1,3 @@
-; (define (assoc key records)
-;   (cond ((null? records) #f)
-;         ((equal? key (caar records)) (car records))
-;         (else (assoc key (cdr records)))))
-
 (define (tagged-list? exp tag)
   (if (pair? exp)
     (eq? (car exp) tag)
