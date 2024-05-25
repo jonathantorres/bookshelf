@@ -76,7 +76,7 @@
   (let ((pc (make-register 'pc))
         (flag (make-register 'flag))
         (stack (make-stack))
-        (the-insruction-sequence '()))
+        (the-instruction-sequence '()))
     (let ((the-ops
             (list (list 'initialize-stack
                         (lambda () (stack 'initialize)))))
@@ -103,10 +103,10 @@
               (execute)))))
       (define (dispatch message)
         (cond ((eq? message 'start)
-               (set-contents! pc the-insruction-sequence)
+               (set-contents! pc the-instruction-sequence)
                (execute))
               ((eq? message 'install-instruction-sequence)
-               (lambda (seq) (set! the-insruction-sequence seq)))
+               (lambda (seq) (set! the-instruction-sequence seq)))
               ((eq? message 'allocate-register) allocate-register)
               ((eq? message 'get-register) lookup-register)
               ((eq? message 'install-operations)
