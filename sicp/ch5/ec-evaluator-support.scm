@@ -13,6 +13,16 @@
 (define (initialize-stack)
   'ok)
 
+; procedures for lazy evaluation
+(define (delay-it exp env)
+  (list 'thunk exp env))
+
+(define (thunk? obj)
+  (tagged-list? obj 'thunk))
+
+(define (thunk-exp thunk) (cadr thunk))
+(define (thunk-env thunk) (caddr thunk))
+
 ; representing procedures
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
