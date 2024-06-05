@@ -42,6 +42,7 @@
                             (list 'if-consequent if-consequent)
                             (list 'true? true?)
                             (list 'null? null?)
+                            (list 'symbol? symbol?)
                             (list 'last-exp? last-exp?)
                             (list 'cond->if cond->if)
                             (list 'let->combination let->combination)
