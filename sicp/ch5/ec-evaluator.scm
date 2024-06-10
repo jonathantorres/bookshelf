@@ -41,6 +41,9 @@
                             (list 'if-alternative if-alternative)
                             (list 'if-consequent if-consequent)
                             (list 'true? true?)
+                            (list 'false? false?)
+                            (list 'list list)
+                            (list 'cons cons)
                             (list 'null? null?)
                             (list 'symbol? symbol?)
                             (list 'last-exp? last-exp?)
@@ -61,8 +64,12 @@
                             (list 'last-operand? last-operand?)
                             (list 'adjoin-arg adjoin-arg)
                             (list 'get-global-environment get-global-environment)
+                            (list 'read read)
+                            (list 'prompt-for-input prompt-for-input)
+                            (list 'announce-output announce-output)
                             (list 'user-print user-print)))
 
+; our explicit control evaluator machine
 (define ec-machine
   (make-machine
     '(exp env val proc argl continue unev)

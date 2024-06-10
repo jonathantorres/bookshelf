@@ -97,14 +97,30 @@
     (scan (frame-variables frame)
           (frame-values frame))))
 
+(define apply-in-underlying-scheme apply)
+
+(define (apply-in-scheme proc args)
+  (apply (car (cdr proc)) args))
+
 (define primitive-procedures
   (list (list 'car car)
         (list 'cdr cdr)
         (list 'cddr cddr)
+        (list 'cdddr cdddr)
         (list 'cadr cadr)
         (list 'caar caar)
+        (list 'caddr caddr)
+        (list 'cadddr cadddr)
+        (list 'caar caar)
+        (list 'caadr caadr)
+        (list 'cdadr cdadr)
         (list 'cons cons)
+        (list 'set-car! set-car!)
+        (list 'set-cdr! set-cdr!)
         (list 'null? null?)
+        (list 'symbol? symbol?)
+        (list 'number? number?)
+        (list 'string? string?)
         (list 'display display)
         (list 'newline newline)
         (list 'equal? equal?)
@@ -125,6 +141,8 @@
         (list 'not not)
         (list 'reverse reverse)
         (list 'remainder remainder)
+        (list 'read read)
+        (list 'apply-in-underlying-scheme apply-in-scheme)
         (list '+ +)
         (list '- -)
         (list '/ /)
@@ -157,11 +175,15 @@
 
 (define (primitive-implementation proc) (cadr proc))
 
-(define apply-in-underlying-scheme apply)
-
 (define (apply-primitive-procedure proc args)
   (apply-in-underlying-scheme
     (primitive-implementation proc) args))
+
+(define (prompt-for-input string)
+  (newline) (newline) (display string) (newline))
+
+(define (announce-output string)
+  (newline) (display string) (newline))
 
 (define (user-print object)
   (begin
