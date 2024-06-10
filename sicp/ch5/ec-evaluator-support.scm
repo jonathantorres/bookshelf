@@ -34,6 +34,18 @@
 (define (procedure-body p) (caddr p))
 (define (procedure-environment p) (cadddr p))
 
+(define (make-compiled-procedure entry env)
+  (list 'compiled-procedure entry env))
+
+(define (compiled-procedure? proc)
+  (tagged-list? proc 'compiled-procedure))
+
+(define (compiled-procedure-entry cproc)
+  (cadr cproc))
+
+(define (compiled-procedure-env cproc)
+  (caddr cproc))
+
 ; environments
 (define (enclosing-environment env) (cdr env))
 (define (first-frame env) (car env))
@@ -186,11 +198,12 @@
   (newline) (display string) (newline))
 
 (define (user-print object)
-  (begin
-    (if (compound-procedure? object)
-      (display (list 'compound-procedure
-                     (procedure-parameters object)
-                     (procedure-body object)
-                     '<procedure-env>))
-      (display object))
-    (newline)))
+  (cond ((compound-procedure? object)
+         (display (list 'compound-procedure
+                        (procedure-parameters object)
+                        (procedure-body object)
+                        '<procedure-env>)))
+        ((compiled-procedure? object)
+         (display '<compiled-procedure>))
+        (else
+          (display object))))

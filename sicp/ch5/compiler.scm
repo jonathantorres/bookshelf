@@ -336,3 +336,13 @@
          (compile-application exp target linkage))
         (else
          (error "Unknown expression type -- COMPILE" exp))))
+
+(define (compile-and-go expression)
+  (let ((instructions
+          (assemble (statements
+                      (compile expression 'val 'return))
+                    ec-machine-comp)))
+    (set! the-global-environment (setup-environment))
+    (set-register-contents! ec-machine-comp 'val instructions)
+    (set-register-contents! ec-machine-comp 'flag true)
+    (start ec-machine-comp)))
