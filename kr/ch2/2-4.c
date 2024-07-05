@@ -1,30 +1,37 @@
 #include <stdio.h>
 
-void squeeze(char s1[], const char s2[]);
+void squeeze(char s[], char t[]);
 
 int main(void)
 {
-    char name[] = "Jonathan";
-    printf("%s\n", name);
-    squeeze(name, "Ja");
-    printf("%s\n", name);
+    char s[] = "Jonathan Torres";
+    char t[] = "an";
+
+    printf("%s\n", s);
+    squeeze(s, t);
+    printf("%s\n", s); // Joth Torres
+
     return 0;
 }
 
-void squeeze(char s1[], const char s2[])
+void squeeze(char s[], char t[])
 {
-    int i, j, k;
-    for (i = 0, k = 0; s1[i] != '\0'; i++) {
-        int in_s2 = 0;
-        for (j = 0; s2[j] != '\0'; j++) {
-            if (s1[i] == s2[j]) {
-                in_s2 = 1;
+    int i, j;
+
+    for (i = j = 0; s[i] != '\0'; ++i) {
+        int found = 0;
+
+        for (int k = 0; t[k] != '\0'; ++k) {
+            if (t[k] == s[i]) {
+                found = 1;
                 break;
             }
         }
-        if (in_s2 == 0) {
-            s1[k++] = s1[i];
+
+        if (!found) {
+            s[j++] = s[i];
         }
     }
-    s1[k] = '\0';
+
+    s[j] = '\0';
 }

@@ -1,22 +1,23 @@
 #include <stdio.h>
 
-#define MAXLINE 1000
+#define MAXLINE 1024
 
 int main(void)
 {
+    char line[MAXLINE];
     int i = 0;
     int c;
-    char s[MAXLINE];
+
     while ((c = getchar()) != EOF) {
         if (c != '\n') {
             if (i < MAXLINE) {
-                s[i] = c;
-                i++;
+                line[i++] = c;
             }
         } else {
-            s[i] = '\0';
-            printf("%s\n", s);
-            i = 0;
+            line[i] = '\0';
+            printf("%s\n", line);
         }
     }
+
+    return 0;
 }

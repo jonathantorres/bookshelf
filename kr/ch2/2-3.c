@@ -1,48 +1,64 @@
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdio.h>
 
-int get_map(char c);
 int htoi(char s[]);
+int is_hexchar(char c);
+int get_hex_val(char c);
 
 int main(void)
 {
-    // always assume it's a valid hex value
-    char s1[] = "0xFF00FF";
-    char s2[] = "cc0033";
-    char s3[] = "DEAD";
+    printf("%d\n", htoi("0xFF"));
+    printf("%d\n", htoi("FF"));
+    printf("%d\n", htoi("0xdead"));
 
-    printf("%s = %d\n", s1, htoi(s1));
-    printf("%s = %d\n", s2, htoi(s2));
-    printf("%s = %d\n", s3, htoi(s3));
     return 0;
-}
-
-int get_map(char c)
-{
-    char map[] = "0123456789abcdef";
-    int pos = 0;
-    for (int i = 0; i < (int)strlen(map); i++) {
-        if (tolower(c) == map[i]) {
-            pos = i;
-            break;
-        }
-    }
-    return pos;
 }
 
 int htoi(char s[])
 {
-    int total = 0;
-    int with_prefix = 0;
+    int n = 0;
     int i = 0;
+
     if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) {
         i = 2;
-        with_prefix = 1;
     }
-    for (int j = strlen(s)-1; s[i] != '\0'; i++,j--) {
-        total += get_map(s[i]) * pow(16, j - (with_prefix == 1 ? 2 : 0));
+
+    for (; is_hexchar(s[i]); ++i) {
+        n = 16 * n + get_hex_val(s[i]);
     }
-    return total;
+
+    return n;
+}
+
+int is_hexchar(char c)
+{
+    // numbers are valid hex
+    if (c >= '0' && c <= '9') {
+        return 1;
+    }
+
+    // letters from A to F are valid hex
+    c = tolower(c);
+    if (c >= 'a' && c <= 'f') {
+        return 1;
+    }
+
+    return 0;
+}
+
+int get_hex_val(char c)
+{
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    }
+
+    char chars[] = "abcdef";
+    int i;
+    c = tolower(c);
+
+    for (i = 0; chars[i] != c; ++i) {
+        //
+    }
+
+    return i + 10;
 }
