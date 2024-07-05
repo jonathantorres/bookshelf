@@ -1,49 +1,75 @@
 #include <stdio.h>
 
 #define MAXLINE 1000
+#define TABSIZE 4
 
-void entab(char s[], int len);
-int get_line(char s[], int lim);
+int getline(char line[], int maxline);
+void entab(char line[], char nline[], int maxline);
 
 int main(void)
 {
-    char line[MAXLINE];
     int len;
-    while ((len = get_line(line, MAXLINE)) > 0) {
-        entab(line, len);
+    char line[MAXLINE];
+    char nline[MAXLINE];
+
+    for (int i = 0; i < MAXLINE; i++) {
+        line[i]  = 0;
+        nline[i] = 0;
     }
+
+    while ((len = getline(line, MAXLINE)) > 0) {
+        if (len > 0) {
+            entab(line, nline, len);
+            printf("%s", nline);
+        }
+    }
+
     return 0;
 }
 
-int get_line(char s[], int lim)
+void entab(char line[], char nline[], int maxline)
+{
+    int i, j, ns;
+    j  = 0;
+    ns = 0;
+
+    for (i = 0; i < maxline; ++i) {
+        char c = line[i];
+
+        if (c == ' ') {
+            ns++;
+        }
+
+        if (c == ' ' && ns == TABSIZE) {
+            ns         = 0;
+            j          = j - (TABSIZE - 1);
+            nline[j++] = '\t';
+        } else {
+            nline[j++] = c;
+        }
+
+        if (c != ' ') {
+            ns = 0;
+        }
+    }
+
+    nline[j] = '\0';
+}
+
+int getline(char s[], int lim)
 {
     int c, i;
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++) {
+
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
         s[i] = c;
     }
+
     if (c == '\n') {
         s[i] = c;
         ++i;
     }
+
     s[i] = '\0';
 
     return i;
-}
-
-void entab(char s[], int len)
-{
-    int tab_added = 0;
-    for (int i = 0; i < len; i++) {
-        if (s[i] == ' ' && s[i+1] == ' ' && s[i+2] == ' ' && s[i+3] == ' ') {
-            putchar('\t');
-            tab_added = 1;
-        } else if (s[i] == ' ') {
-            if (tab_added == 0) {
-                putchar(s[i]);
-            }
-        } else {
-            tab_added = 0;
-            putchar(s[i]);
-        }
-    }
 }

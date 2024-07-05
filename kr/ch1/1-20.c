@@ -1,52 +1,67 @@
 #include <stdio.h>
 
 #define MAXLINE 1000
-#define TABLEN 4
+#define TABSIZE 4
 
-int get_line(char s[], int lim);
-void detab(char s[], int len);
+int getline(char line[], int maxline);
+void detab(char line[], char nline[], int maxline);
 
 int main(void)
 {
-    char line[MAXLINE];
     int len;
-    while ((len = get_line(line, MAXLINE)) > 0) {
-        detab(line, len);
-        printf("%s", line);
+    char line[MAXLINE];
+    char nline[MAXLINE];
+
+    for (int i = 0; i < MAXLINE; i++) {
+        line[i]  = 0;
+        nline[i] = 0;
     }
+
+    while ((len = getline(line, MAXLINE)) > 0) {
+        if (len > 0) {
+            detab(line, nline, len);
+            printf("%s", nline);
+        }
+    }
+
     return 0;
 }
 
-int get_line(char s[], int lim)
+void detab(char line[], char nline[], int maxline)
+{
+    int i, j;
+
+    j = 0;
+
+    for (i = 0; i < maxline; ++i) {
+        char c = line[i];
+
+        if (c == '\t') {
+            for (int k = 0; k < TABSIZE; ++k) {
+                nline[j++] = ' ';
+            }
+        } else {
+            nline[j++] = c;
+        }
+    }
+
+    nline[j] = '\0';
+}
+
+int getline(char s[], int lim)
 {
     int c, i;
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++) {
+
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
         s[i] = c;
     }
+
     if (c == '\n') {
         s[i] = c;
         ++i;
     }
+
     s[i] = '\0';
 
     return i;
-}
-
-void detab(char s[], int len)
-{
-    int found_times = 0;
-    for (int i = 0; i < len; i++) {
-        if (s[i] == '\t') {
-            found_times++;
-            s[i] = ' ';
-            for (int j = len-1; j >= i+1; j--) {
-                s[j+(TABLEN-1)] = s[j];
-            }
-            for (int k = 1; k < TABLEN; k++) {
-                s[i+k] = ' ';
-            }
-        }
-    }
-    len += (TABLEN*found_times);
-    s[len] = '\0';
 }

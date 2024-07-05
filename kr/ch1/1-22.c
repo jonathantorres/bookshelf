@@ -1,49 +1,67 @@
 #include <stdio.h>
-#include <math.h>
 
-#define MAXLINE 1000
-#define LINELIMIT 10
+#define MAXLINE   1024
+#define FOLDLIMIT 20
 
-int get_line(char s[], int lim);
+int getline(char line[], int maxline);
+void fold(char line[], int maxline);
 
 int main(void)
 {
-    char line[MAXLINE];
     int len;
-    while ((len = get_line(line, MAXLINE)) > 0) {
-        if (len > LINELIMIT) {
-            int split = (int)ceil((float)len/LINELIMIT);
-            int char_s = 0;
-            int char_e = LINELIMIT-1;
-            for (int i = 1; i <= split; i++) {
-                for (int j = char_s; j <= char_e; j++) {
-                    putchar(line[j]);
-                }
-                if (i == split - 1) {
-                    char_e += (len - char_e) - 1;
-                } else {
-                    char_e += LINELIMIT;
-                }
-                char_s += LINELIMIT;
-                printf("\n");
-            }
-        } else {
-            printf("%s", line);
+    char line[MAXLINE];
+
+    for (int i = 0; i < MAXLINE; i++) {
+        line[i] = 0;
+    }
+
+    while ((len = getline(line, MAXLINE)) > 0) {
+        if (len > 0) {
+            fold(line, len);
         }
     }
+
     return 0;
 }
 
-int get_line(char s[], int lim)
+void fold(char line[], int maxline)
+{
+    if (maxline < FOLDLIMIT) {
+        printf("%s", line);
+        return;
+    }
+
+    int fc = 0;
+
+    for (int i = 0; i < maxline; ++i) {
+        int c = line[i];
+
+        if (fc >= FOLDLIMIT) {
+            fc = 0;
+            putchar('\n');
+        } else if (c == '\n') {
+            fc = 0;
+        } else {
+            fc++;
+        }
+
+        putchar(c);
+    }
+}
+
+int getline(char s[], int lim)
 {
     int c, i;
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++) {
+
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
         s[i] = c;
     }
+
     if (c == '\n') {
         s[i] = c;
         ++i;
     }
+
     s[i] = '\0';
 
     return i;
