@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 typedef unsigned char *byte_pointer;
 
@@ -15,30 +13,30 @@ void show_bytes(byte_pointer start, size_t len)
     printf("\n");
 }
 
-void show_short(short v)
+void show_short(short x)
 {
-    show_bytes((byte_pointer)&v, sizeof(short));
+    show_bytes((byte_pointer)&x, sizeof(short));
 }
 
-void show_long(long v)
+void show_long(long x)
 {
-    show_bytes((byte_pointer)&v, sizeof(long));
+    show_bytes((byte_pointer)&x, sizeof(long));
 }
 
-void show_double(double v)
+void show_double(double x)
 {
-    show_bytes((byte_pointer)&v, sizeof(double));
+    show_bytes((byte_pointer)&x, sizeof(double));
 }
 
 int main(void)
 {
-    double s = 10;
-    double l = 100000;
-    double d = 2000000.4234;
+    short a  = 55;
+    long b   = 5080;
+    double f = 638.832;
 
-    show_short(s);
-    show_long(l);
-    show_double(d);
+    show_short(a);
+    show_long(b);
+    show_double(f);
 
     return 0;
 }

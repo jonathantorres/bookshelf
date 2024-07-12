@@ -99,9 +99,7 @@ int main(int argc, char *argv[])
     int val = 12345;
 
     if (argc > 1) {
-        if (argc > 1) {
-            val = strtol(argv[1], NULL, 0);
-        }
+        val = strtol(argv[1], NULL, 0);
         printf("calling test_show_bytes\n");
         test_show_bytes(val);
     } else {
