@@ -2,11 +2,11 @@
 
 int is_little_endian()
 {
-    int val           = 0xFF;
+    unsigned val      = 0xFF;
     unsigned char *vp = (unsigned char *)&val;
 
     if (vp[0] == 0xFF) {
-        return 1; // is little endian
+        return 1;
     }
 
     return 0;
