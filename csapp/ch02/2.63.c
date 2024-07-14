@@ -1,32 +1,47 @@
 #include <stdio.h>
 
-// performs a logical right shift
 unsigned srl(unsigned x, int k)
 {
+    /* perform shift arithmetically */
     unsigned xsra = (int)x >> k;
-    int mask      = -1 + (1 << (sizeof(int) << 3) - k);
+    int w         = sizeof(int) * 8;
+    unsigned l    = (0x1 << (w - 1));
 
-    return xsra & mask;
+    // if msb of x is 1
+    // then the leftmost k bits of xsra must be 0
+    if (k > 0 && x & l) {
+        unsigned m = ~(~0U << (w - k));
+        return xsra & m;
+    }
+
+    return xsra;
 }
 
-// performs an arithmetic right shift
 int sra(int x, int k)
 {
-    int xsrl = (unsigned)x >> k;
-    int mask = 1 << (sizeof(int) << 3) - k;
+    /* perform shift logically */
+    int xsrl   = (unsigned)x >> k;
+    int w      = sizeof(int) * 8;
+    unsigned l = (0x1 << (w - 1));
 
-    mask &= x;
+    // if msb of x is 1
+    // then the leftmost k bits of xsrl must be 1
+    if (k > 0 && x & l) {
+        unsigned m = ~0U << (w - k);
 
-    return xsrl | mask;
+        return xsrl | m;
+    }
+
+    return xsrl;
 }
 
 int main(void)
 {
-    printf("%u\n", 10 >> 1);
-    printf("%u\n", srl(10, 1));
+    printf("0x%X\n", srl(~0U, 0));
+    printf("0x%X\n", sra(~0, 0));
 
-    printf("%d\n", -5 >> 1);
-    printf("%d\n", sra(-5, 1));
+    printf("0x%X\n", srl(~0U, 1));
+    printf("0x%X\n", sra(~0, 1));
 
     return 0;
 }

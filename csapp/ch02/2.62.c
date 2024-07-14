@@ -8,6 +8,5 @@ int int_shifts_are_arithmetic()
 int main(void)
 {
     printf("%d\n", int_shifts_are_arithmetic());
-
     return 0;
 }
