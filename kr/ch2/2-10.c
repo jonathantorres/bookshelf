@@ -1,15 +1,18 @@
 #include <stdio.h>
+#include <string.h>
 
 int lower(int c);
 
 int main(void)
 {
-    char s[9] = "JonaTHan";
+    char *s = "Jonathan Torres";
     printf("%s\n", s);
-    for (int i = 0; i < 8; i++) {
+
+    for (size_t i = 0; i < strlen(s); i++) {
         putchar(lower(s[i]));
     }
-    puts("");
+
+    printf("\n");
 }
 
 int lower(int c)
