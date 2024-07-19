@@ -1,31 +1,25 @@
 #include <stdio.h>
 
-unsigned int setbits(unsigned int x, int p, int n, int y);
-unsigned int getbits(unsigned int x, int p, int n);
+unsigned getbits(unsigned x, int p, int n);
+unsigned setbits(unsigned x, int p, int n, unsigned y);
 
 int main(void)
 {
-    unsigned int x = 150;
-    unsigned int y = 100;
-    int p = 3;
-    int n = 4;
-    printf("%u set-> %u = %u\n", x, y, setbits(x, p, n, y));
+    printf("0x%X\n", setbits(0x12345678, 15, 16, 0x0000ABCD)); // 0x1234ABCD
+    printf("0x%X\n", setbits(0x12345678, 23, 16, 0x0000ABCD)); // 0x12ABCD78
+
     return 0;
 }
 
-// returns x with the n bits that begin at position p,
-// set to the rightmost n bits of y,
-// leaving the other bits unchanged
-unsigned int setbits(unsigned int x, int p, int n, int y)
+unsigned setbits(unsigned x, int p, int n, unsigned y)
 {
-    unsigned int ry = getbits(y, n-1, n);
-    ry = ry << (p+1-n);
-    unsigned int m = ((1 << n)-1) << (p+1-n);
-    return x ^ ((x ^ ry) & m);
+    unsigned r = getbits(y, n - 1, n);
+    unsigned m = ~(~0U << n) << (p - n + 1);
+
+    return (x & ~m) | (r << (p - n + 1));
 }
 
-// getbits: get n bits from position p
-unsigned int getbits(unsigned int x, int p, int n)
+unsigned getbits(unsigned x, int p, int n)
 {
-    return (x >> (p+1-n)) & ~(~0 << n);
+    return (x >> (p + 1 - n)) & ~(~0U << n);
 }
