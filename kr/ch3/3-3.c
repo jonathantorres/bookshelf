@@ -1,41 +1,60 @@
 #include <stdio.h>
 
+#define MAXLINE 1024
+
 void expand(char s1[], char s2[]);
 
 int main(void)
 {
-    char s1[] = "-a-zA-Z0-9-";
-    char s2[1000];
+    char s1[MAXLINE];
+    char s2[MAXLINE];
+    char s3[MAXLINE];
 
-    expand(s1, s2);
+    expand("a-z", s1);
+    expand("a-b-c-", s2);
+    expand("-a-z0-9", s3);
+
+    printf("%s\n", s1);
     printf("%s\n", s2);
+    printf("%s\n", s3);
+
     return 0;
 }
 
 void expand(char s1[], char s2[])
 {
-    int trai = 0;
-    int len;
-    for (len = 0; s1[len] != '\0'; len++) {
-        ;
+    int i = 0;
+    int j = 0;
+
+    // initial dash
+    if (s1[i] == '-') {
+        s2[j++] = s1[i++];
     }
-    if (s1[len-1] == '-') {
-        trai = 1;
-    }
-    int k = 0, i = 0;
-    if (s1[0] == '-') {
-        s2[k++] = '-';
-        i++;
-    }
+
+    char start, end;
+
     for (; s1[i] != '\0'; i++) {
-        if (s1[i] == '-') {
-            for (int j = s1[i-1]; j <= s1[i+1]; j++, k++) {
-                s2[k] = (char)j;
+        char c = s1[i];
+
+        if (c == '-' && s1[i + 1] != '\0') {
+            start = s1[i - 1];
+            end   = s1[i + 1];
+
+            if (start == s2[j - 1]) {
+                start++;
+            }
+
+            // build the string
+            while (start <= end) {
+                s2[j++] = start++;
             }
         }
     }
-    if (trai) {
-        s2[k++] = '-';
+
+    // trailing dash
+    if (s1[i - 1] == '-') {
+        s2[j++] = s1[i - 1];
     }
-    s2[k] = '\0';
+
+    s2[j] = '\0';
 }
