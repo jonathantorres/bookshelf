@@ -2,53 +2,30 @@
 #include <string.h>
 
 int strrindex(char s[], char t[]);
-int strindex(char s[], char t[]);
-void reverse(char s[], int len);
 
 int main(void)
 {
-    char msg[] = "banana";
-    char sub[] = "na";
-    printf("%d\n", strrindex(msg, sub));
+    printf("%d\n", strrindex("banana", "na"));
+    printf("%d\n", strrindex("Jonathan", "an"));
+    printf("%d\n", strrindex("Jonathan", "nat"));
+    printf("%d\n", strrindex("foo", "bar"));
+
     return 0;
 }
 
 int strrindex(char s[], char t[])
 {
-    int slen = (int)strlen(s);
-    int tlen = (int)strlen(t);
-
-    reverse(s, slen);
-    reverse(t, tlen);
-    int i = strindex(s, t);
-    if (i >= 0) {
-        i = (slen-tlen) - i;
-    }
-    reverse(s, slen);
-    reverse(t, tlen);
-    return i;
-}
-
-int strindex(char s[], char t[])
-{
     int i, j, k;
-    for (i = 0; s[i] != '\0'; i++) {
-        for (j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++) {
+
+    for (i = strlen(s) - 1; i >= 0; --i) {
+        for (j = i, k = strlen(t) - 1; k >= 0 && s[j] == t[k]; --j, --k) {
             ;
         }
-        if (k > 0 && t[k] == '\0') {
-            return i;
+
+        if (k == -1) {
+            return j + 1;
         }
     }
-    return -1;
-}
 
-void reverse(char s[], int len)
-{
-    int c, i, j;
-    for (i = 0, j = len-1; i < j; i++, j--) {
-        c = s[i];
-        s[i] = s[j];
-        s[j] = c;
-    }
+    return -1;
 }
