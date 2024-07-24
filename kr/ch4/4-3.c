@@ -1,18 +1,11 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
 
-#define MAXVAL 100
-#define BUFSIZE 100
-#define MAXOP 100  // max size of operand or operator
-#define NUMBER '0' // signal that a number was found
-
-int sp = 0;
-double val[MAXVAL];
-
-char buf[BUFSIZE];
-int bufp = 0;
+#define MAXVAL  1024
+#define BUFSIZE 1024
+#define MAXOP   1024 // max size of operand or operator
+#define NUMBER  '0'  // signal that a number was found
 
 int getop(char s[]);
 void push(double f);
@@ -52,7 +45,7 @@ int main(void)
             case '%':
                 op2 = pop();
                 if (op2 != 0) {
-                    push(fmod(pop(), op2));
+                    push((int)pop() % (int)op2);
                 }
                 break;
             case '\n':
@@ -64,6 +57,12 @@ int main(void)
     }
     return 0;
 }
+
+int sp = 0;
+double val[MAXVAL];
+
+char buf[BUFSIZE];
+int bufp = 0;
 
 int getch(void)
 {
@@ -84,23 +83,38 @@ int getop(char s[])
     int i, c;
 
     while ((s[0] = c = getch()) == ' ' || c == '\t') {
+        ;
+    }
 
-    }
     s[1] = '\0';
-    if (!isdigit(c) && c != '.') {
+    if (!isdigit(c) && c != '.' && c != '-') {
         return c;
+    } else {
+        int n = getch();
+
+        ungetch(n);
+
+        if (c == '-' && isdigit(n)) {
+            c = n;
+        } else if (c == '-') {
+            return c;
+        }
     }
+
     i = 0;
+
     if (isdigit(c)) {
         while (isdigit(s[++i] = c = getch())) {
-            //
+            ;
         }
     }
+
     if (c == '.') {
         while (isdigit(s[++i] = c = getch())) {
-
+            ;
         }
     }
+
     s[i] = '\0';
     if (c != EOF) {
         ungetch(c);
