@@ -44,7 +44,7 @@ $(CH3_PROGS):%: ch3/%.c
 
 # chapter 4 programs
 $(CH4_PROGS):%: ch4/%.c
-	$(CFLAGS) $^ -o bin/$@
+	$(CFLAGS) $^ -o bin/$@ -lm
 	./bin/$@
 
 # chapter 5 programs
