@@ -1,30 +1,46 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-void reverse_r(char s[]);
+void reverse(char s[]);
+
+#define MAXLINE 1024
 
 int main(void)
 {
-    char s[] = "Jonathan Torres";
-    printf("%s\n", s);
-    reverse_r(s);
-    printf("%s\n", s);
+    char a[] = "Jonathan Torres";
+    char b[] = "This is a test message";
+    char c[] = "Try to reverse this: 123846";
+
+    reverse(a);
+    reverse(b);
+    reverse(c);
+
+    printf("%s\n", a);
+    printf("%s\n", b);
+    printf("%s\n", c);
+
     return 0;
 }
 
-// reverse: reverse string s in place
-void reverse_r(char s[])
+void reverse(char s[])
 {
     static int i = 0;
-    static int k = 1;
-    int j = strlen(s) - k;
+    static int j = 0;
     int c;
-    if (i < j) {
-        c = s[i];
-        s[i++] = s[j];
-        s[j] = c;
-        k++;
-        reverse_r(s);
+
+    if (i == 0) {
+        j = strlen(s) - 1;
     }
+
+    if (i >= j) {
+        i = 0;
+        j = 0;
+        return;
+    }
+
+    c      = s[i];
+    s[i++] = s[j];
+    s[j--] = c;
+
+    reverse(s);
 }
