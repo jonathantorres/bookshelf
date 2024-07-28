@@ -1,9 +1,9 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
-#define MAXTOKEN 100
-#define BUFSIZE 100
+#define MAXTOKEN 512
+#define BUFSIZE  1024
 
 enum { NAME, PARENS, BRACKETS };
 enum { NO, YES };
@@ -13,20 +13,19 @@ int gettoken(void);
 void ungetch(int c);
 int getch(void);
 
-int bufp = 0;
 int tokentype;
 int pretoken = NO;
-char buf[BUFSIZE];
 char token[MAXTOKEN];
-char out[1000];
+char out[BUFSIZE];
 
 int main(void)
 {
     int type;
-    char temp[MAXTOKEN];
+    char temp[BUFSIZE * 2];
 
     while (gettoken() != EOF) {
         strcpy(out, token);
+
         while ((type = gettoken()) != '\n') {
             if (type == PARENS || type == BRACKETS) {
                 strcat(out, token);
@@ -44,8 +43,10 @@ int main(void)
                 printf("invalid input at %s\n", token);
             }
         }
+
         printf("%s\n", out);
     }
+
     return 0;
 }
 
@@ -58,8 +59,11 @@ int gettoken(void)
         pretoken = NO;
         return tokentype;
     }
+
     while ((c = getch()) == ' ' || c == '\t') {
+        ;
     }
+
     if (c == '(') {
         if ((c = getch()) == ')') {
             strcpy(token, "()");
@@ -70,13 +74,16 @@ int gettoken(void)
         }
     } else if (c == '[') {
         for (*p++ = c; (*p++ = getch()) != ']';) {
+            ;
         }
-        *p = '\0';
+
+        *p               = '\0';
         return tokentype = BRACKETS;
     } else if (isalpha(c)) {
         for (*p++ = c; isalnum(c = getch());) {
             *p++ = c;
         }
+
         *p = '\0';
         ungetch(c);
         return tokentype = NAME;
@@ -84,6 +91,18 @@ int gettoken(void)
         return tokentype = c;
     }
 }
+
+int posttoken(void)
+{
+    int nexttype;
+    nexttype = gettoken();
+    pretoken = YES;
+
+    return nexttype;
+}
+
+int bufp = 0;
+char buf[BUFSIZE];
 
 int getch(void)
 {
@@ -97,12 +116,4 @@ void ungetch(int c)
     } else {
         buf[bufp++] = c;
     }
-}
-
-int posttoken(void)
-{
-    int nexttype;
-    nexttype = gettoken();
-    pretoken = YES;
-    return nexttype;
 }

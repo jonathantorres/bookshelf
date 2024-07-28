@@ -1,9 +1,9 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
-#define MAXTOKEN 100
-#define BUFSIZE 100
+#define MAXTOKEN 512
+#define BUFSIZE  1024
 
 enum { NAME, PARENS, BRACKETS, ERR };
 
@@ -13,13 +13,11 @@ int gettoken(void);
 void ungetch(int c);
 int getch(void);
 
-int bufp = 0;
 int tokentype;
-char buf[BUFSIZE];
 char token[MAXTOKEN];
 char name[MAXTOKEN];
 char datatype[MAXTOKEN];
-char out[1000];
+char out[BUFSIZE];
 
 int main(void)
 {
@@ -27,11 +25,14 @@ int main(void)
         strcpy(datatype, token);
         out[0] = '\0';
         dcl();
+
         if (tokentype == ']') {
             printf("syntax error, missing ]\n");
         }
+
         printf("%s: %s %s\n", name, out, datatype);
     }
+
     return 0;
 }
 
@@ -41,8 +42,9 @@ int gettoken(void)
     char *p = token;
 
     while ((c = getch()) == ' ' || c == '\t') {
-
+        ;
     }
+
     if (c == '(') {
         if ((c = getch()) == ')') {
             strcpy(token, "()");
@@ -52,10 +54,13 @@ int gettoken(void)
             return tokentype = '(';
         }
     } else if (c == '[') {
-        for (*p++ = c; (*p++ = getch()) != ']' && (*(p-1) != '\n');) {
+        for (*p++ = c; (*p++ = getch()) != ']' && (*(p - 1) != '\n');) {
+            ;
         }
+
         *p = '\0';
-        if ((*(p-1)) == ']') {
+
+        if ((*(p - 1)) == ']') {
             return tokentype = BRACKETS;
         } else {
             return tokentype = ']';
@@ -64,6 +69,7 @@ int gettoken(void)
         for (*p++ = c; isalnum(c = getch());) {
             *p++ = c;
         }
+
         *p = '\0';
         ungetch(c);
         return tokentype = NAME;
@@ -73,27 +79,16 @@ int gettoken(void)
     }
 }
 
-int getch(void)
-{
-    return (bufp > 0) ? buf[--bufp] : getchar();
-}
-
-void ungetch(int c)
-{
-    if (bufp >= BUFSIZE) {
-        printf("ungetch: too many characters\n");
-    } else {
-        buf[bufp++] = c;
-    }
-}
-
 void dcl(void)
 {
     int ns;
+
     for (ns = 0; gettoken() == '*';) {
         ns++;
     }
+
     dirdcl();
+
     while (ns-- > 0) {
         strcat(out, " pointer to");
     }
@@ -102,6 +97,7 @@ void dcl(void)
 void dirdcl(void)
 {
     int type;
+
     if (tokentype == '(') {
         dcl();
         if (tokentype != ')') {
@@ -118,6 +114,7 @@ void dirdcl(void)
         tokentype = ERR;
         return;
     }
+
     while ((type = gettoken()) == PARENS || type == BRACKETS) {
         if (type == PARENS) {
             strcat(out, " function returning");
@@ -126,5 +123,22 @@ void dirdcl(void)
             strcat(out, token);
             strcat(out, " of");
         }
+    }
+}
+
+int bufp = 0;
+char buf[BUFSIZE];
+
+int getch(void)
+{
+    return (bufp > 0) ? buf[--bufp] : getchar();
+}
+
+void ungetch(int c)
+{
+    if (bufp >= BUFSIZE) {
+        printf("ungetch: too many characters\n");
+    } else {
+        buf[bufp++] = c;
     }
 }
