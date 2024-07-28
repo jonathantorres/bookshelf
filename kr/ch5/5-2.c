@@ -1,21 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+#include <stdio.h>
 
-#define BUFSIZE 100
-char buf[BUFSIZE];
-int bufp = 0;
+#define BUFFSIZE 1024
 
-int getfloat(float *pn);
+int getfloat(double *pf);
 int getch(void);
 void ungetch(int c);
 
 int main(void)
 {
-    float f;
+    double f;
     int r;
     r = getfloat(&f);
+
     if (r > 0) {
         printf("%f\n", f);
     } else if (r == 0) {
@@ -25,65 +23,53 @@ int main(void)
     } else {
         printf("unknown error!\n");
     }
+
     return 0;
 }
 
-int getfloat(float *pn)
+int getfloat(double *pf)
 {
     double power;
-    int c, sign, exp, esign, bige;
+    int c, sign;
+
     while (isspace(c = getch())) {
-        // skip whitespace
+        ;
     }
-    if (!isdigit(c) && c != EOF && c != '+' && c != '-') {
+
+    if (!isdigit(c) && c != EOF && c != '+' && c != '-' && c != '.') {
         ungetch(c);
         return 0;
     }
+
     sign = (c == '-') ? -1 : 1;
     if (c == '+' || c == '-') {
         c = getch();
-        if (!isdigit(c)) {
-            ungetch(c);
-            ungetch(sign == 1 ? '+' : '-');
-            return 0;
-        }
     }
-    for (*pn = 0.0; isdigit(c); c = getch()) {
-        *pn = 10.0 * *pn + (c - '0');
+
+    for (*pf = 0.0; isdigit(c); c = getch()) {
+        *pf = 10.0 * *pf + (c - '0');
     }
+
     if (c == '.') {
         c = getchar();
     }
+
     for (power = 1.0; isdigit(c); c = getch()) {
-        *pn = 10.0 * *pn + (c - '0');
+        *pf = 10.0 * *pf + (c - '0');
         power *= 10.0;
     }
-    bige = (c == 'E') ? 1 : 0;
-    if (c == 'e' || c == 'E') {
-        c = getch();
-        esign = (c == '-') ? -1 : 1;
-        if (c == '+' || c == '-') {
-            c = getch();
-            if (!isdigit(c)) {
-                ungetch(c);
-                ungetch(sign == 1 ? '+' : '-');
-            }
-        } else if (!isdigit(c)) {
-            ungetch(c);
-            ungetch(bige == 0 ? 'e' : 'E');
-        }
-        for (exp = 0; isdigit(c); c = getch()) {
-            exp = 10 * exp + (c - '0');
-        }
-        *pn *= (sign / power) * pow(10, esign * exp);
-    } else {
-        *pn *= (sign / power);
-    }
+
+    *pf *= (sign / power);
+
     if (c != EOF) {
         ungetch(c);
     }
+
     return c;
 }
+
+char buf[BUFFSIZE];
+int bufp = 0;
 
 int getch(void)
 {
@@ -92,10 +78,9 @@ int getch(void)
 
 void ungetch(int c)
 {
-    if (bufp >= BUFSIZE) {
+    if (bufp >= BUFFSIZE) {
         printf("ungetch: too many characters\n");
     } else {
         buf[bufp++] = c;
     }
 }
-
