@@ -1,29 +1,28 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define MAXLINES 5000
-#define PLINES 10
-#define ALLOCSIZE 50000 // size of available space
-#define MAXLEN 1000     // max size of a line
+#define MAXSTOR    5120
+#define PRINTLINES 10
+#define ALLOCSIZE  50000
+#define MAXLEN     1024
 
-static char allocbuf[ALLOCSIZE]; // storage for alloc
-static char *allocp = allocbuf;  // next free position
-char *lineptr[MAXLINES];
-
-int get_line(char *s, int);
-char *alloc(int n);
 int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines);
+int getline(char *s, int lim);
+char *alloc(int n);
 int process_input(char *v[]);
+
+char *lineptr[MAXSTOR];
 
 int main(int argc, char *argv[])
 {
     int nlines;
+
     switch (argc) {
         case 1:
-            nlines = PLINES;
+            nlines = PRINTLINES;
             break;
         case 2:
             nlines = process_input(argv);
@@ -37,13 +36,31 @@ int main(int argc, char *argv[])
             return 0;
     }
 
-    if ((readlines(lineptr, MAXLINES)) >= 0) {
+    if ((readlines(lineptr, MAXSTOR)) >= 0) {
         writelines(lineptr, nlines);
         return 0;
     } else {
         printf("error: input too big\n");
         return 1;
     }
+}
+
+int readlines(char *lineptr[], int maxlines)
+{
+    int len, nlines;
+    char *p, line[MAXLEN];
+
+    nlines = 0;
+    while ((len = getline(line, MAXLEN)) > 0) {
+        if (nlines >= maxlines || (p = alloc(len)) == NULL) {
+            return -1;
+        } else {
+            line[len - 1] = '\0';
+            strcpy(p, line);
+            lineptr[nlines++] = p;
+        }
+    }
+    return nlines;
 }
 
 int process_input(char *v[])
@@ -65,41 +82,30 @@ int process_input(char *v[])
     }
 }
 
-int readlines(char *lineptr[], int maxlines)
+void writelines(char *lineptr[], int nlines)
 {
-    int len, nlines;
-    char *p, line[MAXLEN];
+    int i, n = 1;
 
-    nlines = 0;
-    while ((len = get_line(line, MAXLEN)) > 0) {
-        if (nlines >= maxlines || (p = alloc(len)) == NULL) {
-            return -1;
-        } else {
-            line[len-1] = '\0';
-            strcpy(p, line);
-            lineptr[nlines++] = p;
-        }
+    printf("\n");
+
+    while (*++lineptr != NULL) {
+        n++;
     }
-    return nlines;
+
+    for (i = 0; i < (nlines + 1) && i < (n + 1); i++) {
+        --lineptr;
+    }
+
+    while (*++lineptr != NULL) {
+        printf("%s\n", *lineptr);
+    }
 }
 
-int get_line(char *s, int lim)
-{
-    int c, i;
-    for (i = 0; i<lim-1 && (c=getchar()) != EOF && c != '\n'; i++) {
-        s[i] = c;
-    }
-    if (c == '\n') {
-        s[i] = c;
-        ++i;
-    }
-    s[i] = '\0';
-    return i;
-}
+static char allocbuf[ALLOCSIZE];
+static char *allocp = allocbuf;
 
 char *alloc(int n)
 {
-    // if it fits
     if (allocbuf + ALLOCSIZE - allocp >= n) {
         allocp += n;
         return allocp - n;
@@ -108,18 +114,22 @@ char *alloc(int n)
     }
 }
 
-/* writelines: write output lines */
-void writelines(char *lineptr[], int nlines)
+int getline(char *s, int lim)
 {
-    int i, n = 1;
-    printf("\n");
-    while (*++lineptr != NULL) {
-        n++;
+    int c;
+    int i = 0;
+
+    while (--lim > 0 && ((c = getchar()) != EOF && c != '\n')) {
+        i++;
+        *s++ = c;
     }
-    for (i = 0; i < (nlines+1) && i < (n+1); i++) {
-        --lineptr;
+
+    if (c == '\n') {
+        i++;
+        *s++ = '\n';
     }
-    while (*++lineptr != NULL) {
-        printf("%s\n", *lineptr);
-    }
+
+    *s = '\0';
+
+    return i;
 }

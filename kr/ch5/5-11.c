@@ -1,70 +1,103 @@
 #include <stdio.h>
 
-#define MAXLINE 1000
-#define TABLEN 4
+#define MAXLINE 1024
+#define TABSIZE 4
 
-int get_line(char s[], int lim);
-void entab(char s[], int len, char ts);
-void detab(char s[], int len, char ts);
+int getline(char line[], int maxline);
+void entab(char line[], char nline[], int maxline, char ts);
+void detab(char line[], char nline[], int maxline, char ts);
 
 int main(int argc, char **argv)
 {
-    char line[MAXLINE];
     int len;
+    char line[MAXLINE];
+    char nline[MAXLINE];
     char ts = '\t';
+
+    for (int i = 0; i < MAXLINE; i++) {
+        line[i]  = 0;
+        nline[i] = 0;
+    }
 
     if (argc > 1) {
         ts = argv[1][0];
     }
 
-    while ((len = get_line(line, MAXLINE)) > 0) {
-        entab(line, len, ts);
-        detab(line, len, ts);
-        printf("%s\n", line);
+    while ((len = getline(line, MAXLINE)) > 0) {
+        if (len > 0) {
+            entab(line, nline, len, ts);
+            detab(line, nline, len, ts);
+            printf("%s", nline);
+        }
     }
+
     return 0;
 }
 
-int get_line(char s[], int lim)
+void entab(char line[], char nline[], int maxline, char ts)
+{
+    int i, j, ns;
+    j  = 0;
+    ns = 0;
+
+    for (i = 0; i < maxline; ++i) {
+        char c = line[i];
+
+        if (c == ' ') {
+            ns++;
+        }
+
+        if (c == ' ' && ns == TABSIZE) {
+            ns         = 0;
+            j          = j - (TABSIZE - 1);
+            nline[j++] = ts;
+        } else {
+            nline[j++] = c;
+        }
+
+        if (c != ' ') {
+            ns = 0;
+        }
+    }
+
+    nline[j] = '\0';
+}
+
+void detab(char line[], char nline[], int maxline, char ts)
+{
+    int i, j;
+
+    j = 0;
+
+    for (i = 0; i < maxline; ++i) {
+        char c = line[i];
+
+        if (c == ts) {
+            for (int k = 0; k < TABSIZE; ++k) {
+                nline[j++] = ' ';
+            }
+        } else {
+            nline[j++] = c;
+        }
+    }
+
+    nline[j] = '\0';
+}
+
+int getline(char s[], int lim)
 {
     int c, i;
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++) {
+
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
         s[i] = c;
     }
+
     if (c == '\n') {
         s[i] = c;
         ++i;
     }
+
     s[i] = '\0';
+
     return i;
-}
-
-void entab(char s[], int len, char ts)
-{
-    for (int i = 0; i < len; i++) {
-        if (i >= 3 && s[i] == ' ' && s[i-1] == ' ' && s[i-2] == ' ' && s[i-3] == ' ') {
-            putchar(ts);
-        } else {
-            putchar(s[i]);
-        }
-    }
-}
-
-void detab(char s[], int len, char ts)
-{
-    int found_times = 0;
-    for (int i = 0; i < len; i++) {
-        if (s[i] == ts) {
-            found_times++;
-            s[i] = ' ';
-            for (int j = len-1; j >= i+1; j--) {
-                s[j+(TABLEN-1)] = s[j];
-            }
-            for (int k = 1; k < TABLEN; k++) {
-                s[i+k] = ' ';
-            }
-        }
-    }
-    len += (TABLEN*found_times);
-    s[len] = '\0';
 }
