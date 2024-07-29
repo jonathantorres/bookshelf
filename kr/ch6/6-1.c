@@ -1,28 +1,48 @@
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 #include <string.h>
 
-#define MAXWORD 100
-#define BUFFSIZE 100
-#define NKEYS (sizeof(keytab) / sizeof(keytab[0]))
+#define MAXWORD  512
+#define BUFFSIZE 1024
+#define NKEYS    (sizeof(keytab) / sizeof(keytab[0]))
 
-char buf[BUFFSIZE];
-int bufp = 0;
-
-struct key
-{
+struct key {
     char *word;
     int count;
 } keytab[] = {
-    { "auto", 0, },
-    { "break", 0, },
-    { "case", 0, },
-    { "char", 0, },
-    { "continue", 0, },
-    { "unsigned", 0, },
-    { "void", 0, },
-    { "volatile", 0, },
-    { "while", 0 },
+    {
+        "auto",
+        0,
+    },
+    {
+        "break",
+        0,
+    },
+    {
+        "case",
+        0,
+    },
+    {
+        "char",
+        0,
+    },
+    {
+        "continue",
+        0,
+    },
+    {
+        "unsigned",
+        0,
+    },
+    {
+        "void",
+        0,
+    },
+    {
+        "volatile",
+        0,
+    },
+    {"while", 0},
 };
 
 int getch(void);
@@ -35,6 +55,7 @@ int main(void)
 {
     int n;
     char word[MAXWORD];
+
     while (getword(word, MAXWORD) != EOF) {
         if (isalpha(word[0])) {
             if ((n = binsearch(word, keytab, NKEYS)) >= 0) {
@@ -42,11 +63,13 @@ int main(void)
             }
         }
     }
+
     for (n = 0; n < (int)NKEYS; n++) {
         if (keytab[n].count > 0) {
             printf("%4d %s\n", keytab[n].count, keytab[n].word);
         }
     }
+
     return 0;
 }
 
@@ -55,8 +78,9 @@ int binsearch(char *word, struct key tab[], int n)
     int cond;
     int low, high, mid;
 
-    low = 0;
+    low  = 0;
     high = n - 1;
+
     while (low <= high) {
         mid = (low + high) / 2;
         if ((cond = strcmp(word, tab[mid].word)) < 0) {
@@ -67,7 +91,13 @@ int binsearch(char *word, struct key tab[], int n)
             return mid;
         }
     }
+
     return -1;
+}
+
+int acceptable(char c)
+{
+    return ((c == '_') || (c == '"') || (c == '#') || (c == '/') || isalnum(c));
 }
 
 int getword(char *word, int lim)
@@ -76,23 +106,32 @@ int getword(char *word, int lim)
     char *w = word;
 
     while (isspace(c = getch())) {
+        ;
     }
+
     if (c != EOF) {
         *w++ = c;
     }
+
     if (!acceptable(c)) {
         *w = '\0';
         return c;
     }
-    for ( ; --lim > 0; w++) {
+
+    for (; --lim > 0; w++) {
         if (!acceptable(*w = getch())) {
             ungetch(*w);
             break;
         }
     }
+
     *w = '\0';
+
     return word[0];
 }
+
+char buf[BUFFSIZE];
+int bufp = 0;
 
 int getch(void)
 {
@@ -106,9 +145,4 @@ void ungetch(int c)
     } else {
         buf[bufp++] = c;
     }
-}
-
-int acceptable(char c)
-{
-    return  ((c == '_') || (c == '"') || (c == '#') || (c == '/') || isalnum(c));
 }
