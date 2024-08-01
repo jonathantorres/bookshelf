@@ -1,22 +1,25 @@
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
-void keep_reading(void);
 int mscanf(char *fmt, ...);
+void keep_reading(void);
 
 int main(void)
 {
-    int a;
-    mscanf("%d\n", &a);
-    printf("%d\n", a);
-}
+    int i;
+    printf("Enter a number: ");
+    mscanf("%d\n", &i);
+    printf("%d\n", i);
 
-void keep_reading(void)
-{
-    char c;
-    while ((c = getchar()) != '\n' || c != EOF) {
+    double f;
+    printf("Enter a floating point number: ");
+    mscanf("%f\n", &f);
+    printf("%f\n", f);
 
-    }
+    char s[100];
+    printf("Enter a word: ");
+    mscanf("%s\n", &s);
+    printf("%s\n", s);
 }
 
 int mscanf(char *fmt, ...)
@@ -28,9 +31,11 @@ int mscanf(char *fmt, ...)
     double *dval;
 
     va_start(ap, fmt);
+
     for (p = fmt; *p; p++) {
         if (*p != '%') {
             c = getchar();
+
             if (c != *p) {
                 keep_reading();
                 return 0;
@@ -38,13 +43,14 @@ int mscanf(char *fmt, ...)
                 continue;
             }
         }
+
         switch (*++p) {
             case 'd':
-                ival = va_arg(ap, int*);
+                ival = va_arg(ap, int *);
                 count += scanf("%d", ival);
                 break;
             case 'f':
-                dval = va_arg(ap, double*);
+                dval = va_arg(ap, double *);
                 count += scanf("%lf", dval);
                 break;
             case 's':
@@ -56,6 +62,17 @@ int mscanf(char *fmt, ...)
                 return 0;
         }
     }
+
     va_end(ap);
+
     return count;
+}
+
+void keep_reading(void)
+{
+    char c;
+
+    while ((c = getchar()) != '\n' || c != EOF) {
+        ;
+    }
 }

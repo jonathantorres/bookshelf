@@ -1,11 +1,15 @@
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 void miniprintf(char *fmt, ...);
 
 int main(void)
 {
-    miniprintf("This is the letter %c\n", 's');
+    miniprintf("%d\n", 55);
+    miniprintf("%f\n", 105.50);
+    miniprintf("%x\n", 255);
+    miniprintf("%s\n", "Jonathan Torres");
+    miniprintf("%c - %c - %c\n", 'a', 'b', 'c');
 }
 
 void miniprintf(char *fmt, ...)
@@ -16,11 +20,13 @@ void miniprintf(char *fmt, ...)
     double dval;
 
     va_start(ap, fmt);
+
     for (p = fmt; *p; p++) {
         if (*p != '%') {
             putchar(*p);
             continue;
         }
+
         switch (*++p) {
             case 'i':
             case 'd':
@@ -53,7 +59,7 @@ void miniprintf(char *fmt, ...)
                 printf("%f", dval);
                 break;
             case 's':
-                for (sval = va_arg(ap, char*); *sval; sval++) {
+                for (sval = va_arg(ap, char *); *sval; sval++) {
                     putchar(*sval);
                 }
                 break;
@@ -62,5 +68,6 @@ void miniprintf(char *fmt, ...)
                 break;
         }
     }
+
     va_end(ap);
 }

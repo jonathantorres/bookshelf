@@ -10,6 +10,7 @@ int main(void)
     printf("%d\n", isupper1('t'));
     printf("%d\n", isupper2('K'));
     printf("%d\n", isupper2('m'));
+
     return 0;
 }
 

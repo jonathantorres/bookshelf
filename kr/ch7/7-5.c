@@ -1,18 +1,11 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
 
-#define MAXVAL 100
-#define BUFSIZE 100
-#define MAXOP 100  // max size of operand or operator
-#define NUMBER '0' // signal that a number was found
-
-int sp = 0;
-double val[MAXVAL];
-
-char buf[BUFSIZE];
-int bufp = 0;
+#define MAXVAL  1024
+#define BUFSIZE 1024
+#define MAXOP   1024 // max size of operand or operator
+#define NUMBER  '0'  // signal that a number was found
 
 int getop(char s[]);
 void push(double f);
@@ -43,6 +36,7 @@ int main(void)
                 break;
             case '/':
                 op2 = pop();
+
                 if (op2 != 0.0) {
                     push(pop() / op2);
                 } else {
@@ -51,8 +45,9 @@ int main(void)
                 break;
             case '%':
                 op2 = pop();
+
                 if (op2 != 0) {
-                    push(fmod(pop(), op2));
+                    push((int)pop() % (int)op2);
                 }
                 break;
             case '\n':
@@ -62,8 +57,39 @@ int main(void)
                 printf("error: unknown command %s\n", s);
         }
     }
+
     return 0;
 }
+
+int getop(char s[])
+{
+    int rc;
+    char c;
+    float f;
+
+    while ((rc = scanf("%c", &c)) != EOF) {
+        if ((s[0] = c) != ' ' && c != '\t') {
+            break;
+        }
+    }
+
+    s[1] = '\0';
+
+    if (rc == EOF) {
+        return EOF;
+    } else if (!isdigit(c) && c != '.') {
+        return c;
+    }
+
+    ungetc(c, stdin);
+    scanf("%f", &f);
+    sprintf(s, "%f", f);
+
+    return NUMBER;
+}
+
+char buf[BUFSIZE];
+int bufp = 0;
 
 int getch(void)
 {
@@ -79,27 +105,8 @@ void ungetch(int c)
     }
 }
 
-int getop(char s[])
-{
-    int c, rc;
-    float f;
-
-    while ((rc = scanf("%c", &c)) != EOF) {
-        if ((s[0] = c) != ' ' && c != '\t') {
-            break;
-        }
-    }
-    s[1] = '\0';
-    if (rc == EOF) {
-        return EOF;
-    } else if (!isdigit(c) && c != '.') {
-        return c;
-    }
-    ungetc(c, stdin);
-    scanf("%f", &f);
-    sprintf(s, "%f", f);
-    return NUMBER;
-}
+int sp = 0;
+double val[MAXVAL];
 
 void push(double f)
 {
