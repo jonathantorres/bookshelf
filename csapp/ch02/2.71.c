@@ -16,10 +16,10 @@ int main(void)
 {
     packed_t w = 0xFF187FBB;
 
-    printf("%d\n", xbyte(w, 0));
-    printf("%d\n", xbyte(w, 1));
-    printf("%d\n", xbyte(w, 2));
-    printf("%d\n", xbyte(w, 3));
+    printf("0x%X\n", xbyte(w, 0));
+    printf("0x%X\n", xbyte(w, 1));
+    printf("0x%X\n", xbyte(w, 2));
+    printf("0x%X\n", xbyte(w, 3));
 
     return 0;
 }

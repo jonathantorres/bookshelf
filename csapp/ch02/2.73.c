@@ -4,12 +4,12 @@
 // Addition that saturates to TMin or TMax
 int saturating_add(int x, int y)
 {
-    int sum      = x + y;
-    int sig_mask = INT_MIN;
-    int pos_over = !(x & sig_mask) && !(y & sig_mask) && (sum & sig_mask);
-    int neg_over = (x & sig_mask) && (y & sig_mask) && !(sum & sig_mask);
+    int sum   = x + y;
+    int m     = INT_MIN;
+    int pover = !(x & m) && !(y & m) && (sum & m);
+    int nover = (x & m) && (y & m) && !(sum & m);
 
-    (pos_over && (sum = INT_MAX) || neg_over && (sum = INT_MIN));
+    ((pover && (sum = INT_MAX)) || (nover && (sum = INT_MIN)));
 
     return sum;
 }
