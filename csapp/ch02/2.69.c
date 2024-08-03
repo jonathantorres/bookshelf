@@ -2,19 +2,18 @@
 
 unsigned rotate_left(unsigned x, int n)
 {
-    unsigned y = x;
+    unsigned w = sizeof(int) << 3;
+    unsigned m = ~0 >> (w - n);
 
-    x <<= n;
-    y >>= (sizeof(int) << 3) - n;
-
-    return x | y;
+    return x << n | ((x >> (w - n)) & m);
 }
 
 int main(void)
 {
-    printf("%#x\n", rotate_left(0x12345678, 4));
-    printf("%#x\n", rotate_left(0x12345678, 20));
-    printf("%#x\n", rotate_left(0x12345678, 0));
+    printf("0x%X\n", rotate_left(0x12345678, 4));  // 0x23456781
+    printf("0x%X\n", rotate_left(0x12345678, 20)); // 0x67812345
+    printf("0x%X\n", rotate_left(0x12345678, 32)); // 0x12345678
+    printf("0x%X\n", rotate_left(0x12345678, 0));  // 0x12345678
 
     return 0;
 }

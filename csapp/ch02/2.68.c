@@ -2,17 +2,17 @@
 
 int lower_one_mask(int n)
 {
-    int m = ~0;
-    m     = m << (n - 1) << 1;
+    unsigned w = sizeof(int) << 3;
 
-    return m ^ ~0;
+    return ~0U >> (w - n);
 }
 
 int main(void)
 {
-    printf("%X\n", lower_one_mask(6));
-    printf("%X\n", lower_one_mask(17));
-    printf("%X\n", lower_one_mask(32));
+    printf("0x%X\n", lower_one_mask(1));  // 0x1
+    printf("0x%X\n", lower_one_mask(6));  // 0x3F
+    printf("0x%X\n", lower_one_mask(17)); // 0x1FFFF
+    printf("0x%X\n", lower_one_mask(32)); // 0xFFFFFFFF
 
     return 0;
 }
