@@ -5,7 +5,7 @@ int divide_power2(int x, int k)
 {
     int bias = 0;
 
-    (x & INT_MIN && (bias = (1 << k) - 1));
+    ((x & INT_MIN) && (bias = (1 << k) - 1));
 
     return (x + bias) >> k;
 }

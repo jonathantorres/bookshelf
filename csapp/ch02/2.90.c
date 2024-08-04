@@ -1,3 +1,11 @@
+#include <math.h>
+#include <stdio.h>
+
+float u2f(unsigned x)
+{
+    return *(float *)&x;
+}
+
 float fpwr2(int x)
 {
     /* result exponent and fraction */
@@ -27,4 +35,14 @@ float fpwr2(int x)
 
     /* return as float */
     return u2f(u);
+}
+
+int main(void)
+{
+    printf("%f\n", fpwr2(0));
+    printf("%f\n", fpwr2(8));
+    printf("%f\n", fpwr2(16));
+    printf("%f\n", fpwr2(32));
+
+    return 0;
 }

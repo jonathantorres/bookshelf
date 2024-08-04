@@ -6,7 +6,7 @@ int mul3div4(int x)
     int r    = (x << 2) - x;
     int bias = 0;
 
-    (r & INT_MIN && (bias = (1 << 2) - 1));
+    ((r & INT_MIN) && (bias = (1 << 2) - 1));
 
     return (r + bias) >> 2;
 }

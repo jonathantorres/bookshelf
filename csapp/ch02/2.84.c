@@ -20,8 +20,8 @@ int float_le(float x, float y)
 
 int main(void)
 {
-    printf("%d\n", float_le(0.00, 1.00));
-    printf("%d\n", float_le(2.00, 1.00));
+    printf("%d\n", float_le(0.00, 1.00)); // 1
+    printf("%d\n", float_le(2.00, 1.00)); // 0
 
     return 0;
 }
