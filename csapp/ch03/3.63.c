@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 long switch_prob(long x, long n)
 {
     long result = x;
@@ -22,4 +24,14 @@ long switch_prob(long x, long n)
     }
 
     return result;
+}
+
+int main(void)
+{
+    long x = 50;
+    int n  = 5;
+
+    printf("%ld\n", switch_prob(x, n));
+
+    return 0;
 }

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 long test(long x, long y)
 {
     long val = x * 8;
@@ -13,4 +15,14 @@ long test(long x, long y)
     }
 
     return val;
+}
+
+int main(void)
+{
+    long x = 20;
+    long y = 25;
+
+    printf("%ld\n", test(x, y));
+
+    return 0;
 }

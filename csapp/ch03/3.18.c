@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 long test(long x, long y, long z)
 {
     long val = x + y + z;
@@ -13,4 +15,15 @@ long test(long x, long y, long z)
     }
 
     return val;
+}
+
+int main(void)
+{
+    long x = 20;
+    long y = 25;
+    long z = 50;
+
+    printf("%ld\n", test(x, y, z));
+
+    return 0;
 }

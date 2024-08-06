@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 /* A: x is stored in % rbx */
 /* B: code changes are below: */
 long rfun(unsigned long x)
@@ -10,4 +12,13 @@ long rfun(unsigned long x)
     long rv          = rfun(nx);
 
     return x + rv;
+}
+
+int main(void)
+{
+    long x = 100;
+
+    printf("%ld\n", rfun(x));
+
+    return 0;
 }

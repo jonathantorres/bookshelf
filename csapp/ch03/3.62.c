@@ -1,6 +1,8 @@
+#include <stdio.h>
+
 typedef enum { MODE_A, MODE_B, MODE_C, MODE_D, MODE_E } mode_t;
 
-long switch3(long *pi, long *p2, mode_t action)
+long switch3(long *p1, long *p2, mode_t action)
 {
     long result = 0;
 
@@ -28,5 +30,15 @@ long switch3(long *pi, long *p2, mode_t action)
             break;
     }
 
-    return retult;
+    return result;
+}
+
+int main(void)
+{
+    long x = 100;
+    long y = 50;
+
+    printf("%ld\n", switch3(&x, &y, MODE_A));
+
+    return 0;
 }

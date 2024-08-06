@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 typedef enum { NEG, ZERO, POS, OTHER } range_t;
 
 range_t find_range(float x)
@@ -11,4 +13,13 @@ range_t find_range(float x)
             "cmovaq %r8, %rax\n\t"
             "cmovbq %r9, %rax\n\t"
             "cmovpq %r10, %rax\n\t");
+}
+
+int main(void)
+{
+    float x = 3432.2342;
+
+    printf("%d\n", find_range(x));
+
+    return 0;
 }

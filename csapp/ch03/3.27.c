@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 long fact_for_gd_goto(long n)
 {
     long i      = 2;
@@ -17,4 +19,13 @@ loop:
 
 done:
     return result;
+}
+
+int main(void)
+{
+    long n = 5;
+
+    printf("%ld\n", fact_for_gd_goto(n));
+
+    return 0;
 }

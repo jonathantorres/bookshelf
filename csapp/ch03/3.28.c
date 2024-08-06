@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 /* A: See code below */
 /* B: Because we are iterating down from 64, so the test is done after the first iteration of the
  * loop
@@ -15,4 +17,13 @@ long fun_b(unsigned long x)
     }
 
     return val;
+}
+
+int main(void)
+{
+    long x = 20;
+
+    printf("%ld\n", fun_b(x));
+
+    return 0;
 }

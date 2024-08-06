@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 typedef enum { NEG, ZERO, POS, OTHER } range_t;
 
 range_t find_range(float x)
@@ -20,4 +22,13 @@ range_t find_range(float x)
             ".P:\n\t"
             "movl $3, %eax\n\t"
             ".Done:\n\t");
+}
+
+int main(void)
+{
+    float x = 55.2342;
+
+    printf("%d\n", find_range(x));
+
+    return 0;
 }

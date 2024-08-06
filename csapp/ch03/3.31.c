@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void switcher(long a, long b, long c, long *dest)
 {
     long val;
@@ -20,4 +22,18 @@ void switcher(long a, long b, long c, long *dest)
     }
 
     *dest = val;
+}
+
+int main(void)
+{
+    long a    = 20;
+    long b    = 25;
+    long c    = 25;
+    long dest = 0;
+
+    switcher(a, b, c, &dest);
+
+    printf("%ld\n", dest);
+
+    return 0;
 }
