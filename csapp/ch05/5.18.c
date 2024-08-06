@@ -59,7 +59,7 @@ int main(void)
     double a[n];
     memset(a, 0, sizeof(double) * n);
 
-    for (size_t i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         a[i] = i + 1;
     }
 

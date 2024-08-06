@@ -6,7 +6,6 @@ void *memset_fast(void *s, int c, size_t n)
 {
     size_t k             = sizeof(unsigned long);
     size_t cnt           = 0;
-    size_t shift         = 8;
     unsigned char *schar = s;
 
     while ((cnt < n) && (size_t)schar % k != 0) {

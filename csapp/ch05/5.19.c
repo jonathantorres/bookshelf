@@ -3,7 +3,7 @@
 void psum_fast(float a[], float p[], long n)
 {
     long i;
-    float val, last_val;
+    float last_val;
     float tmp0, tmp1, tmp2, tmp3;
 
     last_val = p[0] = a[0];
@@ -30,11 +30,22 @@ void psum_fast(float a[], float p[], long n)
 
 int main(void)
 {
-    long n    = 7;
-    float a[] = {2, 3, 4, 5, 7, 8, 10};
-    float b[] = {7, 9, 2, 8, 0, 9, 22};
+    long n      = 7;
+    float a[]   = {2, 3, 4, 5, 7, 8, 10};
+    float b[10] = {0};
+    float *p    = b;
 
     psum_fast(a, b, n);
+
+    while (1) {
+        if (*p == 0) {
+            break;
+        }
+
+        printf("%f, ", *p++);
+    }
+
+    printf("\n");
 
     return 0;
 }
