@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #define BLOCK_SIZE 16
 
 void transpose(int *dst, int *src, int dim)
@@ -29,4 +33,30 @@ void transpose(int *dst, int *src, int dim)
             dst[j * dim + i] = src[i * dim + j];
         }
     }
+}
+
+int main(void)
+{
+    int a[BLOCK_SIZE][BLOCK_SIZE] = {0};
+    int b[BLOCK_SIZE][BLOCK_SIZE] = {0};
+
+    srand(time(0));
+
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        for (int j = 0; j < BLOCK_SIZE; j++) {
+            b[i][j] = rand();
+        }
+    }
+
+    transpose((int *)a, (int *)b, BLOCK_SIZE);
+
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        for (int j = 0; j < BLOCK_SIZE; j++) {
+            printf("%d ", a[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
 }

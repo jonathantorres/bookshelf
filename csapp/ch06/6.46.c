@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #define BLOCK_SIZE 16
 
 void col_convert(int *src, int dim)
@@ -35,4 +39,29 @@ void col_convert(int *src, int dim)
             src[i * dim + j] = tmp;
         }
     }
+}
+
+int main(void)
+{
+    int a[BLOCK_SIZE][BLOCK_SIZE] = {0};
+
+    srand(time(0));
+
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        for (int j = 0; j < BLOCK_SIZE; j++) {
+            a[i][j] = rand();
+        }
+    }
+
+    col_convert((int *)a, BLOCK_SIZE);
+
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        for (int j = 0; j < BLOCK_SIZE; j++) {
+            printf("%d ", a[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
 }
