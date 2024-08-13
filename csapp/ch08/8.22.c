@@ -26,6 +26,8 @@ int mysystem(char *command)
             return WTERMSIG(status);
         }
     }
+
+    return status;
 }
 
 int main(int argc, char **argv)
