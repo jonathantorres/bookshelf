@@ -2,6 +2,7 @@ a.out
 node_modules/
 */bin/*
 apue/code/*
+unp/code/*
 # apue/code/**/*.o
 # apue/code/**/*.a
 
