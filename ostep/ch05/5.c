@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 int main(void)
 {
@@ -13,10 +14,9 @@ int main(void)
         printf("wait returns: %d\n", rc);
     } else if (rc == 0) {
         // child
-        // int id = getppid();
-        // int rc = wait(&id);
+        /* int rc = wait(NULL); */
         printf("child id: %d\n", getpid());
-        // printf("wait returns: %d\n", rc);
+        /* printf("wait returns: %d\n", rc); */
     } else {
         puts("fork() has failed!");
         exit(1);

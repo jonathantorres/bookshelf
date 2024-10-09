@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int main(void)
 {
-    int x = 100;
+    int x    = 100;
     pid_t rc = fork();
 
     if (rc > 0) {
