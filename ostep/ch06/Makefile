@@ -1,9 +1,12 @@
-CFLAGS := gcc -std=gnu11 -Wall -Wextra
+CFLAGS := gcc -std=gnu11 -Wall -Wextra -Wpedantic
+PROGS := syscall switch
 
-measure:
-	$(CFLAGS) measure.c -o measure
-	./measure
+$(PROGS):%: ./%.c
+	$(CFLAGS) $^ -o $@
+	./$@
 
+.PHONY: clean
 clean:
-	rm ./measure
+	rm -f ./*.o ./*.h.gch
+	rm -f $(PROGS)
 
