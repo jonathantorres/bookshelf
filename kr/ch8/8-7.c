@@ -24,21 +24,26 @@ void myfree(void *ap);
 int main(void)
 {
     int *p = NULL;
-    int i = 0;
+    int i  = 0;
 
-    p = mymalloc(1000);
+    p = mymalloc(1024);
+
     if (NULL == p) {
-        printf("mymalloc returned NULL");
-    } else {
-        for (i = 0; i <= 100; i++) {
-            printf("%08X", p[i]);
-            if (i % 8 == 7) {
-                printf("\n");
-            }
-        }
-        printf("\n");
-        myfree(p);
+        printf("mymalloc returned NULL\n");
+        return 1;
     }
+
+    for (i = 0; i <= 127; i++) {
+        printf("%08X", p[i]);
+
+        if (i % 8 == 7) {
+            printf("\n");
+        }
+    }
+
+    printf("\n");
+    myfree(p);
+
     return 0;
 }
 
@@ -52,13 +57,14 @@ static Header *morecore(unsigned nu)
     }
 
     cp = sbrk(nu * sizeof(Header));
-    if (cp == (char *) - 1) {
+    if (cp == (char *)-1) {
         return NULL;
     }
 
-    up = (Header *) cp;
+    up         = (Header *)cp;
     up->s.size = nu;
     myfree((void *)(up + 1));
+
     return freep;
 }
 
@@ -71,12 +77,14 @@ void *mymalloc(unsigned nbytes)
         fprintf(stderr, "alloc: can't allocate more than %u bytes\n", MAXBYTES);
         return NULL;
     }
+
     nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1;
 
     if ((prevp = freep) == NULL) {
-        base.s.ptr = freep = prevp = & base;
-        base.s.size = 0;
+        base.s.ptr = freep = prevp = &base;
+        base.s.size                = 0;
     }
+
     for (p = prevp->s.ptr;; prevp = p, p = p->s.ptr) {
         if (p->s.size >= nunits) {
             if (p->s.size == nunits) {
@@ -101,7 +109,7 @@ void *mymalloc(unsigned nbytes)
 void myfree(void *ap)
 {
     Header *bp, *p;
-    bp = (Header *) ap - 1;
+    bp = (Header *)ap - 1;
 
     for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
         if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
@@ -122,5 +130,6 @@ void myfree(void *ap)
     } else {
         p->s.ptr = bp;
     }
+
     freep = p;
 }
