@@ -3,7 +3,7 @@
 #### Answer #1
 - Target Audience
 - Browser Market Share
-- How difficult is to support the browser (of version)
+- How difficult is to support the browser (or version)
 ***
 
 #### Answer #2
