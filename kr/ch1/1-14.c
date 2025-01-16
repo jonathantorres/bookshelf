@@ -25,6 +25,7 @@ int main(void)
             for (int j = 0; j < chars[i]; j++) {
                 putchar('-');
             }
+
             putchar('\n');
         }
     }
