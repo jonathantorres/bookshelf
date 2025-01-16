@@ -8,6 +8,7 @@ int main(void)
         if (!(c == ' ' && prev == ' ')) {
             putchar(c);
         }
+
         prev = c;
     }
 

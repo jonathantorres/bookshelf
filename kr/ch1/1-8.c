@@ -18,5 +18,6 @@ int main(void)
     }
 
     printf("blanks: %ld\ntabs: %ld\nnewlines: %ld\n", blanks, tabs, newlines);
+
     return 0;
 }
