@@ -17,6 +17,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | lcthw       | Learn C The Hard Way |
 | lp3thw      | Learn Python 3 The Hard Way |
 | math        | Discrete Mathematics |
+| nand        | The Elements of Computing Systems (nand2tetris) |
 | ninja       | Secrets of the JavaScript Ninja |
 | ostep       | Operating Systems: Three Easy Pieces |
 | rim         | Rust In Motion: Video Course |
