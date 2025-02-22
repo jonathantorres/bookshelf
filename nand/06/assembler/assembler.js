@@ -100,8 +100,8 @@ export default class Assembler {
         let encodedInstructions = [];
 
         // second pass, resolve symbols and encode binary instructions
-        for (const [i, inst] of instructions.entries()) {
-            let instruction = new Instruction(i, inst.trim());
+        for (const inst of instructions) {
+            let instruction = new Instruction(inst.trim());
 
             if (instruction.getKind() === InstructionKind.A) {
                 const instValue = instruction.getValue();

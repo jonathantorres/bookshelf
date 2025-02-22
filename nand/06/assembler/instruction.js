@@ -57,10 +57,14 @@ const jmpTable = new Map([
     ['JMP', '111'],
 ]);
 
+export const InstructionKind = {
+    A: Symbol('a'),
+    C: Symbol('c'),
+};
+
 export class Instruction {
     #kind = null;
-    #instructionText = '';
-    #addr = null;
+    #instructionText = null;
 
     // the value of the instruction (only used for A instructions)
     #value = null;
@@ -70,8 +74,7 @@ export class Instruction {
     #comp = null;
     #jmp = null;
 
-    constructor(addr, inst) {
-        this.#addr = addr;
+    constructor(inst) {
         this.#instructionText = inst;
 
         if (inst[0] === '@') {
@@ -198,9 +201,3 @@ export class Instruction {
         this.#value = value;
     }
 }
-
-export const InstructionKind = {
-    A: Symbol('a'),
-    C: Symbol('c'),
-    Label: Symbol('label'),
-};
