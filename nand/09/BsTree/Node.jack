@@ -1,0 +1,57 @@
+class Node {
+    field Node parent;
+    field Node left;
+    field Node right;
+    field int value;
+
+    constructor Node new(int val) {
+        var int v;
+        let v = val;
+        let value = v;
+        let parent = null;
+        let left = null;
+        let right = null;
+
+        return this;
+    }
+
+    method int getValue() {
+        return value;
+    }
+
+    method Node getRight() {
+        return right;
+    }
+    
+    method Node getLeft() {
+        return left;
+    }
+
+    method void setParent(Node p) {
+        let parent = p;
+        return;
+    }
+
+    method void setLeft(Node l) {
+        let left = l;
+        return;
+    }
+    
+    method void setRight(Node r) {
+        let right = r;
+        return;
+    }
+
+    method void dispose() {
+        if (~(left = null)) {
+            do left.dispose();
+        }
+
+        if (~(right = null)) {
+            do right.dispose();
+        }
+
+        do Memory.deAlloc(this);
+        return;
+    }
+}

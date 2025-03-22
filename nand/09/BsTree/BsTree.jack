@@ -1,0 +1,92 @@
+class BsTree {
+    field Node root;
+    field int len;
+
+    constructor BsTree new() {
+        var Node one, three;
+        let len = 0;
+        let root = null;
+
+        return this;
+    }
+
+    method void insert(int value) {
+        var Node node, left, right;
+        var int nodeVal;
+        if (root = null) {
+            let node = Node.new(value);
+            let root = node;
+            let len = len + 1;
+            return;
+        }
+
+        let nodeVal = root.getValue();
+        let left = root.getLeft();
+        let right = root.getRight();
+        if (value < nodeVal) {
+            let left = BsTree.insertNode(this, left, root, value);
+            do root.setLeft(left);
+        }
+        if (value > nodeVal) {
+            let right = BsTree.insertNode(this, right, root, value);
+            do root.setRight(right);
+        }
+        return;
+    }
+
+    function Node insertNode(BsTree tree, Node node, Node parent, int value) {
+        var Node newNode;
+        var int len, nodeVal;
+
+        if (node = null) {
+            let newNode = Node.new(value);
+            let len = tree.getLen() + 1;
+            do tree.setLen(len);
+            do newNode.setParent(parent);
+            return newNode;
+        }
+
+        let nodeVal = node.getValue();
+
+        if (value < nodeVal) {
+            return BsTree.insertNode(tree, node.getLeft(), node, value);
+        }
+        if (value > nodeVal) {
+            return BsTree.insertNode(tree, node.getRight(), node, value);
+        }
+        return null;
+    }
+
+    method void dispose() {
+        if (~(root = null)) {
+            do root.dispose();
+        }
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void setLen(int l) {
+        let len = l;
+        return;
+    }
+
+    method int getLen() {
+        return len;
+    }
+
+    method void print() {
+        do BsTree.printNode(root);
+        return;
+    }
+
+    function void printNode(Node node) {
+        if (node = null) {
+            return;
+        }
+        do Output.printInt(node.getValue());
+        do Output.printString(" ");
+        do BsTree.printNode(node.getLeft());
+        do BsTree.printNode(node.getRight());
+        return;
+    }
+}
