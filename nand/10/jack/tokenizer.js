@@ -80,6 +80,9 @@ const keywords = [
 
 export class Tokenizer {
     #currentPos = 0;
+    #peeking = false;
+    #peekToken = null;
+    #peekTokenType = null;
     #currentToken = null;
     #currentTokenType = null;
     #fileLocation = null;
@@ -101,10 +104,12 @@ export class Tokenizer {
         }
     }
 
-    advance() {
+    advance(peek = false) {
         if (!this.#fileString) {
             throw new Error('File to tokenize was not read');
         }
+
+        this.#peeking = peek;
 
         const buf = this.#fileString;
         let pos = this.#currentPos;
@@ -172,36 +177,41 @@ export class Tokenizer {
             pos++;
         }
 
-        this.#currentPos = pos;
-        this.#currentToken = currentToken.trim();
-        this.#currentTokenType = this.#parseTokenType(readStringConstant);
+        if (peek) {
+            this.#peekToken = currentToken.trim();
+            this.#peekTokenType = this.#parseTokenType(readStringConstant);
+        } else {
+            this.#currentPos = pos;
+            this.#currentToken = currentToken.trim();
+            this.#currentTokenType = this.#parseTokenType(readStringConstant);
 
-        // check if we are done tokenizing
-        let finalPos = pos;
-        let done = false;
+            // check if we are done tokenizing
+            let finalPos = pos;
+            let done = false;
 
-        while (true) {
-            if (finalPos > buf.length - 1) {
-                done = true;
+            while (true) {
+                if (finalPos > buf.length - 1) {
+                    done = true;
+                    break;
+                }
+
+                const tok = buf[finalPos];
+
+                if (
+                    tok === '\n' ||
+                    tok === ' ' ||
+                    tok === '\t' ||
+                    tok === '\r' ||
+                    tok === ''
+                ) {
+                    finalPos++;
+                    continue;
+                }
                 break;
             }
 
-            const tok = buf[finalPos];
-
-            if (
-                tok === '\n' ||
-                tok === ' ' ||
-                tok === '\t' ||
-                tok === '\r' ||
-                tok === ''
-            ) {
-                finalPos++;
-                continue;
-            }
-            break;
+            this.#doneTokenizing = done;
         }
-
-        this.#doneTokenizing = done;
     }
 
     hasMoreTokens() {
@@ -209,6 +219,9 @@ export class Tokenizer {
     }
 
     tokenType() {
+        if (this.#peeking) {
+            return this.#peekTokenType;
+        }
         return this.#currentTokenType;
     }
 
@@ -221,12 +234,17 @@ export class Tokenizer {
     keywordType() {
         const tokenType = this.tokenType();
         let keyword = null;
+        let currentToken = this.#currentToken;
+
+        if (this.#peeking) {
+            currentToken = this.#peekToken;
+        }
 
         if (tokenType !== TokenType.KEYWORD) {
             throw new Error(`Invalid token type: ${tokenType}`);
         }
 
-        switch (this.#currentToken) {
+        switch (currentToken) {
             case 'boolean':
                 keyword = Keyword.BOOLEAN;
                 break;
@@ -291,7 +309,7 @@ export class Tokenizer {
                 keyword = Keyword.WHILE;
                 break;
             default:
-                throw new Error(`Unknown keyword: ${this.#currentToken}`);
+                throw new Error(`Unknown keyword: ${currentToken}`);
         }
 
         return keyword;
@@ -329,7 +347,11 @@ export class Tokenizer {
     }
 
     #parseTokenType(readString) {
-        const token = this.#currentToken;
+        let token = this.#currentToken;
+
+        if (this.#peeking) {
+            token = this.#peekToken;
+        }
 
         if (readString) {
             return TokenType.STRING;
@@ -410,7 +432,13 @@ export class Tokenizer {
         const currentTokenType = this.tokenType();
 
         if (currentTokenType !== tokenType) {
-            throw new Error(`Invalid token type: ${currentTokenType}`);
+            throw new Error(
+                `Invalid token type: expected "${currentTokenType.description}" but passed token is "${tokenType.description}"`
+            );
+        }
+
+        if (this.#peeking) {
+            return this.#peekToken;
         }
 
         return this.#currentToken;
