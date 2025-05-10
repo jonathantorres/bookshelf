@@ -549,7 +549,28 @@ export class Compiler {
 
         out += this.#compileIdentifier(tok);
 
-        // TODO: support array syntax
+        // check for array syntax
+        tok.advance(true);
+        tokenType = tok.tokenType();
+
+        if (tokenType === TokenType.SYMBOL) {
+            const sym = tok.symbol();
+
+            if (sym === '[') {
+                tok.advance();
+                out += this.#compileSymbol(tok);
+                out += this.#compileExpression(tok);
+
+                // compile closing "]"
+                tok.advance();
+                tokenType = tok.tokenType();
+
+                if (tokenType !== TokenType.SYMBOL) {
+                    throw new Error(`Invalid token: ${tokenType.description}`);
+                }
+                out += this.#compileSymbol(tok);
+            }
+        }
 
         // compile '=' sign
         tok.advance();
@@ -834,8 +855,23 @@ export class Compiler {
                         // assume it's a subroutine call
                         out += this.#compileSubroutineCall(tok, ident);
                     } else if (symb === '[') {
-                        // TODO: array access varName[exp]
-                        out += '';
+                        // array access varName[exp]
+                        out += ident;
+
+                        tok.advance();
+                        out += this.#compileSymbol(tok);
+                        out += this.#compileExpression(tok);
+
+                        // compile closing "]"
+                        tok.advance();
+                        tokenType = tok.tokenType();
+
+                        if (tokenType !== TokenType.SYMBOL) {
+                            throw new Error(
+                                `Invalid token: ${tokenType.description}`
+                            );
+                        }
+                        out += this.#compileSymbol(tok);
                     } else {
                         out += ident;
                     }
