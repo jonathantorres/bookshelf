@@ -1,0 +1,23 @@
+{
+  "name": "jack",
+  "version": "0.0.0",
+  "description": "The Jack Compiler",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Torres",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "arrowParens": "always"
+  }
+}
