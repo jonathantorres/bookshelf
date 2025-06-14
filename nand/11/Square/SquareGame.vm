@@ -11,7 +11,7 @@ push constant 0
 pop this 1
 push pointer 0
 return
-function SquareGame.dispose 1
+function SquareGame.dispose 0
 push argument 0
 pop pointer 0
 push this 0
@@ -20,166 +20,171 @@ pop temp 0
 push pointer 0
 call Memory.deAlloc 1
 pop temp 0
+push constant 0
 return
-function SquareGame.moveSquare 1
+function SquareGame.moveSquare 0
 push argument 0
 pop pointer 0
 push this 1
 push constant 1
 eq
 not
-if-goto IF_LABEL_180.89990039119198
+if-goto SquareGame_0
 push this 0
 call Square.moveUp 1
 pop temp 0
-goto IF_ELSE_LABEL_383.84416513128514
-label IF_LABEL_180.89990039119198
-label IF_ELSE_LABEL_383.84416513128514
+goto SquareGame_1
+label SquareGame_0
+label SquareGame_1
 push this 1
 push constant 2
 eq
 not
-if-goto IF_LABEL_600.3219884050668
+if-goto SquareGame_2
 push this 0
 call Square.moveDown 1
 pop temp 0
-goto IF_ELSE_LABEL_609.5439679452337
-label IF_LABEL_600.3219884050668
-label IF_ELSE_LABEL_609.5439679452337
+goto SquareGame_3
+label SquareGame_2
+label SquareGame_3
 push this 1
 push constant 3
 eq
 not
-if-goto IF_LABEL_64.04257833625392
+if-goto SquareGame_4
 push this 0
 call Square.moveLeft 1
 pop temp 0
-goto IF_ELSE_LABEL_216.85609031861208
-label IF_LABEL_64.04257833625392
-label IF_ELSE_LABEL_216.85609031861208
+goto SquareGame_5
+label SquareGame_4
+label SquareGame_5
 push this 1
 push constant 4
 eq
 not
-if-goto IF_LABEL_207.8538028636281
+if-goto SquareGame_6
 push this 0
 call Square.moveRight 1
 pop temp 0
-goto IF_ELSE_LABEL_592.0807817684814
-label IF_LABEL_207.8538028636281
-label IF_ELSE_LABEL_592.0807817684814
+goto SquareGame_7
+label SquareGame_6
+label SquareGame_7
 push constant 5
 call Sys.wait 1
 pop temp 0
+push constant 0
 return
-function SquareGame.run 1
+function SquareGame.run 2
 push argument 0
 pop pointer 0
 push constant 0
 pop local 1
-label WHILE_LABEL1_793.2700410976612
+label SquareGame_9
 push local 1
 not
 not
-if-goto WHILE_LABEL2_853.1313570708398
-label WHILE_LABEL1_934.8669043502629
+if-goto SquareGame_8
+label SquareGame_11
 push local 0
 push constant 0
 eq
 not
-if-goto WHILE_LABEL2_899.1403370667679
+if-goto SquareGame_10
 call Keyboard.keyPressed 0
 pop local 0
+push pointer 0
 call SquareGame.moveSquare 1
 pop temp 0
-goto WHILE_LABEL1_934.8669043502629
-label WHILE_LABEL2_899.1403370667679
+goto SquareGame_11
+label SquareGame_10
 push local 0
 push constant 81
 eq
 not
-if-goto IF_LABEL_600.882597584288
+if-goto SquareGame_12
 push constant 1
 neg
 pop local 1
-goto IF_ELSE_LABEL_189.4611490384346
-label IF_LABEL_600.882597584288
-label IF_ELSE_LABEL_189.4611490384346
+goto SquareGame_13
+label SquareGame_12
+label SquareGame_13
 push local 0
 push constant 90
 eq
 not
-if-goto IF_LABEL_101.48855329410699
+if-goto SquareGame_14
 push this 0
 call Square.decSize 1
 pop temp 0
-goto IF_ELSE_LABEL_631.1876219373738
-label IF_LABEL_101.48855329410699
-label IF_ELSE_LABEL_631.1876219373738
+goto SquareGame_15
+label SquareGame_14
+label SquareGame_15
 push local 0
 push constant 88
 eq
 not
-if-goto IF_LABEL_356.7753896265462
+if-goto SquareGame_16
 push this 0
 call Square.incSize 1
 pop temp 0
-goto IF_ELSE_LABEL_883.23856557636
-label IF_LABEL_356.7753896265462
-label IF_ELSE_LABEL_883.23856557636
+goto SquareGame_17
+label SquareGame_16
+label SquareGame_17
 push local 0
 push constant 131
 eq
 not
-if-goto IF_LABEL_855.5162410722066
+if-goto SquareGame_18
 push constant 1
 pop this 1
-goto IF_ELSE_LABEL_249.85325659246092
-label IF_LABEL_855.5162410722066
-label IF_ELSE_LABEL_249.85325659246092
+goto SquareGame_19
+label SquareGame_18
+label SquareGame_19
 push local 0
 push constant 133
 eq
 not
-if-goto IF_LABEL_917.5899094300393
+if-goto SquareGame_20
 push constant 2
 pop this 1
-goto IF_ELSE_LABEL_305.8743008239415
-label IF_LABEL_917.5899094300393
-label IF_ELSE_LABEL_305.8743008239415
+goto SquareGame_21
+label SquareGame_20
+label SquareGame_21
 push local 0
 push constant 130
 eq
 not
-if-goto IF_LABEL_441.80069384197475
+if-goto SquareGame_22
 push constant 3
 pop this 1
-goto IF_ELSE_LABEL_915.0078098354193
-label IF_LABEL_441.80069384197475
-label IF_ELSE_LABEL_915.0078098354193
+goto SquareGame_23
+label SquareGame_22
+label SquareGame_23
 push local 0
 push constant 132
 eq
 not
-if-goto IF_LABEL_464.8953583801361
+if-goto SquareGame_24
 push constant 4
 pop this 1
-goto IF_ELSE_LABEL_526.5574585403439
-label IF_LABEL_464.8953583801361
-label IF_ELSE_LABEL_526.5574585403439
-label WHILE_LABEL1_532.0476861582495
+goto SquareGame_25
+label SquareGame_24
+label SquareGame_25
+label SquareGame_27
 push local 0
 push constant 0
 eq
 not
 not
-if-goto WHILE_LABEL2_384.17177490405584
+if-goto SquareGame_26
 call Keyboard.keyPressed 0
 pop local 0
+push pointer 0
 call SquareGame.moveSquare 1
 pop temp 0
-goto WHILE_LABEL1_532.0476861582495
-label WHILE_LABEL2_384.17177490405584
-goto WHILE_LABEL1_793.2700410976612
-label WHILE_LABEL2_853.1313570708398
+goto SquareGame_27
+label SquareGame_26
+goto SquareGame_9
+label SquareGame_8
+push constant 0
 return
