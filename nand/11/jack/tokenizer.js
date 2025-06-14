@@ -178,11 +178,20 @@ export class Tokenizer {
         }
 
         if (peek) {
-            this.#peekToken = currentToken.trim();
+            if (readStringConstant) {
+                this.#peekToken = currentToken;
+            } else {
+                this.#peekToken = currentToken.trim();
+            }
             this.#peekTokenType = this.#parseTokenType(readStringConstant);
         } else {
             this.#currentPos = pos;
-            this.#currentToken = currentToken.trim();
+
+            if (readStringConstant) {
+                this.#currentToken = currentToken;
+            } else {
+                this.#currentToken = currentToken.trim();
+            }
             this.#currentTokenType = this.#parseTokenType(readStringConstant);
 
             // check if we are done tokenizing
