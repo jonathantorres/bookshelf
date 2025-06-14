@@ -1310,7 +1310,7 @@ export class Compiler {
     #compileStringConstant(tok) {
         const str = tok.stringVal();
         let out = '';
-        out += `push constant ${tok.stringVal().length}\n`;
+        out += `push constant ${str.length}\n`;
         out += 'call String.new 1\n';
 
         for (let i = 0; i < str.length; i++) {
