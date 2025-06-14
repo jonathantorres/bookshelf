@@ -608,8 +608,9 @@ export class Compiler {
         }
 
         let varName = tok.identifier();
+        let arrayAccess = false;
 
-        // TODO: check for array syntax
+        // check for array syntax
         tok.advance(true);
         tokenType = tok.tokenType();
 
@@ -618,7 +619,16 @@ export class Compiler {
 
             if (sym === '[') {
                 tok.advance();
-                // out += this.#compileSymbol(tok);
+
+                arrayAccess = true;
+
+                // generate the segment for the array variable
+                const seg = this.#generateIdentifierSegment(
+                    varName,
+                    classTable,
+                    routineTable
+                );
+                out += `push ${seg}\n`;
                 out += this.#compileExpression(
                     tok,
                     classTable,
@@ -626,14 +636,15 @@ export class Compiler {
                     routineTable
                 );
 
-                // compile closing "]"
+                // advance closing "]"
                 tok.advance();
                 tokenType = tok.tokenType();
 
                 if (tokenType !== TokenType.SYMBOL) {
                     throw new Error(`Invalid token: ${tokenType.description}`);
                 }
-                // out += this.#compileSymbol(tok);
+
+                out += 'add\n';
             }
         }
 
@@ -655,14 +666,20 @@ export class Compiler {
         // advance the semicolon
         tok.advance();
 
-        // generate the segment for the variable
-        const seg = this.#generateIdentifierSegment(
-            varName,
-            classTable,
-            routineTable
-        );
-
-        out += 'pop ' + seg + '\n';
+        if (arrayAccess) {
+            out += 'pop temp 0\n';
+            out += 'pop pointer 1\n';
+            out += 'push temp 0\n';
+            out += 'pop that 0\n';
+        } else {
+            // generate the segment for the variable and pop it
+            const seg = this.#generateIdentifierSegment(
+                varName,
+                classTable,
+                routineTable
+            );
+            out += 'pop ' + seg + '\n';
+        }
 
         return out;
     }
@@ -998,11 +1015,17 @@ export class Compiler {
                             ident
                         );
                     } else if (symb === '[') {
-                        // TODO: array access varName[exp]
-                        out += ident;
+                        // array access varName[exp]
+                        out += this.#compileIdentifier(
+                            tok,
+                            classTable,
+                            routineTable,
+                            ident
+                        );
 
+                        // advance the opening "["
                         tok.advance();
-                        // out += this.#compileSymbol(tok);
+
                         out += this.#compileExpression(
                             tok,
                             classTable,
@@ -1010,7 +1033,7 @@ export class Compiler {
                             routineTable
                         );
 
-                        // compile closing "]"
+                        // advance closing "]"
                         tok.advance();
                         tokenType = tok.tokenType();
 
@@ -1019,7 +1042,10 @@ export class Compiler {
                                 `Invalid token: ${tokenType.description}`
                             );
                         }
-                        // out += this.#compileSymbol(tok);
+
+                        out += 'add\n';
+                        out += 'pop pointer 1\n';
+                        out += 'push that 0\n';
                     } else {
                         out += this.#compileIdentifier(
                             tok,
