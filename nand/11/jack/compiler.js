@@ -304,20 +304,43 @@ export class Compiler {
         // compile list of 0 or more parameters (they are added to the subroutine symbol table)
         this.#compileParameterList(tok, routineTable);
 
+        // consume opening brace
+        tok.advance();
+        tokenType = tok.tokenType();
+
+        if (tokenType !== TokenType.SYMBOL) {
+            throw new Error(`Invalid token: ${tokenType.description}`);
+        }
+
+        // compile any var declarations in this subroutine
+        while (true) {
+            tok.advance(true);
+            tokenType = tok.tokenType();
+
+            if (tokenType === TokenType.KEYWORD) {
+                const keyType = tok.keywordType();
+
+                if (keyType === Keyword.VAR) {
+                    tok.advance();
+                    this.#compileVarDec(tok, routineTable);
+                    continue;
+                }
+            }
+            break;
+        }
+
+        const localCount = routineTable.varCount(SymbolKind.VAR);
+        out += `${localCount}\n`;
+
         if (subroutineKind === Keyword.CONSTRUCTOR) {
             // constructor, allocate memory for the object
-            out += `0\n`;
-
             const size = classTable.varCount(SymbolKind.FIELD);
             out += `push constant ${size}\n`;
             out += `call Memory.alloc 1\n`;
             out += `pop pointer 0\n`;
         } else if (subroutineKind === Keyword.FUNCTION) {
-            const args = routineTable.varCount(SymbolKind.ARG);
-            out += `${args}\n`;
+            // nothing to do here, just a function
         } else if (subroutineKind === Keyword.METHOD) {
-            const args = routineTable.varCount(SymbolKind.ARG);
-            out += `${args}\n`;
             out += `push argument 0\n`;
             out += `pop pointer 0\n`;
         } else {
@@ -412,31 +435,6 @@ export class Compiler {
         routineTable,
         subroutineName
     ) {
-        // consume opening brace
-        tok.advance();
-        let tokenType = tok.tokenType();
-
-        if (tokenType !== TokenType.SYMBOL) {
-            throw new Error(`Invalid token: ${tokenType.description}`);
-        }
-
-        // compile any var declarations in this subroutine
-        while (true) {
-            tok.advance(true);
-            tokenType = tok.tokenType();
-
-            if (tokenType === TokenType.KEYWORD) {
-                const keyType = tok.keywordType();
-
-                if (keyType === Keyword.VAR) {
-                    tok.advance();
-                    this.#compileVarDec(tok, routineTable);
-                    continue;
-                }
-            }
-            break;
-        }
-
         // compile the statements in the subroutine body
         const out = this.#compileStatements(
             tok,
@@ -691,8 +689,6 @@ export class Compiler {
             className,
             routineTable
         );
-        out += 'not\n';
-        out += `if-goto ${label1}\n`;
 
         // advance the closing paren
         tok.advance();
@@ -704,6 +700,9 @@ export class Compiler {
         if (tokenType !== TokenType.SYMBOL) {
             throw new Error(`Invalid token: ${tokenType.description}`);
         }
+
+        out += 'not\n';
+        out += `if-goto ${label1}\n`;
 
         tok.advance(true);
         tokenType = tok.tokenType();
@@ -730,15 +729,15 @@ export class Compiler {
             );
         }
 
-        out += `goto ${label2}\n`;
-        out += `label ${label1}\n`;
-
         // advance the closing brace
         tokenType = tok.tokenType();
 
         if (tokenType !== TokenType.SYMBOL) {
             throw new Error(`Invalid token: ${tokenType.description}`);
         }
+
+        out += `goto ${label2}\n`;
+        out += `label ${label1}\n`;
 
         // compile optional "else" if it's there
         tok.advance();
@@ -804,6 +803,12 @@ export class Compiler {
     #compileWhile(tok, classTable, className, routineTable, routineName) {
         let out = '';
 
+        // branch labels
+        const label1 = this.#nextLabel(className);
+        const label2 = this.#nextLabel(className);
+
+        out += `label ${label2}\n`;
+
         // advance opening paren
         tok.advance();
         let tokenType = tok.tokenType();
@@ -811,12 +816,6 @@ export class Compiler {
         if (tokenType !== TokenType.SYMBOL) {
             throw new Error(`Invalid token: ${tokenType.description}`);
         }
-
-        // branch labels
-        const label1 = this.#nextLabel(className);
-        const label2 = this.#nextLabel(className);
-
-        out += `label ${label1}\n`;
 
         // compile the expression inside the parens
         out += this.#compileExpression(
@@ -826,11 +825,11 @@ export class Compiler {
             routineTable
         );
 
-        out += 'not\n';
-        out += `if-goto ${label2}\n`;
-
         // advance closing paren
         tok.advance();
+
+        out += 'not\n';
+        out += `if-goto ${label1}\n`;
 
         // advance opening brace
         tok.advance();
@@ -865,15 +864,15 @@ export class Compiler {
             );
         }
 
-        out += `goto ${label1}\n`;
-        out += `label ${label2}\n`;
-
         // advance closing brace
         tokenType = tok.tokenType();
 
         if (tokenType !== TokenType.SYMBOL) {
             throw new Error(`Invalid token: ${tokenType.description}`);
         }
+
+        out += `goto ${label2}\n`;
+        out += `label ${label1}\n`;
 
         return out;
     }
@@ -1098,6 +1097,8 @@ export class Compiler {
 
         if (symb === '(') {
             // calling a function
+            out += 'push pointer 0\n';
+
             const res = this.#compileExpressionList(
                 tok,
                 classTable,
