@@ -104,6 +104,8 @@ export class Compiler {
         let table = new SymbolTable();
         let output = '';
 
+        this.#labelCounter = 0;
+
         // consume the class keyword
         tok.advance();
         let tokenType = tok.tokenType();
