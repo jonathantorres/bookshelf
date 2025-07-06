@@ -89,14 +89,14 @@ Yes, as long as the graph `G` is connected and we do not include the root as par
 
 #### 5-16
 
-This translates to the question of labeling the tree with two colors, because this way each edge's vertices are colored differently. The larger group of colors is the sought for maximum-size independent set.
+This translates to the question of labeling the tree with two colors, because this way each edge's vertices are colored differently. The larger group of colors is the sought for maximum-size independent set.  
 a. Do a BFS on `G` and pick all the vertices that are leaves on this discovery tree.  
 b. Do a BFS on `G` and remove all the leaf vertices from the tree of discovery, pick all the remaining vertices except the root node.  
 c. Same as b.
 
 #### 5-17
 
-This can be done with DFS:
+This can be done with DFS:  
 a. Compare every possible set of 3 vertices and test if there is an edge between them  
 b. Use DFS and maintain an array of parent and check any back edge `u-v` whether grandparent of `u` is equal to `v`
 
