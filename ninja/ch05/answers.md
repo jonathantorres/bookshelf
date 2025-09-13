@@ -1,7 +1,7 @@
 ## Functions for the master
 
 #### Answer #1
-Option a) "Access external variable that are in scope when the function is defined".
+Option a) "Access external variables that are in scope when the function is defined".
 ***
 
 #### Answer #2
