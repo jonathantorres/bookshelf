@@ -10,7 +10,7 @@ By using one of the numbers as negative: $-4 x 2 = -8$ is less than $min(-4, 2) 
 
 #### 1-3
 
-Use a curve for one of the roads:
+Route A->D->B is fastest (but longer) since there is a traffic light between A->C in the shorter A->C->B route.
 
 ![Image of Solution](https://github.com/jonathantorres/bookshelf/blob/master/adm/ch1/img/1-3.png)
 
