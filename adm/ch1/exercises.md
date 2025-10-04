@@ -16,7 +16,7 @@ Route A->D->B is fastest (but longer) since there is a traffic light between A->
 
 #### 1-4
 
-Make short turns and use long straight roads:
+Route A->C->D->E->F->B has 4 turns but it is shorter than the longer A->I->H->G->B route with 3 turns.
 
 ![Image of Solution](https://github.com/jonathantorres/bookshelf/blob/master/adm/ch1/img/1-4.png)
 
@@ -24,11 +24,11 @@ Make short turns and use long straight roads:
 
 a. $S=\\{3,4,9,4\\}$ where $T=17$  
 b. $S=\\{8,4,2,5\\}$ with $T=14$  
-c. $S=\\{7,3,9,2\\}$ with $T=20$
+c. $S=\\{7,3,9,2\\}$ with $T=18$
 
 #### 1-6
 
-In the case where $U=\\{4,5,6,7\\}$ and $S=\\{\\{5,6\\},\\{7\\},\\{4,5,6\\},\\{6,7\\}\\}$ then the set cover is $S1$ and $S2$ $S=\\{\\{5,6\\},\\{7\\},\\{5,6,3\\},\\{6,7\\}\\}$. No set cover $4$ is missing.
+Let $U=\\{1,2,3,4,5\\}$ and $S_1=\\{3,1\\}$, $S_2=\\{2\\}$, $S_3=\\{5\\}$, $S_4=\\{1,2\\}$, $S_5=\\{1,4\\}$ and $S_6=\\{4\\}$. The algorithm will find the set cover $S_1, S_2, S_3, S_5$ which is correct but not the most optimal, there will be two 1's repeated in sets $S_1$ and $S_5$. The most optimal and correct set cover is $S_1, S_2, S_3, S_6$.
 
 #### 1-7
 
