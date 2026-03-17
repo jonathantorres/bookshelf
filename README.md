@@ -12,6 +12,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | math        | Discrete Mathematics |
 | nand        | The Elements of Computing Systems (nand2tetris) |
 | ninja       | Secrets of the JavaScript Ninja |
+| ostep       | Operating Systems: Three Easy Pieces |
 | rim         | Rust In Motion: Video Course |
 | rust        | The Rust Programming Language |
 | sicp        | Structure and Interpretation of Computer Programs |

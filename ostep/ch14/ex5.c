@@ -1,0 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    int *data = malloc(100 * sizeof(int));
+    printf("data[100] is: %d\n", data[100]);
+    return 0;
+}
