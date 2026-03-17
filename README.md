@@ -8,6 +8,7 @@ A collection of programs/notes from several books and courses, the list is organ
 | dmoi        | Discrete Mathematics - An Open Introduction |
 | gkr         | The C Programming Language (Rewritten in Go) |
 | gointro     | Introducing Go |
+| gopl        | The Go Programming Language |
 | kr          | The C Programming Language |
 | math        | Discrete Mathematics |
 | nand        | The Elements of Computing Systems (nand2tetris) |
