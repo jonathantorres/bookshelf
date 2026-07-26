@@ -1,0 +1,5 @@
+## Chapter 25 - Signal-Driven I/O
+
+#### 25.1
+
+No, these changes will introduce an error. The `nqueue` variable value will be updated before the entry on the `dg` array is processed.
