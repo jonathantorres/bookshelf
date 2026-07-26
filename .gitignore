@@ -1,8 +1,8 @@
 a.out
 node_modules/
 */bin/*
-apue/code/*
+# apue/code/*
 unp/code/*
-# apue/code/**/*.o
-# apue/code/**/*.a
+apue/code/**/*.o
+apue/code/**/*.a
 
